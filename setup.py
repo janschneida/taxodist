@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-with open('README.rst') as f:
+with open('README.md') as f:
     README = f.read()
 
 setup(
@@ -16,5 +16,5 @@ setup(
     include_package_data=True,
     packages=find_packages(),
     python_requires=">=3.9.6",
-    install_requires=['scipy>=1.3.1','numpy>=1.16.5', 'scikit-learn>=0.21.3', 'pandas>=0.25.1', 'treelib==1.6.1']
+    install_requires=['xml.etree.ElementTree','concurrent.futures','scipy>=1.3.1','numpy>=1.16.5', 'scikit-learn>=0.21.3', 'pandas>=0.25.1', 'treelib==1.6.1']
 )
