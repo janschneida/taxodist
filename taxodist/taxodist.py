@@ -4,7 +4,7 @@ import concurrent.futures as cf
 from timeit import default_timer as timer
 
 class DistanceCalculations:
-    def calc_distance_with_codes(max_workers=None,codes=None,parallelized=True,plot_when_finished=False):
+    def calc_distance_with_codes(max_workers=None,codes=None,parallelized=True,plot_when_finished=False,taxonomy='icd10gm'):
         '''
         Visualizes the similarity of ICD10 codes based on the ICD10 taxonomy. \n
         Saves x and y coordiantes of the codes in an excel-sheet for further distance calculation. \n
@@ -37,7 +37,7 @@ class DistanceCalculations:
 
         ######################### SETUP #########################
 
-        tree = utils.buildICD10Tree()
+        tree = utils.buildICD10Tree() #TODO add function for tree generation as parameter from outside
         ICD10_codes = codes
         if not ICD10_codes:
             ICD10_codes = utils.getAllICD10Codes(tree)
