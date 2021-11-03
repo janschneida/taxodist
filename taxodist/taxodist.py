@@ -5,7 +5,7 @@ from timeit import default_timer as timer
 
 class DistanceCalculations:
     def calc_distance_with_codes(max_workers=None,codes=None,parallelized=True,plot_when_finished=False,taxonomy='icd10gm'):
-        '''
+        """
         Visualizes the similarity of ICD10 codes based on the ICD10 taxonomy. \n
         Saves x and y coordiantes of the codes in an excel-sheet for further distance calculation. \n
         Saves pairwise distances of the codes in another excel-sheet.\n
@@ -33,7 +33,7 @@ class DistanceCalculations:
                                 The number of codes for which their distances have been calculated.
                 runtime [s] (float):
                                 The time in seconds it took to calculate the distances.
-        '''
+        """
 
         ######################### SETUP #########################
 
