@@ -1,8 +1,7 @@
 from numpy.lib import utils
-import taxodist.taxodist as td
-import taxodist.taxodist_utils as utils
+from taxodist.taxodist import DistanceCalculations
+from taxodist import taxodist_utils as utils
 import pandas as pd
-
 
 def main():
     """
@@ -12,34 +11,29 @@ def main():
     The runtimes are saved to excel sheets for comparison.
     """
     runtimes = []
+    tree = utils.getICD10GMTree()
     for i in range(1,9):
-        runtimes.append(td.DistanceCalculations.calc_distance_with_codes(i,100))
+        runtimes.append(DistanceCalculations.calc_distance_with_codes(max_workers=i, codes=utils.getRandomCodes(100,tree), taxonomy_tree=tree))
     df_runtimes = pd.DataFrame(runtimes)
     df_runtimes.to_excel('parallel_runtimes_100_codes.xlsx')
 
     runtimes = []
     for i in range(1,9):
-        runtimes.append(td.DistanceCalculations.calc_distance_with_codes(i,2000))
+        runtimes.append(DistanceCalculations.calc_distance_with_codes(max_workers=i, codes=utils.getRandomCodes(2000,tree), taxonomy_tree=tree))
     df_runtimes = pd.DataFrame(runtimes)
     df_runtimes.to_excel('parallel_runtimes_2000_codes.xlsx')
 
     runtimes = []
     for i in range(1,9):
-        runtimes.append(td.DistanceCalculations.calc_distance_with_codes(i))
+        runtimes.append(DistanceCalculations.calc_distance_with_codes(max_workers=i,taxonomy_tree=tree))
     df_runtimes = pd.DataFrame(runtimes)
     df_runtimes.to_excel('parallel_runtimes_all_codes.xlsx')
 
     runtimes = []
     for code_cnt in [100, 2000, None]:
-         runtimes.append(td.DistanceCalculations.calc_distance_with_codes(code_cnt=code_cnt))
+         runtimes.append(DistanceCalculations.calc_distance_with_codes(code_cnt=code_cnt))
     df_runtimes = pd.DataFrame(runtimes)
     df_runtimes.to_excel('seq_runtimes.xlsx')
-
-def getRandomCodes(code_cnt: int) -> list:
-    """
-    Returns list with code_cnt random codes.
-    """
-    utils.
 
 if __name__ == "__main__":
     main()

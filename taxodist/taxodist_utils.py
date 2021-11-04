@@ -1,18 +1,20 @@
 import math
 import xml.etree.ElementTree as ET
 import numpy as np
+from pandas.core.frame import DataFrame
 from scipy.spatial import distance_matrix
 import treelib
 import pandas as pd
 from sklearn.manifold import MDS
 import matplotlib.pyplot as plt
+import random
  
-def buildICD10Tree():
+def getICD10GMTree():
     """
     Returns a tree that represents the ICD10 taxonomy. \n
     Based on the ICD10-XML export from https://www.dimdi.de/dynamic/de/klassifikationen/downloads/
     """
-    raw_xml = ET.parse('ICD10_xml.xml')
+    raw_xml = ET.parse('resources\\ICD10_xml.xml')
     root = raw_xml.getroot()
     tree = treelib.Tree()
     tree.create_node('ICD-10', 0)
@@ -66,7 +68,7 @@ def getCS(code1, code2, tree, depth):
     return (depth - ic_lca) / (depth - 1)
 
 
-def getAllICD10Codes(tree):
+def getAllCodes(tree):
     all_codes = []
     for node in tree.all_nodes():
         all_codes.append(node.identifier)
@@ -105,11 +107,9 @@ def getDistMatrixSeq(ICD10_codes_var, tree, dist_matrix):
             cs = getCS(code1, code2, tree,depth)
             # safe CS values in matrix
             dist_matrix[ICD10_codes_var.index(code1), ICD10_codes_var.index(code2)] = cs
-    #return dist_matrix
 
 def getStop(worker_index, max_workers, length):
     """Returns logarithmically spaced stop index"""
-    #return int(( length/max_workers ) * worker_index)
     if worker_index == max_workers:
         return length
     return getStart(worker_index + 1, max_workers, length)
@@ -139,7 +139,7 @@ def getICD10CodesFromExcel():
 
 
 def getMDSMatrix(dist_matrix):
-    """Computes multi-dimensionally-scaled ICD10 two-dimensional code-coordinates based on a pairwise-distance-matrix"""
+    """Computes multi-dimensionally-scaled two-dimensional code-coordinates based on a pairwise-distance-matrix"""
     # use MDS to compute the relative distances of the distinct codes
     embedding = MDS(n_components=2)
     dist_matrix_transformed = embedding.fit_transform(dist_matrix)
@@ -160,10 +160,19 @@ def plotCodes(df_mds_coordinates, ICD10_codes):
 
     plt.show()
 
-def saveCodeDistancesInExcel(df_mds_coordinates, ICD_10_codes):
+def saveCodeDistancesInExcel(df_mds_coordinates: DataFrame, ICD_10_codes):
     """Saves pairwise code-distances to excel."""
     array = df_mds_coordinates.to_numpy()
     dm = distance_matrix(array,array)
     df = pd.DataFrame(dm)
     df.to_excel('code_distances.xlsx')
+
+def getRandomCodes(code_cnt: int,tree: treelib.Tree) -> list:
+    """Returns list with code_cnt random codes from the given taxonomy tree."""
+    return random.sample(tree.all_nodes(),code_cnt)
+
+def getCodeCount(tree: treelib.Tree):
+    """Returns the number of codes in a taxonomy."""
+    return len(tree.leaves()) #TODO fragen: nur leaves oder alle?
+
     
