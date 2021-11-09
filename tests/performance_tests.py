@@ -20,19 +20,19 @@ def main():
 
     runtimes = []
     for i in range(1,9):
-        runtimes.append(DistanceCalculations.calc_distance_with_codes(max_workers=i, codes=utils.getRandomCodes(2000,tree), taxonomy_tree=tree))
+        runtimes.append(td.DistanceCalculations.calc_distance_with_codes(max_workers=i, codes=utils.getRandomCodes(2000,tree), taxonomy_tree=tree))
     df_runtimes = pd.DataFrame(runtimes)
     df_runtimes.to_excel('parallel_runtimes_2000_codes.xlsx')
 
     runtimes = []
     for i in range(1,9):
-        runtimes.append(DistanceCalculations.calc_distance_with_codes(max_workers=i,taxonomy_tree=tree))
+        runtimes.append(td.DistanceCalculations.calc_distance_with_codes(max_workers=i,taxonomy_tree=tree))
     df_runtimes = pd.DataFrame(runtimes)
     df_runtimes.to_excel('parallel_runtimes_all_codes.xlsx')
 
     runtimes = []
     for code_cnt in [100, 2000, None]:
-         runtimes.append(DistanceCalculations.calc_distance_with_codes(code_cnt=code_cnt))
+         runtimes.append(td.DistanceCalculations.calc_distance_with_codes(code_cnt=code_cnt))
     df_runtimes = pd.DataFrame(runtimes)
     df_runtimes.to_excel('seq_runtimes.xlsx')
 
