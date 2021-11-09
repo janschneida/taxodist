@@ -5,9 +5,11 @@ from pandas.core.frame import DataFrame
 from scipy.spatial import distance_matrix
 import treelib
 import pandas as pd
-from sklearn.manifold import MDS
-import matplotlib.pyplot as plt
+# from sklearn.manifold import MDS
+# import matplotlib.pyplot as plt
 import random
+
+from treelib.node import Node
  
 def getICD10GMTree():
     """
@@ -169,7 +171,9 @@ def saveCodeDistancesInExcel(df_mds_coordinates: DataFrame, ICD_10_codes):
 
 def getRandomCodes(code_cnt: int,tree: treelib.Tree) -> list:
     """Returns list with code_cnt random codes from the given taxonomy tree."""
-    return random.sample(tree.all_nodes(),code_cnt)
+    nodes: list[Node]
+    nodes = random.sample(tree.all_nodes(),code_cnt)
+    return [x.identifier for x in nodes]
 
 def getCodeCount(tree: treelib.Tree):
     """Returns the number of codes in a taxonomy."""
