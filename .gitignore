@@ -1,6 +1,7 @@
 **/.vscode
 **/__pycache__
 **/taxodist_env
+**/build
 *.xlsx
 !icd-codes_examples.xlsx
 !ICD10_xml.xlsx
