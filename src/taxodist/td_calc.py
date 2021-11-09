@@ -1,4 +1,4 @@
-import taxodist_utils as utils
+import taxodist.td_utils as utils
 import numpy as np
 import concurrent.futures as cf
 from timeit import default_timer as timer

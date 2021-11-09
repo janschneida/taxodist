@@ -1,6 +1,7 @@
-from numpy.lib import utils
-from taxodist.taxodist import DistanceCalculations
-from taxodist import taxodist_utils as utils
+import sys
+sys.path.append("z:\\Praktikum_Patient_Similarity\\taxodist\\src")
+from taxodist import td_calc as td
+from taxodist import td_utils as utils
 import pandas as pd
 
 def main():
@@ -13,7 +14,7 @@ def main():
     runtimes = []
     tree = utils.getICD10GMTree()
     for i in range(1,9):
-        runtimes.append(DistanceCalculations.calc_distance_with_codes(max_workers=i, codes=utils.getRandomCodes(100,tree), taxonomy_tree=tree))
+        runtimes.append(td.DistanceCalculations.calc_distance_with_codes(max_workers=i, codes=utils.getRandomCodes(100,tree), taxonomy_tree=tree))
     df_runtimes = pd.DataFrame(runtimes)
     df_runtimes.to_excel('parallel_runtimes_100_codes.xlsx')
 
