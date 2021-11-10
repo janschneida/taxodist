@@ -1,4 +1,4 @@
-import taxodist.td_utils as utils
+from src.taxodist import td_utils as utils
 import numpy as np
 import concurrent.futures as cf
 from timeit import default_timer as timer
@@ -17,7 +17,7 @@ class DistanceCalculations:
                                 Per default, concurrent.futures picks the "best" setting for your system.
                 codes (list): 
                                 A list of codes to calculate the distances. \n
-                                Per default, this method uses all codes of the given taxonomy.
+                                Per default, if this parameter is left out or set to None, this method uses all codes of the given taxonomy.
                 parallelized (bool):
                                 Sets whether or not the calculation should be parallelized. \n 
                                 Especially for smaller code-batch-sizes it might make sense to use the serialized calculation, 
@@ -73,14 +73,14 @@ class DistanceCalculations:
     
         # print('Calculation time: ', time, ' seconds')
         
-        dist_matrix = utils.mirrorMatrix(dist_matrix)
+        # dist_matrix = utils.mirrorMatrix(dist_matrix)
 
-        df_mds_coordinates = utils.getMDSMatrix(dist_matrix)
+        # df_mds_coordinates = utils.getMDSMatrix(dist_matrix)
 
-        utils.saveCodeDistancesInExcel(df_mds_coordinates, codes)
+        # utils.saveCodeDistancesInExcel(df_mds_coordinates, codes)
 
-        if plot_when_finished:
-            utils.plotCodes(df_mds_coordinates, codes)
+        # if plot_when_finished:
+        #     utils.plotCodes(df_mds_coordinates, codes)
         return max_workers,length,time
 
         

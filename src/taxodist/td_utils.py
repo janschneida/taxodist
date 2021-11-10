@@ -5,11 +5,12 @@ from pandas.core.frame import DataFrame
 from scipy.spatial import distance_matrix
 import treelib
 import pandas as pd
-# from sklearn.manifold import MDS
-# import matplotlib.pyplot as plt
+from sklearn.manifold import MDS
+import matplotlib.pyplot as plt
 import random
 
 from treelib.node import Node
+from treelib.tree import Tree
  
 def getICD10GMTree():
     """
@@ -49,10 +50,10 @@ def getLCA(code1, code2, tree):
     return lca
 
 
-def getAncestors(code, tree):
+def getAncestors(code, tree: Tree):
     """Return the ancestors of a code in a given tree"""
     ancestors = []
-    parent = tree.parent(code)
+    parent: Node = tree.parent(code)
     while tree.depth(parent.identifier) >= 1:
         ancestors.append(parent.identifier)
         if parent.is_root():
@@ -77,7 +78,7 @@ def getAllCodes(tree):
     all_codes.remove(0)
     return all_codes
 
-def getDistMatrix(ICD10_codes_var, tree, worker_index, max_workers):
+def getDistMatrix(ICD10_codes_var, tree: Tree, worker_index, max_workers):
     """
     Function for the parallelized processes. \n 
     Computes the part of the (absolute) distance matrix of the given ICD10 codes, 
@@ -98,7 +99,7 @@ def getDistMatrix(ICD10_codes_var, tree, worker_index, max_workers):
         i+=1
     return dist_matrix, worker_index
 
-def getDistMatrixSeq(ICD10_codes_var, tree, dist_matrix): 
+def getDistMatrixSeq(ICD10_codes_var: list, tree: Tree, dist_matrix): 
     """Calculates the (absolute) distance matrix of the given ICD10 codes sequentially""" 
     depth = tree.depth()
 
@@ -153,7 +154,7 @@ def mirrorMatrix(dist_matrix):
     """mirrors uppertriangular distance matrix along its diagonal"""
     return dist_matrix + dist_matrix.T - np.diag(np.diag(dist_matrix))
 
-def plotCodes(df_mds_coordinates, ICD10_codes):
+def plotCodes(df_mds_coordinates: DataFrame, ICD10_codes):
     fig, ax = plt.subplots()
     df_mds_coordinates.plot(0, 1, kind='scatter', ax=ax)
 
@@ -177,6 +178,6 @@ def getRandomCodes(code_cnt: int,tree: treelib.Tree) -> list:
 
 def getCodeCount(tree: treelib.Tree):
     """Returns the number of codes in a taxonomy."""
-    return len(tree.leaves()) #TODO fragen: nur leaves oder alle?
+    return len(tree.leaves())
 
     
