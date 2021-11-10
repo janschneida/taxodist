@@ -71,8 +71,6 @@ class DistanceCalculations:
         dist_matrix = utils.mirrorMatrix(dist_matrix)
         time = timer() - start
     
-        # print('Calculation time: ', time, ' seconds')
-        
         # dist_matrix = utils.mirrorMatrix(dist_matrix)
 
         # df_mds_coordinates = utils.getMDSMatrix(dist_matrix)
