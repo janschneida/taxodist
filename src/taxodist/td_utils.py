@@ -1,17 +1,18 @@
 import math
+import random
 import xml.etree.ElementTree as ET
+
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import treelib
 from pandas.core.frame import DataFrame
 from scipy.spatial import distance_matrix
-import treelib
-import pandas as pd
 from sklearn.manifold import MDS
-import matplotlib.pyplot as plt
-import random
-
 from treelib.node import Node
 from treelib.tree import Tree
- 
+
+
 def getICD10GMTree():
     """
     Returns a tree that represents the ICD10 taxonomy. \n
@@ -34,9 +35,13 @@ def getICD10GMTree():
 
     return tree
 
-def getIC(code, tree):
+def getIC(code, tree: Tree, mode: str='levels'):
     """Returns information content (depth) of a given code - based on https://doi.org/10.1186/s12911-019-0807-y"""
-    return tree.depth(code)
+    if mode == 'levels': 
+        return tree.depth(code)
+    if mode == 'ontology':
+        return #TODO find out what exactly subsumers are
+
 
 def getLCA(code1, code2, tree):
     """Return lowest common ancester of two codes."""
@@ -62,54 +67,92 @@ def getAncestors(code, tree: Tree):
 
     return set(ancestors)
 
-def getCS(code1, code2, tree, depth):
-    """Returns code similarity of two codes based on CS#4 from https://doi.org/10.1186/s12911-019-0807-y"""
+def getCSLi(ic_1,ic_2,ic_lca):
+    return 1 - math.exp(0.2*(ic_1 + ic_2 - 2*ic_lca))*(math.exp(0.6*ic_lca)-math.exp(-0.6*ic_lca))/(math.exp(0.6*ic_lca)+math.exp(-0.6*ic_lca))
+
+def getCSWuPalmer(ic_1,ic_2,ic_lca):
+    return 1 - (2*ic_lca)/(ic_1+ic_2)
+
+def getCSSimpleWuPalmer(ic_lca, depth):
+    return (depth - ic_lca)/(depth - 1)
+
+def getCS(code1, code2, tree, depth,ic_mode,cs_mode):
+    """Returns code similarity of two codes based on CS-algorithms from https://doi.org/10.1186/s12911-019-0807-y"""
     if code1 == code2:
         return 0.0
     lca = getLCA(code1, code2, tree)
-    ic_lca = getIC(lca, tree)
-    return (depth - ic_lca) / (depth - 1)
+    ic_lca = getIC(lca, tree,ic_mode)
+    ic_1 = getIC(code1,tree,ic_mode)
+    ic_2 = getIC(code2,tree,ic_mode)
+
+    #CS1
+    if cs_mode == 'binary':
+        return int(code1==code2)
+    # CS2
+    if cs_mode == 'wu_palmer':
+        return getCSWuPalmer(ic_1,ic_2,ic_lca) 
+    # CS 3
+    if cs_mode == 'li':
+        return getCSLi(ic_1,ic_2,ic_lca)
+    # CS4
+    if cs_mode == 'simple_wu_palmer':
+        return getCSSimpleWuPalmer(ic_lca,depth)
+    
+    ###### ONLY >= PYTHON 3.10.0 #####
+    # match cs_mode:
+    #     # CS1
+    #     case 'binary':
+    #         return int(code1==code2)
+    #     # CS2
+    #     case 'wu_palmer':
+    #         return 1 - (2*ic_lca)/(ic_1+ic_2) 
+    #     # CS 3
+    #     case 'li':
+    #         return 1 - math.exp( 0.2*(ic_1 + ic_2 - 2*ic_lca) )*
+    #     # CS4
+    #     case 'simple_wu_palmer':
+    #         return (depth - ic_lca)/(depth - 1)
 
 
-def getAllCodes(tree):
+def getAllCodes(tree: Tree):
     all_codes = []
     for node in tree.all_nodes():
         all_codes.append(node.identifier)
     all_codes.remove(0)
     return all_codes
 
-def getDistMatrix(ICD10_codes_var, tree: Tree, worker_index, max_workers):
+def getDistMatrix(codes: list, tree: Tree, worker_index, max_workers):
     """
     Function for the parallelized processes. \n 
     Computes the part of the (absolute) distance matrix of the given ICD10 codes, 
     that corresponds to the worker index of the calling process.
     """
     depth = tree.depth()
-    length = len(ICD10_codes_var)
+    length = len(codes)
     start = getStart(worker_index, max_workers, length)
     stop = getStop(worker_index, max_workers, length)
     dist_matrix = np.zeros(shape=(stop-start, length))
     i = 0
-    for code1 in ICD10_codes_var[start:stop]: 
-        code1_index = ICD10_codes_var.index(code1)
-        for code2 in ICD10_codes_var[code1_index:]:
+    for code1 in codes[start:stop]: 
+        code1_index = codes.index(code1)
+        for code2 in codes[code1_index:]:
             cs = getCS(code1, code2, tree,depth)
             # safe CS values in matrix (only upper triangular)
-            dist_matrix[i, ICD10_codes_var.index(code2)] = cs
+            dist_matrix[i, codes.index(code2)] = cs
         i+=1
     return dist_matrix, worker_index
 
-def getDistMatrixSeq(ICD10_codes_var: list, tree: Tree, dist_matrix): 
+def getDistMatrixSeq(codes: list, tree: Tree, dist_matrix): 
     """Calculates the (absolute) distance matrix of the given ICD10 codes sequentially""" 
     depth = tree.depth()
 
-    for code1 in ICD10_codes_var:
-        code1_index = ICD10_codes_var.index(code1)
+    for code1 in codes:
+        code1_index = codes.index(code1)
     # calculates only upper-triangular values & writes them to the corresponding diagonal index 
-        for code2 in ICD10_codes_var[code1_index:]:
+        for code2 in codes[code1_index:]:
             cs = getCS(code1, code2, tree,depth)
             # safe CS values in matrix
-            dist_matrix[ICD10_codes_var.index(code1), ICD10_codes_var.index(code2)] = cs
+            dist_matrix[codes.index(code1), codes.index(code2)] = cs
 
 def getStop(worker_index, max_workers, length):
     """Returns logarithmically spaced stop index"""
@@ -154,16 +197,16 @@ def mirrorMatrix(dist_matrix):
     """mirrors uppertriangular distance matrix along its diagonal"""
     return dist_matrix + dist_matrix.T - np.diag(np.diag(dist_matrix))
 
-def plotCodes(df_mds_coordinates: DataFrame, ICD10_codes):
+def plotCodes(df_mds_coordinates: DataFrame, codes: list):
     fig, ax = plt.subplots()
     df_mds_coordinates.plot(0, 1, kind='scatter', ax=ax)
 
     for k, v in df_mds_coordinates.iterrows():
-        ax.annotate(ICD10_codes[k], v)
+        ax.annotate(codes[k], v)
 
     plt.show()
 
-def saveCodeDistancesInExcel(df_mds_coordinates: DataFrame, ICD_10_codes):
+def saveCodeDistancesInExcel(df_mds_coordinates: DataFrame, codes: list):
     """Saves pairwise code-distances to excel."""
     array = df_mds_coordinates.to_numpy()
     dm = distance_matrix(array,array)
