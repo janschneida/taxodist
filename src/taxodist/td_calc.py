@@ -1,10 +1,11 @@
+from treelib.tree import Tree
 import td_utils as utils
 import numpy as np
 import concurrent.futures as cf
 from timeit import default_timer as timer
 
 class DistanceCalculations:
-    def calc_distance_with_codes(max_workers: int = None,codes=None,parallelized=True,plot_when_finished=False,taxonomy_tree=None):
+    def calc_distance_with_codes(max_workers: int = None,codes: list=None,parallelized=True,taxonomy_tree: Tree=None, ic_mode: str='levels', cs_mode: str='simple_wu_palmer'):
         """
         Computes the similarity of codes based on their position in the corresponding taxonomy. \n
         Saves x and y coordiantes of the codes in an excel-sheet for further distance calculation. \n
@@ -23,8 +24,6 @@ class DistanceCalculations:
                                 Especially for smaller code-batch-sizes it might make sense to use the serialized calculation, 
                                 because parallelization overhead might outweigh its gain. \n 
                                 Per default, the method runs in parallel.
-                plot_when_finished (bool):
-                                Sets whether or not to plot the relative distances of the codes after the calculation.
                 taxonomy_tree (Tree): 
                                 A tree object representing the taxonomy you wish to calculate code distances in. \n
                                 This package offers methods to get trees for the following taxonomies:
@@ -77,8 +76,6 @@ class DistanceCalculations:
 
         # utils.saveCodeDistancesInExcel(df_mds_coordinates, codes)
 
-        # if plot_when_finished:
-        #     utils.plotCodes(df_mds_coordinates, codes)
         return max_workers,length,time
 
         
