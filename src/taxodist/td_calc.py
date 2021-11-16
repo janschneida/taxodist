@@ -5,7 +5,7 @@ import concurrent.futures as cf
 from timeit import default_timer as timer
 
 class DistanceCalculations:
-    def calc_distance_with_codes(max_workers: int = None,codes: list=None,parallelized=True,taxonomy_tree: Tree=None, ic_mode: str='levels', cs_mode: str='simple_wu_palmer'):
+    def calc_distance_with_codes(self,max_workers: int = None,codes: list=None,parallelized=True,taxonomy_tree: Tree=None, ic_mode: str='levels', cs_mode: str='simple_wu_palmer'):
         """
         Computes the similarity of codes based on their position in the corresponding taxonomy. \n
         Saves x and y coordiantes of the codes in an excel-sheet for further distance calculation. \n
@@ -88,4 +88,14 @@ class DistanceCalculations:
 
         return max_workers,length,time
 
-        
+    def calc_dist_for_specific_subcategory(self,max_workers: int = None,codes: list=None,parallelized=True,taxonomy_tree: Tree=None):
+        """Use this method when you know, that your codes are from the same subcategory and that they are leaves."""
+        self.calc_distance_with_codes(max_workers=max_workers,codes=codes,parallelized=parallelized,taxonomy_tree=taxonomy_tree,ic_mode='levels',cs_mode='simple_wu_palmer')
+
+    def calc_dist_for_distinct_codes(self,max_workers: int = None,codes: list=None,parallelized=True,taxonomy_tree: Tree=None):
+        """
+        Use this method when you know, that your codes are more distinct, might not be leaves and you are working
+        with a more comprehensive concept background.
+        """
+        self.calc_distance_with_codes(max_workers=max_workers,codes=codes,parallelized=parallelized,taxonomy_tree=taxonomy_tree,ic_mode='ontology',cs_mode='wu_palmer')
+
