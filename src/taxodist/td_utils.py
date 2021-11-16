@@ -35,13 +35,23 @@ def getICD10GMTree():
 
     return tree
 
-def getIC(code, tree: Tree, mode: str='levels'):
-    """Returns information content (depth) of a given code - based on https://doi.org/10.1186/s12911-019-0807-y"""
-    if mode == 'levels': 
+def getIC(code, tree: Tree, mode: str):
+    """
+    Returns information content of a given code 
+    based on the IC algorthms from https://doi.org/10.1186/s12911-019-0807-y
+    
+    """
+    if mode == 'levels':
+        # IC calculation based on Boriah et al. https://doi.org/10.1137/1.9781611972788.22 
         return tree.depth(code)
     if mode == 'ontology':
-        return #TODO find out what exactly subsumers are
+        return getSanchezIC(code,tree)
 
+def getSanchezIC(code: str, tree: Tree):
+    """IC calculation based on Sánchez et al. https://doi.org/10.1016/j.knosys.2010.10.001"""
+    leaves_cnt = len(tree.leaves(code))
+    ancestors_cnt = len(getAncestors(code,tree))
+    return -math.log( (leaves_cnt/ancestors_cnt + 1)/(leaves_cnt+1) )
 
 def getLCA(code1, code2, tree):
     """Return lowest common ancester of two codes."""
@@ -68,12 +78,18 @@ def getAncestors(code, tree: Tree):
     return set(ancestors)
 
 def getCSLi(ic_1,ic_2,ic_lca):
+    """CS calculation based on Li et al. https://doi.org/10.1109/TKDE.2003.1209005"""
     return 1 - math.exp(0.2*(ic_1 + ic_2 - 2*ic_lca))*(math.exp(0.6*ic_lca)-math.exp(-0.6*ic_lca))/(math.exp(0.6*ic_lca)+math.exp(-0.6*ic_lca))
 
 def getCSWuPalmer(ic_1,ic_2,ic_lca):
+    """Cs calculation based on Wu et al. https://doi.org/10.3115/981732.981751"""
     return 1 - (2*ic_lca)/(ic_1+ic_2)
 
 def getCSSimpleWuPalmer(ic_lca, depth):
+    """
+    CS calculation based on a simplified version of Wu-Palmer,
+    where the two codes are on the deepest level of the taxonomy tree
+    """
     return (depth - ic_lca)/(depth - 1)
 
 def getCS(code1, code2, tree, depth,ic_mode,cs_mode):
