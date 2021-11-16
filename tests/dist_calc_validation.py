@@ -6,7 +6,7 @@ from src.taxodist import td_utils as utils
 
 def main():
     """
-    Runs tests with different codes to valiate the pairwise distance calculations.\n
+    Runs tests with different codes to valiate the respective implemented CS & IC algorithms.\n
 
     The ground-truth is derived by manually calculating the values for the respective codes.
     """

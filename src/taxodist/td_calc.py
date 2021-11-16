@@ -15,20 +15,30 @@ class DistanceCalculations:
                 max_workers (int): 
                                 The number of parallel processes to calculate the distances. \n
                                 This number must not be greater then the cores your system offers. \n
-                                Per default, concurrent.futures picks the "best" setting for your system.
+                                Per default, concurrent.futures picks the "best" setting for your system.\n
                 codes (list): 
                                 A list of codes to calculate the distances. \n
-                                Per default, if this parameter is left out or set to None, this method uses all codes of the given taxonomy.
+                                Per default, if this parameter is left out or set to None,\n 
+                                this method uses all codes of the given taxonomy.\n
                 parallelized (bool):
                                 Sets whether or not the calculation should be parallelized. \n 
-                                Especially for smaller code-batch-sizes it might make sense to use the serialized calculation, 
+                                Especially for smaller code-batch-sizes it might make sense to use the serialized calculation,\n 
                                 because parallelization overhead might outweigh its gain. \n 
-                                Per default, the method runs in parallel.
+                                Per default, the method runs in parallel.\n
                 taxonomy_tree (Tree): 
                                 A tree object representing the taxonomy you wish to calculate code distances in. \n
-                                This package offers methods to get trees for the following taxonomies:
-                                    - ICD-10-GM (getICD10GMTree)
+                                This package offers methods to get trees for the following taxonomies:\n
+                                \t  - ICD-10-GM (getICD10GMTree)
+                                \n
+                ic_mode (str):
+                                Defines what information-content algorithm should be used. \n
+                                The following are available:\n
+                                \t    - \'levels\'  level based \n
+                                \t    - \'ontology\'  ontology based \n
 
+                                For a comprehensive take on when to use which algorithm look
+                                at the README or https://doi.org/10.1186/s12911-019-0807-y
+            \n
             Returns:
                 max_workers (int):
                                 The degree of parallelization.

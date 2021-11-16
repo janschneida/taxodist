@@ -24,8 +24,8 @@ def runSeqTest(code_cnt,tree):
 
 def main():
     """
-    Runs performance tests with different amounts of codes and 
-    differend degrees of parallelization to benchmark the parallelization gain. \n
+    Runs performance tests with different amounts of ICD-10-GM codes and 
+    different degrees of parallelization to benchmark the parallelization gain. \n
 
     The runtimes are saved to excel sheets for comparison.
     """
