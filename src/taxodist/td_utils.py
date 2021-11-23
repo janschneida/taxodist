@@ -82,7 +82,7 @@ def getCSLi(ic_1,ic_2,ic_lca):
     return 1 - math.exp(0.2*(ic_1 + ic_2 - 2*ic_lca))*(math.exp(0.6*ic_lca)-math.exp(-0.6*ic_lca))/(math.exp(0.6*ic_lca)+math.exp(-0.6*ic_lca))
 
 def getCSWuPalmer(ic_1,ic_2,ic_lca):
-    """Cs calculation based on Wu et al. https://doi.org/10.3115/981732.981751"""
+    """CS calculation based on Wu et al. https://doi.org/10.3115/981732.981751"""
     return 1 - (2*ic_lca)/(ic_1+ic_2)
 
 def getCSSimpleWuPalmer(ic_lca, depth):
@@ -140,7 +140,7 @@ def getAllCodes(tree: Tree):
 def getDistMatrix(codes: list, tree: Tree, worker_index, max_workers):
     """
     Function for the parallelized processes. \n 
-    Computes the part of the (absolute) distance matrix of the given ICD10 codes, 
+    Computes the part of the (absolute) distance matrix of the given codes, 
     that corresponds to the worker index of the calling process.
     """
     depth = tree.depth()
@@ -159,7 +159,7 @@ def getDistMatrix(codes: list, tree: Tree, worker_index, max_workers):
     return dist_matrix, worker_index
 
 def getDistMatrixSeq(codes: list, tree: Tree, dist_matrix): 
-    """Calculates the (absolute) distance matrix of the given ICD10 codes sequentially""" 
+    """Calculates the (absolute) distance matrix of the given codes sequentially""" 
     depth = tree.depth()
 
     for code1 in codes:
@@ -182,7 +182,7 @@ def getStart(worker_index, max_workers, length):
     return math.ceil(logspace[worker_index-1])
 
 def getSpacing(max_workers, length):
-    """Returns spacing for the ICD10 code list."""
+    """Returns spacing for the code list."""
     logspace =  length/10*np.logspace(start=-1,stop=1,num=max_workers, endpoint=True)
     # remove offset
     logspace = logspace - logspace[0] 
