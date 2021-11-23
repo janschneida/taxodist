@@ -11,41 +11,59 @@ class DistanceCalculations:
         Saves x and y coordiantes of the codes in an excel-sheet for further distance calculation. \n
         Saves pairwise distances of the codes in another excel-sheet.\n
 
-            Parameters:
-                max_workers (int): 
-                                The number of parallel processes to calculate the distances. \n
-                                This number must not be greater then the cores your system offers. \n
-                                Per default, concurrent.futures picks the "best" setting for your system.\n
-                codes (list): 
-                                A list of codes to calculate the distances. \n
-                                Per default, if this parameter is left out or set to None,\n 
-                                this method uses all codes of the given taxonomy.\n
-                parallelized (bool):
-                                Sets whether or not the calculation should be parallelized. \n 
-                                Especially for smaller code-batch-sizes it might make sense to use the serialized calculation,\n 
-                                because parallelization overhead might outweigh its gain. \n 
-                                Per default, the method runs in parallel.\n
-                taxonomy_tree (Tree): 
-                                A tree object representing the taxonomy you wish to calculate code distances in. \n
-                                This package offers methods to get trees for the following taxonomies:\n
-                                \t  - ICD-10-GM (getICD10GMTree)
-                                \n
-                ic_mode (str):
-                                Defines what information-content algorithm should be used. \n
-                                The following are available:\n
-                                \t    - \'levels\'  level based \n
-                                \t    - \'ontology\'  ontology based \n
+        ----
+        ## Parameters:\n
+        * max_workers (int):\n
+        \tThe number of parallel processes to calculate the distances. \n
+        \tThis number must not be greater then the cores your system offers. \n
+        \tPer default, concurrent.futures picks the "best" setting for your system.\n
 
-                                For a comprehensive take on when to use which algorithm look
-                                at the README or https://doi.org/10.1186/s12911-019-0807-y
-            \n
-            Returns:
-                max_workers (int):
-                                The degree of parallelization.
-                code_cnt (int):
-                                The number of codes for which their distances have been calculated.
-                runtime [s] (float):
-                                The time in seconds it took to calculate the distances.
+        * codes (list): \n
+        \tA list of codes to calculate the distances. \n
+        \tPer default, if this parameter is left out or set to None,\n 
+        \tthis method uses all codes of the given taxonomy.\n
+
+        * parallelized (bool):\n
+        \tSets whether or not the calculation should be parallelized. \n 
+        \tEspecially for smaller code-batch-sizes it might make sense to use the serialized calculation,\n 
+        \tbecause parallelization overhead might outweigh its gain. \n 
+        \tPer default, the method runs in parallel.\n
+        
+        * taxonomy_tree (Tree):\n 
+        \tA tree object representing the taxonomy you wish to calculate code distances in. \n
+        \tThis package offers methods to get trees for the following taxonomies:\n
+        \t\t- ICD-10-GM (getICD10GMTree)
+        \n
+        * ic_mode (str):\n
+        \tDefines what information-content algorithm should be used. \n
+        \tThe following are available:\n
+        \t\t-'levels' \n
+        \t\t-'ontology' \n
+
+        \tFor a comprehensive take on when to use which algorithm look
+        \tat the README or https://doi.org/10.1186/s12911-019-0807-y
+        \n
+        * cs_mode (str):\n
+        \tDefines what code-similarity algorithm should be used. \n
+        \tThe following are available:\n
+        \t\t-'binary'  \n
+        \t\t-'wu_palmer' \n
+        \t\t-'li' \n
+        \t\t-'simple_wu_palmer' \n
+
+        \tFor a comprehensive take on when to use which algorithm look
+        \tat the README or https://doi.org/10.1186/s12911-019-0807-y
+        \n
+
+        ----
+        ## Returns:\n
+        * max_workers (int):\n
+        \tThe degree of parallelization.\n
+        * code_cnt (int):\n
+        \tThe number of codes for which their distances have been calculated.
+        * runtime [s] (float):\n
+        \tThe time in seconds it took to calculate the distances.
+       
         """
 
         ######################### SETUP #########################
