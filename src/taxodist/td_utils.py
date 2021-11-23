@@ -192,14 +192,6 @@ def getDistMatrixWrapper(p):
     """Wrapper for the parallel-process-function"""
     return getDistMatrix(*p)
 
-def getICD10CodesFromExcel():
-    df_raw = pd.read_excel('icd-codes_examples.xlsx', engine='openpyxl')
-    df_raw.dropna(inplace=True)
-    ICD10_codes = df_raw['ICD-10'].drop_duplicates().to_list()
-    ICD10_codes.sort()
-    return ICD10_codes
-
-
 def getMDSMatrix(dist_matrix):
     """Computes multi-dimensionally-scaled two-dimensional code-coordinates based on a pairwise-distance-matrix"""
     # use MDS to compute the relative distances of the distinct codes
