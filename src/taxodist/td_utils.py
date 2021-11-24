@@ -35,16 +35,16 @@ def getICD10GMTree():
 
     return tree
 
-def getIC(code, tree: Tree, mode: str):
+def getIC(code, tree: Tree, ic_mode: str):
     """
     Returns information content of a given code 
     based on the IC algorthms from https://doi.org/10.1186/s12911-019-0807-y
     
     """
-    if mode == 'levels':
+    if ic_mode == 'levels':
         # IC calculation based on Boriah et al. https://doi.org/10.1137/1.9781611972788.22 
         return tree.depth(code)
-    if mode == 'ontology':
+    if ic_mode == 'ontology':
         return getSanchezIC(code,tree)
 
 def getSanchezIC(code: str, tree: Tree):
@@ -53,14 +53,14 @@ def getSanchezIC(code: str, tree: Tree):
     ancestors_cnt = len(getAncestors(code,tree))
     return -math.log( (leaves_cnt/ancestors_cnt + 1)/(leaves_cnt+1) )
 
-def getLCA(code1, code2, tree):
+def getLCA(code1, code2, tree, ic_mode):
     """Return lowest common ancester of two codes."""
     lca = 0
     ca = list(getAncestors(code1, tree).intersection(getAncestors(code2, tree)))
     if len(ca) != 0:
         lca = ca[0]
         for code in ca:
-            if getIC(code, tree) > getIC(lca, tree):
+            if getIC(code, tree, ic_mode) > getIC(lca, tree, ic_mode):
                 lca = code
     return lca
 
@@ -96,7 +96,7 @@ def getCS(code1, code2, tree, depth,ic_mode,cs_mode):
     """Returns code similarity of two codes based on CS-algorithms from https://doi.org/10.1186/s12911-019-0807-y"""
     if code1 == code2:
         return 0.0
-    lca = getLCA(code1, code2, tree)
+    lca = getLCA(code1, code2, tree, ic_mode)
     ic_lca = getIC(lca, tree,ic_mode)
     ic_1 = getIC(code1,tree,ic_mode)
     ic_2 = getIC(code2,tree,ic_mode)
@@ -137,7 +137,7 @@ def getAllCodes(tree: Tree):
     all_codes.remove(0)
     return all_codes
 
-def getDistMatrix(codes: list, tree: Tree, worker_index, max_workers):
+def getDistMatrix(codes: list, tree: Tree, worker_index, max_workers,ic_mode,cs_mode):
     """
     Function for the parallelized processes. \n 
     Computes the part of the (absolute) distance matrix of the given codes, 
@@ -152,7 +152,7 @@ def getDistMatrix(codes: list, tree: Tree, worker_index, max_workers):
     for code1 in codes[start:stop]: 
         code1_index = codes.index(code1)
         for code2 in codes[code1_index:]:
-            cs = getCS(code1, code2, tree,depth)
+            cs = getCS(code1, code2, tree,depth,ic_mode,cs_mode)
             # safe CS values in matrix (only upper triangular)
             dist_matrix[i, codes.index(code2)] = cs
         i+=1

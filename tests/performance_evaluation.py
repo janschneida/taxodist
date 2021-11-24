@@ -1,5 +1,5 @@
 import pandas as pd 
-import performance_tests as pt
+import run_performance_tests as pt
 import matplotlib.pyplot as plt
 
 def main():

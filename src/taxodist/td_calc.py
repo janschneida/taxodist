@@ -1,10 +1,12 @@
 from treelib.tree import Tree
-import td_utils as utils
+from src.taxodist import td_utils as utils
 import numpy as np
 import concurrent.futures as cf
 from timeit import default_timer as timer
 
 class DistanceCalculations:
+    def __init__(self) -> None:
+        pass
     def calc_distance_with_codes(self,max_workers: int = None,codes: list=None,parallelized=True,taxonomy_tree: Tree=None, ic_mode: str='levels', cs_mode: str='simple_wu_palmer'):
         """
         Computes the similarity of codes based on their position in the corresponding taxonomy. \n
@@ -32,7 +34,7 @@ class DistanceCalculations:
         * taxonomy_tree (Tree):\n 
         \tA tree object representing the taxonomy you wish to calculate code distances in. \n
         \tThis package offers methods to get trees for the following taxonomies:\n
-        \t\t- ICD-10-GM (getICD10GMTree)
+        \t\t-ICD-10-GM (getICD10GMTree)
         \n
         * ic_mode (str):\n
         \tDefines what information-content algorithm should be used. \n
@@ -89,7 +91,7 @@ class DistanceCalculations:
             start = timer()
             for i in range(0,max_workers):
                 # start processes and save return values 
-                fs.append(executor.submit(utils.getDistMatrixWrapper, (codes, taxonomy_tree, i+1, max_workers)))
+                fs.append(executor.submit(utils.getDistMatrixWrapper, (codes, taxonomy_tree, i+1, max_workers,ic_mode,cs_mode)))
         for future in cf.as_completed(fs):
             # merge partial matrices
             partial_dist_matrix, worker_index = future.result()
