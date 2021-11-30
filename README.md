@@ -2,7 +2,8 @@
 
 ## What the package is about
 
-taxodist is a tool to generate pairwise distances of ICD10 codes based on the ICD10 taxonomy & https://doi.org/10.1186/s12911-019-0807-y. 
+Taxodist is a tool to calculate similarity of codes/concepts from a taxonomic hierarchy.
+The package offers methods to insert a list of codes/concepts and a tree to perform distance calculations for the given codes, based on their position in the taxonomy tree. 
 
-A call to main() of icd10Main.py with a value for max_workers (grade of parallelization) generates a distance matrix of the currently existing ICD10-codes extracted from https://www.dimdi.de/dynamic/de/klassifikationen/downloads/. 
-The distances can be used to calculate similarity values for diagnoses and by this be used in patient-similarity-vectors to compute patient similarity.
+You can choose two kinds of 
+ -> mention pull requests for self implemented parsers for other taxonomies 
