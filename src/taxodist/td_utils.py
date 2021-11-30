@@ -35,16 +35,16 @@ def getICD10GMTree():
 
     return tree
 
-def getIC(code, tree: Tree, mode: str):
+def getIC(code, tree: Tree, ic_mode: str):
     """
     Returns information content of a given code 
     based on the IC algorthms from https://doi.org/10.1186/s12911-019-0807-y
     
     """
-    if mode == 'levels':
+    if ic_mode == 'levels':
         # IC calculation based on Boriah et al. https://doi.org/10.1137/1.9781611972788.22 
         return tree.depth(code)
-    if mode == 'ontology':
+    if ic_mode == 'ontology':
         return getSanchezIC(code,tree)
 
 def getSanchezIC(code: str, tree: Tree):
@@ -53,14 +53,14 @@ def getSanchezIC(code: str, tree: Tree):
     ancestors_cnt = len(getAncestors(code,tree))
     return -math.log( (leaves_cnt/ancestors_cnt + 1)/(leaves_cnt+1) )
 
-def getLCA(code1, code2, tree):
+def getLCA(code1, code2, tree, ic_mode):
     """Return lowest common ancester of two codes."""
     lca = 0
     ca = list(getAncestors(code1, tree).intersection(getAncestors(code2, tree)))
     if len(ca) != 0:
         lca = ca[0]
         for code in ca:
-            if getIC(code, tree) > getIC(lca, tree):
+            if getIC(code, tree, ic_mode) > getIC(lca, tree, ic_mode):
                 lca = code
     return lca
 
@@ -82,7 +82,7 @@ def getCSLi(ic_1,ic_2,ic_lca):
     return 1 - math.exp(0.2*(ic_1 + ic_2 - 2*ic_lca))*(math.exp(0.6*ic_lca)-math.exp(-0.6*ic_lca))/(math.exp(0.6*ic_lca)+math.exp(-0.6*ic_lca))
 
 def getCSWuPalmer(ic_1,ic_2,ic_lca):
-    """Cs calculation based on Wu et al. https://doi.org/10.3115/981732.981751"""
+    """CS calculation based on Wu et al. https://doi.org/10.3115/981732.981751"""
     return 1 - (2*ic_lca)/(ic_1+ic_2)
 
 def getCSSimpleWuPalmer(ic_lca, depth):
@@ -96,7 +96,7 @@ def getCS(code1, code2, tree, depth,ic_mode,cs_mode):
     """Returns code similarity of two codes based on CS-algorithms from https://doi.org/10.1186/s12911-019-0807-y"""
     if code1 == code2:
         return 0.0
-    lca = getLCA(code1, code2, tree)
+    lca = getLCA(code1, code2, tree, ic_mode)
     ic_lca = getIC(lca, tree,ic_mode)
     ic_1 = getIC(code1,tree,ic_mode)
     ic_2 = getIC(code2,tree,ic_mode)
@@ -137,10 +137,10 @@ def getAllCodes(tree: Tree):
     all_codes.remove(0)
     return all_codes
 
-def getDistMatrix(codes: list, tree: Tree, worker_index, max_workers):
+def getDistMatrix(codes: list, tree: Tree, worker_index, max_workers,ic_mode,cs_mode):
     """
     Function for the parallelized processes. \n 
-    Computes the part of the (absolute) distance matrix of the given ICD10 codes, 
+    Computes the part of the (absolute) distance matrix of the given codes, 
     that corresponds to the worker index of the calling process.
     """
     depth = tree.depth()
@@ -152,14 +152,14 @@ def getDistMatrix(codes: list, tree: Tree, worker_index, max_workers):
     for code1 in codes[start:stop]: 
         code1_index = codes.index(code1)
         for code2 in codes[code1_index:]:
-            cs = getCS(code1, code2, tree,depth)
+            cs = getCS(code1, code2, tree,depth,ic_mode,cs_mode)
             # safe CS values in matrix (only upper triangular)
             dist_matrix[i, codes.index(code2)] = cs
         i+=1
     return dist_matrix, worker_index
 
 def getDistMatrixSeq(codes: list, tree: Tree, dist_matrix): 
-    """Calculates the (absolute) distance matrix of the given ICD10 codes sequentially""" 
+    """Calculates the (absolute) distance matrix of the given codes sequentially""" 
     depth = tree.depth()
 
     for code1 in codes:
@@ -182,7 +182,7 @@ def getStart(worker_index, max_workers, length):
     return math.ceil(logspace[worker_index-1])
 
 def getSpacing(max_workers, length):
-    """Returns spacing for the ICD10 code list."""
+    """Returns spacing for the code list."""
     logspace =  length/10*np.logspace(start=-1,stop=1,num=max_workers, endpoint=True)
     # remove offset
     logspace = logspace - logspace[0] 
@@ -191,14 +191,6 @@ def getSpacing(max_workers, length):
 def getDistMatrixWrapper(p):
     """Wrapper for the parallel-process-function"""
     return getDistMatrix(*p)
-
-def getICD10CodesFromExcel():
-    df_raw = pd.read_excel('icd-codes_examples.xlsx', engine='openpyxl')
-    df_raw.dropna(inplace=True)
-    ICD10_codes = df_raw['ICD-10'].drop_duplicates().to_list()
-    ICD10_codes.sort()
-    return ICD10_codes
-
 
 def getMDSMatrix(dist_matrix):
     """Computes multi-dimensionally-scaled two-dimensional code-coordinates based on a pairwise-distance-matrix"""
