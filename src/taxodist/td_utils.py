@@ -1,3 +1,4 @@
+import sys
 import math
 import random
 import xml.etree.ElementTree as ET
@@ -41,11 +42,17 @@ def getIC(code, tree: Tree, ic_mode: str):
     based on the IC algorthms from https://doi.org/10.1186/s12911-019-0807-y
     
     """
-    if ic_mode == 'levels':
-        # IC calculation based on Boriah et al. https://doi.org/10.1137/1.9781611972788.22 
-        return tree.depth(code)
-    if ic_mode == 'ontology':
-        return getSanchezIC(code,tree)
+    try:
+        if ic_mode == 'levels':
+            # IC calculation based on Boriah et al. https://doi.org/10.1137/1.9781611972788.22 
+            return tree.depth(code)
+        elif ic_mode == 'ontology':
+            return getSanchezIC(code,tree)
+        else:
+            raise ValueError('Unsupported IC-mode',ic_mode)
+    except ValueError as err:
+        print(err.args)
+        sys.exit()
 
 def getSanchezIC(code: str, tree: Tree):
     """IC calculation based on Sánchez et al. https://doi.org/10.1016/j.knosys.2010.10.001"""
@@ -101,18 +108,25 @@ def getCS(code1, code2, tree, depth,ic_mode,cs_mode):
     ic_1 = getIC(code1,tree,ic_mode)
     ic_2 = getIC(code2,tree,ic_mode)
 
-    #CS1
-    if cs_mode == 'binary':
-        return int(code1==code2)
-    # CS2
-    if cs_mode == 'wu_palmer':
-        return getCSWuPalmer(ic_1,ic_2,ic_lca) 
-    # CS 3
-    if cs_mode == 'li':
-        return getCSLi(ic_1,ic_2,ic_lca)
-    # CS4
-    if cs_mode == 'simple_wu_palmer':
-        return getCSSimpleWuPalmer(ic_lca,depth)
+    try:
+        #CS1
+        if cs_mode == 'binary':
+            return int(code1==code2)
+        # CS2
+        elif cs_mode == 'wu_palmer':
+            return getCSWuPalmer(ic_1,ic_2,ic_lca) 
+        # CS 3
+        elif cs_mode == 'li':
+            return getCSLi(ic_1,ic_2,ic_lca)
+        # CS4
+        elif cs_mode == 'simple_wu_palmer':
+            return getCSSimpleWuPalmer(ic_lca,depth)
+        
+        else:
+         raise ValueError('Unsupported CS-mode',cs_mode)
+    except ValueError as err:
+        print(err.args)
+        sys.exit()
     
     ###### ONLY >= PYTHON 3.10.0 #####
     # match cs_mode:
