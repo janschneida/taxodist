@@ -6,3 +6,5 @@
 !icd-codes_examples.xlsx
 !ICD10_xml.xlsx
 *.code-workspace
+performance_evaluation.py
+run_performance_tests.py
