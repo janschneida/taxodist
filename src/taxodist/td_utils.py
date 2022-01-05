@@ -13,6 +13,7 @@ from sklearn.manifold import MDS
 from treelib.node import Node
 from treelib.tree import Tree
 
+max_ic = None
 
 def getICD10GMTree():
     """
@@ -99,7 +100,16 @@ def getCSSimpleWuPalmer(ic_lca, depth):
     """
     return (depth - ic_lca)/(depth - 1)
 
-def getCS(code1, code2, tree, depth,ic_mode,cs_mode):
+def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree):
+    """
+    CS calculation based on redefined Leacock Chodorow measure
+    """
+    global max_ic
+    if max_ic is None:
+        max_ic = getMaxIC(tree, ic_mode)
+    return -math.log((ic_1+ic_2-2*ic_lca+1)/2*max_ic)
+
+def getCS(code1: str, code2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: str):
     """Returns code similarity of two codes based on CS-algorithms from https://doi.org/10.1186/s12911-019-0807-y"""
     if code1 == code2:
         return 0.0
@@ -121,6 +131,8 @@ def getCS(code1, code2, tree, depth,ic_mode,cs_mode):
         # CS4
         elif cs_mode == 'simple_wu_palmer':
             return getCSSimpleWuPalmer(ic_lca,depth)
+        elif cs_mode == 'leacock_chodorow':
+            return getCSLeacockChodorow(ic_1,ic_2,ic_lca,ic_mode,tree)
         
         else:
          raise ValueError('Unsupported CS-mode',cs_mode)
@@ -233,4 +245,10 @@ def getCodeCount(tree: treelib.Tree):
     """Returns the number of codes in a taxonomy."""
     return len(tree.leaves())
 
-    
+def getMaxIC(tree: Tree, ic_mode: str) -> float:
+    depth = tree.depth()
+    for node in tree.all_nodes():
+        code = node.identifier
+        ancestor_cnt = len(getAncestors(code, tree))
+        if ancestor_cnt == depth:
+            return getIC(code,tree,ic_mode)
