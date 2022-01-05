@@ -57,8 +57,12 @@ def getIC(code, tree: Tree, ic_mode: str):
 
 def getSanchezIC(code: str, tree: Tree):
     """IC calculation based on Sánchez et al. https://doi.org/10.1016/j.knosys.2010.10.001"""
-    leaves_cnt = len(tree.leaves(code))
+    if code == tree.root:
+        return 0.0
     ancestors_cnt = len(getAncestors(code,tree))
+    if ancestors_cnt == 0:
+        return 0.0
+    leaves_cnt = len(tree.leaves(code))
     return -math.log( (leaves_cnt/ancestors_cnt + 1)/(leaves_cnt+1) )
 
 def getLCA(code1, code2, tree, ic_mode):
@@ -75,9 +79,11 @@ def getLCA(code1, code2, tree, ic_mode):
 
 def getAncestors(code, tree: Tree):
     """Return the ancestors of a code in a given tree"""
+    if code == tree.root:
+        return set()
     ancestors = []
     parent: Node = tree.parent(code)
-    while tree.depth(parent.identifier) >= 1:
+    while tree.depth(parent.identifier) >= 0:
         ancestors.append(parent.identifier)
         if parent.is_root():
             return set(ancestors)
