@@ -37,7 +37,7 @@ def getICD10GMTree():
 
     return tree
 
-def getIC(code, tree: Tree, ic_mode: str):
+def getIC(code: str, tree: Tree, ic_mode: str):
     """
     Returns information content of a given code 
     based on the IC algorthms from https://doi.org/10.1186/s12911-019-0807-y
@@ -65,7 +65,7 @@ def getSanchezIC(code: str, tree: Tree):
     leaves_cnt = len(tree.leaves(code))
     return -math.log( (leaves_cnt/ancestors_cnt + 1)/(leaves_cnt+1) )
 
-def getLCA(code1, code2, tree, ic_mode):
+def getLCA(code1: str, code2: str, tree: Tree, ic_mode: str) -> str:
     """Return lowest common ancester of two codes."""
     lca = 0
     ca = list(getAncestors(code1, tree).intersection(getAncestors(code2, tree)))
@@ -75,7 +75,6 @@ def getLCA(code1, code2, tree, ic_mode):
             if getIC(code, tree, ic_mode) > getIC(lca, tree, ic_mode):
                 lca = code
     return lca
-
 
 def getAncestors(code, tree: Tree):
     """Return the ancestors of a code in a given tree"""
@@ -92,16 +91,21 @@ def getAncestors(code, tree: Tree):
     return set(ancestors)
 
 def getCSLi(ic_1,ic_2,ic_lca):
-    """CS calculation based on Li et al. https://doi.org/10.1109/TKDE.2003.1209005"""
+    """
+    CS calculation based on Li et al. https://doi.org/10.1109/TKDE.2003.1209005
+    """
     return 1 - math.exp(0.2*(ic_1 + ic_2 - 2*ic_lca))*(math.exp(0.6*ic_lca)-math.exp(-0.6*ic_lca))/(math.exp(0.6*ic_lca)+math.exp(-0.6*ic_lca))
 
 def getCSWuPalmer(ic_1,ic_2,ic_lca):
-    """CS calculation based on Wu et al. https://doi.org/10.3115/981732.981751"""
+    """
+    CS calculation based on redefined Wu Palmer measure from Sánchez et al. https://doi.org/10.1016/j.jbi.2011.03.013
+    Equation is the same as the Lin similarity measure http://dx.doi.org/10.3115/981574.981590
+    """
     return 1 - (2*ic_lca)/(ic_1+ic_2)
 
 def getCSSimpleWuPalmer(ic_lca, depth):
     """
-    CS calculation based on a simplified version of Wu-Palmer,
+    CS calculation based on a simplified version of IC-based Wu-Palmer,
     where the two codes are on the deepest level of the taxonomy tree
     """
     return (depth - ic_lca)/(depth - 1)
@@ -123,7 +127,7 @@ def getCS(code1: str, code2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: s
     ic_lca = getIC(lca, tree,ic_mode)
     ic_1 = getIC(code1,tree,ic_mode)
     ic_2 = getIC(code2,tree,ic_mode)
-
+    
     try:
         #CS1
         if cs_mode == 'binary':
@@ -146,7 +150,7 @@ def getCS(code1: str, code2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: s
         print(err.args)
         sys.exit()
     
-    ###### ONLY >= PYTHON 3.10.0 #####
+    ###### ONLY PYTHON >= 3.10.0 #####
     # match cs_mode:
     #     # CS1
     #     case 'binary':
@@ -249,7 +253,7 @@ def getRandomCodes(code_cnt: int,tree: treelib.Tree) -> list:
 
 def getCodeCount(tree: treelib.Tree):
     """Returns the number of codes in a taxonomy."""
-    return len(tree.leaves())
+    return len(tree.leaves())    
 
 def getMaxIC(tree: Tree, ic_mode: str) -> float:
     depth = tree.depth()
