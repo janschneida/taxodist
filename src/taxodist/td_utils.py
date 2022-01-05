@@ -172,18 +172,6 @@ def getDistMatrix(codes: list, tree: Tree, worker_index, max_workers,ic_mode,cs_
         i+=1
     return dist_matrix, worker_index
 
-def getDistMatrixSeq(codes: list, tree: Tree, dist_matrix): 
-    """Calculates the (absolute) distance matrix of the given codes sequentially""" 
-    depth = tree.depth()
-
-    for code1 in codes:
-        code1_index = codes.index(code1)
-    # calculates only upper-triangular values & writes them to the corresponding diagonal index 
-        for code2 in codes[code1_index:]:
-            cs = getCS(code1, code2, tree,depth)
-            # safe CS values in matrix
-            dist_matrix[codes.index(code1), codes.index(code2)] = cs
-
 def getStop(worker_index, max_workers, length):
     """Returns logarithmically spaced stop index"""
     if worker_index == max_workers:
