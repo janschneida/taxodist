@@ -7,7 +7,7 @@ from timeit import default_timer as timer
 class DistanceCalculations:
     def __init__(self) -> None:
         pass
-    def calc_distance_with_codes(self,max_workers: int = None,codes: list=None,parallelized=True,taxonomy_tree: Tree=None, ic_mode: str='levels', cs_mode: str='simple_wu_palmer'):
+    def calc_distance_with_codes(self, codes: list=None,taxonomy_tree: Tree=None, ic_mode: str='levels', cs_mode: str='simple_wu_palmer'):
         """
         Computes the similarity of codes based on their position in the corresponding taxonomy. \n
         Saves x and y coordiantes of the codes in an excel-sheet for further distance calculation. \n
@@ -76,17 +76,8 @@ class DistanceCalculations:
         length = len(codes)
         dist_matrix = np.zeros(shape=(len(codes), len(codes)))
 
-        if not parallelized:
-        ################## SEQUENTIAL COMPUTATION ##################
-            start = timer() 
-            utils.getDistMatrixSeq(codes,taxonomy_tree,dist_matrix)
-            time = timer() - start
-            return 0,length,time
-
-        ################## PARALLELIZED COMPUTATION ##################
-
         fs = []
-        with cf.ProcessPoolExecutor(max_workers=max_workers) as executor:
+        with cf.ProcessPoolExecutor(max_workers=1) as executor:
             max_workers = executor.__getattribute__('_max_workers')
             start = timer()
             for i in range(0,max_workers):
