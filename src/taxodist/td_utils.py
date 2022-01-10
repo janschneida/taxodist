@@ -121,6 +121,18 @@ def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree, depth):
         max_ic = getMaxIC(tree, ic_mode, depth)
     return -math.log((ic_1+ic_2-2*ic_lca+1)/2*max_ic)
 
+def getCSNguyenAlMubaid(code1: str, code2: str, lca: str, tree: Tree, depth: int):
+    """ CS calculation based on Nguyen & Al-Mubaid https://doi.org/10.1109/TSMCC.2009.2020689 """
+    # TODO add alpha & beta contribution factors
+    # TODO lookup reasonable value for k 
+    depth_lca = tree.level(lca)
+    return math.log2((getShortestPath(code1,code2,depth_lca,tree)-1)*(depth - depth_lca)+1)
+
+def getShortestPath(code1: str, code2: str, depth_lca: int, tree: Tree):
+    depth_code1 = tree.level(code1)
+    depth_code2 = tree.level(code2)
+    return depth_code1 + depth_code2 - 2*depth_lca
+
 def getCS(code1: str, code2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: str):
     """Returns code similarity of two codes based on CS-algorithms from https://doi.org/10.1186/s12911-019-0807-y"""
     if code1 == code2:
@@ -131,20 +143,19 @@ def getCS(code1: str, code2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: s
     ic_2 = getIC(code2,tree,ic_mode)
     
     try:
-        #CS1
+        
         if cs_mode == 'binary':
             return int(code1==code2)
-        # CS2
         elif cs_mode == 'wu_palmer':
             return getCSWuPalmer(ic_1,ic_2,ic_lca) 
-        # CS 3
         elif cs_mode == 'li':
             return getCSLi(ic_1,ic_2,ic_lca)
-        # CS4
         elif cs_mode == 'simple_wu_palmer':
             return getCSSimpleWuPalmer(ic_lca,depth)
         elif cs_mode == 'leacock_chodorow':
             return getCSLeacockChodorow(ic_1,ic_2,ic_lca,ic_mode,tree,depth)
+        elif cs_mode == 'nguyen_almubaid':
+            return getCSNguyenAlMubaid(code1, code2, lca, tree, depth)        
         else:
          raise ValueError('Unsupported CS-mode',cs_mode)
     except ValueError as err:
