@@ -112,13 +112,13 @@ def getCSSimpleWuPalmer(ic_lca, depth):
     """
     return (depth - ic_lca)/(depth - 1)
 
-def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree):
+def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree, depth):
     """
     CS calculation based on redefined Leacock Chodorow measure
     """
     global max_ic
     if max_ic is None:
-        max_ic = getMaxIC(tree, ic_mode)
+        max_ic = getMaxIC(tree, ic_mode, depth)
     return -math.log((ic_1+ic_2-2*ic_lca+1)/2*max_ic)
 
 def getCS(code1: str, code2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: str):
@@ -144,8 +144,7 @@ def getCS(code1: str, code2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: s
         elif cs_mode == 'simple_wu_palmer':
             return getCSSimpleWuPalmer(ic_lca,depth)
         elif cs_mode == 'leacock_chodorow':
-            return getCSLeacockChodorow(ic_1,ic_2,ic_lca,ic_mode,tree)
-        
+            return getCSLeacockChodorow(ic_1,ic_2,ic_lca,ic_mode,tree,depth)
         else:
          raise ValueError('Unsupported CS-mode',cs_mode)
     except ValueError as err:
@@ -257,8 +256,7 @@ def getCodeCount(tree: treelib.Tree):
     """Returns the number of codes in a taxonomy."""
     return len(tree.leaves())    
 
-def getMaxIC(tree: Tree, ic_mode: str) -> float:
-    depth = tree.depth()
+def getMaxIC(tree: Tree, ic_mode: str, depth: int) -> float:
     for node in tree.all_nodes():
         code = node.identifier
         ancestor_cnt = len(getAncestors(code, tree))
