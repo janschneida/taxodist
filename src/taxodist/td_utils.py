@@ -65,6 +65,7 @@ def getSanchezIC(code: str, tree: Tree):
     leaves_cnt = len(tree.leaves(code))
     return -math.log( (leaves_cnt/ancestors_cnt + 1)/(leaves_cnt+1) )
 
+
 def getLCA(code1: str, code2: str, tree: Tree, ic_mode: str) -> str:
     """Return lowest common ancester of two codes."""
     lca = 0
@@ -72,6 +73,7 @@ def getLCA(code1: str, code2: str, tree: Tree, ic_mode: str) -> str:
     if len(ca) != 0:
         lca = ca[0]
         for code in ca:
+            # TODO discuss: does this make sense? cant i just take the depth?
             if getIC(code, tree, ic_mode) > getIC(lca, tree, ic_mode):
                 lca = code
     return lca
