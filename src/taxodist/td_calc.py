@@ -89,7 +89,7 @@ class DistanceCalculations:
             dist_matrix[utils.getStart(worker_index,max_workers,length):utils.getStop(worker_index,max_workers,length)] = partial_dist_matrix
         
         dist_matrix = utils.mirrorMatrix(dist_matrix)
-        time = timer() - start
+        # time = timer() - start
     
         # dist_matrix = utils.mirrorMatrix(dist_matrix)
 
@@ -97,7 +97,7 @@ class DistanceCalculations:
 
         # utils.saveCodeDistancesInExcel(df_mds_coordinates, codes)
 
-        return max_workers,length,time
+        return dist_matrix
 
     def calc_dist_for_specific_subcategory(self,max_workers: int = None,codes: list=None,parallelized=True,taxonomy_tree: Tree=None):
         """Use this method when you know, that your codes are from the same subcategory and that they are leaves."""
