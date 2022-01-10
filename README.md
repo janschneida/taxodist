@@ -7,3 +7,6 @@ The package offers methods to insert a list of codes/concepts and a tree to perf
 
 You can choose two kinds of 
  -> mention pull requests for self implemented parsers for other taxonomies 
+
+ // mention that we use IC based/redefined algorithms bc they are more accurate
+ // mention that our tool is for DISTANCE not similarity calculations 
