@@ -10,3 +10,4 @@ You can choose two kinds of
 
  // mention that we use IC based/redefined algorithms bc they are more accurate
  // mention that our tool is for DISTANCE not similarity calculations 
+ // mention that this is for single ontologies only
