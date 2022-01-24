@@ -47,15 +47,15 @@ def getIC(concept: str, tree: Tree, ic_mode: str):
         if ic_mode == 'levels':
             # IC calculation based on Boriah et al. https://doi.org/10.1137/1.9781611972788.22 
             return tree.depth(concept)
-        elif ic_mode == 'ontology':
-            return getSanchezIC(concept,tree)
+        elif ic_mode == 'sanchez':
+            return getICSanchez(concept,tree)
         else:
             raise ValueError('Unsupported IC-mode',ic_mode)
     except ValueError as err:
         print(err.args)
         sys.exit()
 
-def getSanchezIC(concept: str, tree: Tree):
+def getICSanchez(concept: str, tree: Tree):
     """IC calculation based on Sánchez et al. https://doi.org/10.1016/j.knosys.2010.10.001"""
     if concept == tree.root:
         return 0.0
