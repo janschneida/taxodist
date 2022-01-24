@@ -27,13 +27,13 @@ def getICD10GMTree():
 
     # create all nodes
     for clss in root.iter('Class'):
-        tree.create_node(clss.get('concept'), clss.get('concept'), parent=0)
+        tree.create_node(clss.get('code'), clss.get('code'), parent=0)
 
     # move them to represent the hierarchy
     for clss in root.iter('Class'):
         if clss.get('kind') != 'chapter':
             for superclass in clss.iter('SuperClass'):
-                tree.move_node(clss.get('concept'), superclass.get('concept'))
+                tree.move_node(clss.get('code'), superclass.get('code'))
 
     return tree
 
