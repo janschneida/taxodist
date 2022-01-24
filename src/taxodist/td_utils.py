@@ -15,15 +15,37 @@ from treelib.tree import Tree
 
 max_ic = None
 
-def getICD10GMTree():
+def getICD_10_GMTree():
     """
-    Returns a tree that represents the ICD10 taxonomy. \n
-    Based on the ICD10-XML export from https://www.dimdi.de/dynamic/de/klassifikationen/downloads/
+    Returns a tree that represents the ICD-10-GM taxonomy. \n
+    Based on the ICD-10-XML export from https://www.dimdi.de/dynamic/de/klassifikationen/downloads/
     """
-    raw_xml = ET.parse('resources\\ICD10_xml.xml')
+    raw_xml = ET.parse('resources\\ICD_10_xml.xml')
     root = raw_xml.getroot()
     tree = treelib.Tree()
     tree.create_node('ICD-10', 0)
+
+    # create all nodes
+    for clss in root.iter('Class'):
+        tree.create_node(clss.get('code'), clss.get('code'), parent=0)
+
+    # move them to represent the hierarchy
+    for clss in root.iter('Class'):
+        if clss.get('kind') != 'chapter':
+            for superclass in clss.iter('SuperClass'):
+                tree.move_node(clss.get('code'), superclass.get('code'))
+
+    return tree
+
+def getICD_O_3Tree():
+    """
+    Returns a tree that represents the ICD-O-3 taxonomy. \n
+    Based on the ICD-O-3-XML export from https://www.bfarm.de/DE/Kodiersysteme/Services/Downloads/_node.html
+    """
+    raw_xml = ET.parse('resources\\ICD_O_3_xml.xml')
+    root = raw_xml.getroot()
+    tree = treelib.Tree()
+    tree.create_node('ICD-O-3', 0)
 
     # create all nodes
     for clss in root.iter('Class'):
