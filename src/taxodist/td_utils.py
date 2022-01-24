@@ -27,63 +27,63 @@ def getICD10GMTree():
 
     # create all nodes
     for clss in root.iter('Class'):
-        tree.create_node(clss.get('code'), clss.get('code'), parent=0)
+        tree.create_node(clss.get('concept'), clss.get('concept'), parent=0)
 
     # move them to represent the hierarchy
     for clss in root.iter('Class'):
         if clss.get('kind') != 'chapter':
             for superclass in clss.iter('SuperClass'):
-                tree.move_node(clss.get('code'), superclass.get('code'))
+                tree.move_node(clss.get('concept'), superclass.get('concept'))
 
     return tree
 
-def getIC(code: str, tree: Tree, ic_mode: str):
+def getIC(concept: str, tree: Tree, ic_mode: str):
     """
-    Returns information content of a given code 
+    Returns information content of a given concept 
     based on the IC algorthms from https://doi.org/10.1186/s12911-019-0807-y
     
     """
     try:
         if ic_mode == 'levels':
             # IC calculation based on Boriah et al. https://doi.org/10.1137/1.9781611972788.22 
-            return tree.depth(code)
-        elif ic_mode == 'sanchez':
-            return getICSanchez(code,tree)
+            return tree.depth(concept)
+        elif ic_mode == 'ontology':
+            return getSanchezIC(concept,tree)
         else:
             raise ValueError('Unsupported IC-mode',ic_mode)
     except ValueError as err:
         print(err.args)
         sys.exit()
 
-def getICSanchez(code: str, tree: Tree):
+def getSanchezIC(concept: str, tree: Tree):
     """IC calculation based on Sánchez et al. https://doi.org/10.1016/j.knosys.2010.10.001"""
-    if code == tree.root:
+    if concept == tree.root:
         return 0.0
-    ancestors_cnt = len(getAncestors(code,tree))
+    ancestors_cnt = len(getAncestors(concept,tree))
     if ancestors_cnt == 0:
         return 0.0
-    leaves_cnt = len(tree.leaves(code))
+    leaves_cnt = len(tree.leaves(concept))
     return -math.log( (leaves_cnt/ancestors_cnt + 1)/(leaves_cnt+1) )
 
 
-def getLCA(code1: str, code2: str, tree: Tree, ic_mode: str) -> str:
-    """Return lowest common ancester of two codes."""
+def getLCA(concept1: str, concept2: str, tree: Tree, ic_mode: str) -> str:
+    """Return lowest common ancester of two concepts."""
     lca = 0
-    ca = list(getAncestors(code1, tree).intersection(getAncestors(code2, tree)))
+    ca = list(getAncestors(concept1, tree).intersection(getAncestors(concept2, tree)))
     if len(ca) != 0:
         lca = ca[0]
-        for code in ca:
+        for concept in ca:
             # TODO discuss: does this make sense? cant i just take the depth?
-            if getIC(code, tree, ic_mode) > getIC(lca, tree, ic_mode):
-                lca = code
+            if getIC(concept, tree, ic_mode) > getIC(lca, tree, ic_mode):
+                lca = concept
     return lca
 
-def getAncestors(code, tree: Tree):
-    """Return the ancestors of a code in a given tree"""
-    if code == tree.root:
+def getAncestors(concept, tree: Tree):
+    """Return the ancestors of a concept in a given tree"""
+    if concept == tree.root:
         return set()
     ancestors = []
-    parent: Node = tree.parent(code)
+    parent: Node = tree.parent(concept)
     while tree.depth(parent.identifier) >= 0:
         ancestors.append(parent.identifier)
         if parent.is_root():
@@ -108,7 +108,7 @@ def getCSWuPalmer(ic_1,ic_2,ic_lca):
 def getCSSimpleWuPalmer(ic_lca, depth):
     """
     CS calculation based on a simplified version of IC-based Wu-Palmer,
-    where the two codes are on the deepest level of the taxonomy tree
+    where the two concepts are on the deepest level of the taxonomy tree
     """
     return (depth - ic_lca)/(depth - 1)
 
@@ -121,35 +121,35 @@ def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree, depth):
         max_ic = getMaxIC(tree, ic_mode, depth)
     return -math.log((ic_1+ic_2-2*ic_lca+1)/2*max_ic)
 
-def getCSNguyenAlMubaid(code1: str, code2: str, lca: str, tree: Tree, depth: int):
+def getCSNguyenAlMubaid(concept1: str, concept2: str, lca: str, tree: Tree, depth: int):
     """ CS calculation based on Nguyen & Al-Mubaid https://doi.org/10.1109/TSMCC.2009.2020689 """
     # TODO add alpha & beta contribution factors
     # TODO lookup reasonable value for k 
     depth_lca = tree.level(lca)
-    return math.log2((getShortestPath(code1,code2,depth_lca,tree)-1)*(depth - depth_lca)+1)
+    return math.log2((getShortestPath(concept1,concept2,depth_lca,tree)-1)*(depth - depth_lca)+1)
 
-def getCSBatet(code1, code2, lca, tree, depth):
+def getCSBatet(concept1, concept2, lca, tree, depth):
     """ Cs calculation based on Batet et al. http://dx.doi.org/10.1016/j.jbi.2010.09.002 """
     return
 
-def getShortestPath(code1: str, code2: str, depth_lca: int, tree: Tree):
-    depth_code1 = tree.level(code1)
-    depth_code2 = tree.level(code2)
-    return depth_code1 + depth_code2 - 2*depth_lca
+def getShortestPath(concept1: str, concept2: str, depth_lca: int, tree: Tree):
+    depth_concept1 = tree.level(concept1)
+    depth_concept2 = tree.level(concept2)
+    return depth_concept1 + depth_concept2 - 2*depth_lca
 
-def getCS(code1: str, code2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: str):
-    """Returns code similarity of two codes based on CS-algorithms from https://doi.org/10.1186/s12911-019-0807-y"""
-    if code1 == code2:
+def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: str):
+    """Returns concept similarity of two concepts based on CS-algorithms from https://doi.org/10.1186/s12911-019-0807-y"""
+    if concept1 == concept2:
         return 0.0
-    lca = getLCA(code1, code2, tree, ic_mode)
+    lca = getLCA(concept1, concept2, tree, ic_mode)
     ic_lca = getIC(lca, tree,ic_mode)
-    ic_1 = getIC(code1,tree,ic_mode)
-    ic_2 = getIC(code2,tree,ic_mode)
+    ic_1 = getIC(concept1,tree,ic_mode)
+    ic_2 = getIC(concept2,tree,ic_mode)
     
     try:
         
         if cs_mode == 'binary':
-            return int(code1==code2)
+            return int(concept1==concept2)
         elif cs_mode == 'wu_palmer':
             return getCSWuPalmer(ic_1,ic_2,ic_lca) 
         elif cs_mode == 'li':
@@ -159,9 +159,9 @@ def getCS(code1: str, code2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: s
         elif cs_mode == 'leacock_chodorow':
             return getCSLeacockChodorow(ic_1,ic_2,ic_lca,ic_mode,tree,depth)
         elif cs_mode == 'nguyen_almubaid':
-            return getCSNguyenAlMubaid(code1, code2, lca, tree, depth) 
+            return getCSNguyenAlMubaid(concept1, concept2, lca, tree, depth) 
         elif cs_mode == 'batet':
-            return getCSBatet(code1, code2, lca, tree, depth)        
+            return getCSBatet(concept1, concept2, lca, tree, depth)        
         else:
          raise ValueError('Unsupported CS-mode',cs_mode)
     except ValueError as err:
@@ -172,7 +172,7 @@ def getCS(code1: str, code2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: s
     # match cs_mode:
     #     # CS1
     #     case 'binary':
-    #         return int(code1==code2)
+    #         return int(concept1==concept2)
     #     # CS2
     #     case 'wu_palmer':
     #         return 1 - (2*ic_lca)/(ic_1+ic_2) 
@@ -184,31 +184,31 @@ def getCS(code1: str, code2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: s
     #         return (depth - ic_lca)/(depth - 1)
 
 
-def getAllCodes(tree: Tree):
-    all_codes = []
+def getAllConcepts(tree: Tree):
+    all_concepts = []
     for node in tree.all_nodes():
-        all_codes.append(node.identifier)
-    all_codes.remove(0)
-    return all_codes
+        all_concepts.append(node.identifier)
+    all_concepts.remove(0)
+    return all_concepts
 
-def getDistMatrix(codes: list, tree: Tree, worker_index, max_workers,ic_mode,cs_mode):
+def getDistMatrix(concepts: list, tree: Tree, worker_index, max_workers,ic_mode,cs_mode):
     """
     Function for the parallelized processes. \n 
-    Computes the part of the (absolute) distance matrix of the given codes, 
+    Computes the part of the (absolute) distance matrix of the given concepts, 
     that corresponds to the worker index of the calling process.
     """
     depth = tree.depth()
-    length = len(codes)
+    length = len(concepts)
     start = getStart(worker_index, max_workers, length)
     stop = getStop(worker_index, max_workers, length)
     dist_matrix = np.zeros(shape=(stop-start, length))
     i = 0
-    for code1 in codes[start:stop]: 
-        code1_index = codes.index(code1)
-        for code2 in codes[code1_index:]:
-            cs = getCS(code1, code2, tree,depth,ic_mode,cs_mode)
+    for concept1 in concepts[start:stop]: 
+        concept1_index = concepts.index(concept1)
+        for concept2 in concepts[concept1_index:]:
+            cs = getCS(concept1, concept2, tree,depth,ic_mode,cs_mode)
             # safe CS values in matrix (only upper triangular)
-            dist_matrix[i, codes.index(code2)] = cs
+            dist_matrix[i, concepts.index(concept2)] = cs
         i+=1
     return dist_matrix, worker_index
 
@@ -224,7 +224,7 @@ def getStart(worker_index, max_workers, length):
     return math.ceil(logspace[worker_index-1])
 
 def getSpacing(max_workers, length):
-    """Returns spacing for the code list."""
+    """Returns spacing for the concept list."""
     logspace =  length/10*np.logspace(start=-1,stop=1,num=max_workers, endpoint=True)
     # remove offset
     logspace = logspace - logspace[0] 
@@ -235,8 +235,8 @@ def getDistMatrixWrapper(p):
     return getDistMatrix(*p)
 
 def getMDSMatrix(dist_matrix):
-    """Computes multi-dimensionally-scaled two-dimensional code-coordinates based on a pairwise-distance-matrix"""
-    # use MDS to compute the relative distances of the distinct codes
+    """Computes multi-dimensionally-scaled two-dimensional concept-coordinates based on a pairwise-distance-matrix"""
+    # use MDS to compute the relative distances of the distinct concepts
     embedding = MDS(n_components=2)
     dist_matrix_transformed = embedding.fit_transform(dist_matrix)
 
@@ -247,35 +247,35 @@ def mirrorMatrix(dist_matrix):
     """mirrors uppertriangular distance matrix along its diagonal"""
     return dist_matrix + dist_matrix.T - np.diag(np.diag(dist_matrix))
 
-def plotCodes(df_mds_coordinates: DataFrame, codes: list):
+def plotConcepts(df_mds_coordinates: DataFrame, concepts: list):
     fig, ax = plt.subplots()
     df_mds_coordinates.plot(0, 1, kind='scatter', ax=ax)
 
     for k, v in df_mds_coordinates.iterrows():
-        ax.annotate(codes[k], v)
+        ax.annotate(concepts[k], v)
 
     plt.show()
 
-def saveCodeDistancesInExcel(df_mds_coordinates: DataFrame, codes: list):
-    """Saves pairwise code-distances to excel."""
+def saveConceptDistancesInExcel(df_mds_coordinates: DataFrame, concepts: list):
+    """Saves pairwise concept-distances to excel."""
     array = df_mds_coordinates.to_numpy()
     dm = distance_matrix(array,array)
     df = pd.DataFrame(dm)
-    df.to_excel('code_distances.xlsx')
+    df.to_excel('concept_distances.xlsx')
 
-def getRandomCodes(code_cnt: int,tree: treelib.Tree) -> list:
-    """Returns list with code_cnt random codes from the given taxonomy tree."""
+def getRandomConcepts(concept_cnt: int,tree: treelib.Tree) -> list:
+    """Returns list with concept_cnt random concepts from the given taxonomy tree."""
     nodes: list[Node]
-    nodes = random.sample(tree.all_nodes(),code_cnt)
+    nodes = random.sample(tree.all_nodes(),concept_cnt)
     return [x.identifier for x in nodes]
 
-def getCodeCount(tree: treelib.Tree):
-    """Returns the number of codes in a taxonomy."""
+def getConceptCount(tree: treelib.Tree):
+    """Returns the number of concepts in a taxonomy."""
     return len(tree.leaves())    
 
 def getMaxIC(tree: Tree, ic_mode: str, depth: int) -> float:
     for node in tree.all_nodes():
-        code = node.identifier
-        ancestor_cnt = len(getAncestors(code, tree))
+        concept = node.identifier
+        ancestor_cnt = len(getAncestors(concept, tree))
         if ancestor_cnt == depth:
-            return getIC(code,tree,ic_mode)
+            return getIC(concept,tree,ic_mode)

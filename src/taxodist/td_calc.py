@@ -7,11 +7,11 @@ from timeit import default_timer as timer
 class DistanceCalculations:
     def __init__(self) -> None:
         pass
-    def calc_distance_with_codes(self, codes: list=None,taxonomy_tree: Tree=None, ic_mode: str='levels', cs_mode: str='simple_wu_palmer'):
+    def calc_distance_with_concepts(self, concepts: list=None,taxonomy_tree: Tree=None, ic_mode: str='levels', cs_mode: str='simple_wu_palmer'):
         """
-        Computes the similarity of codes based on their position in the corresponding taxonomy. \n
-        Saves x and y coordiantes of the codes in an excel-sheet for further distance calculation. \n
-        Saves pairwise distances of the codes in another excel-sheet.\n
+        Computes the similarity of concepts based on their position in the corresponding taxonomy. \n
+        Saves x and y coordiantes of the concepts in an excel-sheet for further distance calculation. \n
+        Saves pairwise distances of the concepts in another excel-sheet.\n
 
         ----
         ## Parameters:\n
@@ -20,19 +20,19 @@ class DistanceCalculations:
         \tThis number must not be greater then the cores your system offers. \n
         \tPer default, concurrent.futures picks the "best" setting for your system.\n
 
-        * codes (list): \n
-        \tA list of codes to calculate the distances. \n
+        * concepts (list): \n
+        \tA list of concepts to calculate the distances. \n
         \tPer default, if this parameter is left out or set to None,\n 
-        \tthis method uses all codes of the given taxonomy.\n
+        \tthis method uses all concepts of the given taxonomy.\n
 
         * parallelized (bool):\n
         \tSets whether or not the calculation should be parallelized. \n 
-        \tEspecially for smaller code-batch-sizes it might make sense to use the serialized calculation,\n 
+        \tEspecially for smaller concept-batch-sizes it might make sense to use the serialized calculation,\n 
         \tbecause parallelization overhead might outweigh its gain. \n 
         \tPer default, the method runs in parallel.\n
         
         * taxonomy_tree (Tree):\n 
-        \tA tree object representing the taxonomy you wish to calculate code distances in. \n
+        \tA tree object representing the taxonomy you wish to calculate concept distances in. \n
         \tThis package offers methods to get trees for the following taxonomies:\n
         \t\t-ICD-10-GM (getICD10GMTree)
         \n
@@ -46,7 +46,7 @@ class DistanceCalculations:
         \tat the README or https://doi.org/10.1186/s12911-019-0807-y
         \n
         * cs_mode (str):\n
-        \tDefines what code-similarity algorithm should be used. \n
+        \tDefines what concept-similarity algorithm should be used. \n
         \tThe following are available:\n
         \t\t-'binary'  \n
         \t\t-'wu_palmer' \n
@@ -61,8 +61,8 @@ class DistanceCalculations:
         ## Returns:\n
         * max_workers (int):\n
         \tThe degree of parallelization.\n
-        * code_cnt (int):\n
-        \tThe number of codes for which their distances have been calculated.
+        * concept_cnt (int):\n
+        \tThe number of concepts for which their distances have been calculated.
         * runtime [s] (float):\n
         \tThe time in seconds it took to calculate the distances.
        
@@ -70,11 +70,11 @@ class DistanceCalculations:
 
         ######################### SETUP #########################
 
-        if not codes:
-            codes = utils.getAllCodes(taxonomy_tree)
+        if not concepts:
+            concepts = utils.getAllconcepts(taxonomy_tree)
 
-        length = len(codes)
-        dist_matrix = np.zeros(shape=(len(codes), len(codes)))
+        length = len(concepts)
+        dist_matrix = np.zeros(shape=(len(concepts), len(concepts)))
 
         fs = []
         with cf.ProcessPoolExecutor(max_workers=1) as executor:
@@ -82,7 +82,7 @@ class DistanceCalculations:
             start = timer()
             for i in range(0,max_workers):
                 # start processes and save return values 
-                fs.append(executor.submit(utils.getDistMatrixWrapper, (codes, taxonomy_tree, i+1, max_workers,ic_mode,cs_mode)))
+                fs.append(executor.submit(utils.getDistMatrixWrapper, (concepts, taxonomy_tree, i+1, max_workers,ic_mode,cs_mode)))
         for future in cf.as_completed(fs):
             # merge partial matrices
             partial_dist_matrix, worker_index = future.result()
@@ -95,18 +95,18 @@ class DistanceCalculations:
 
         # df_mds_coordinates = utils.getMDSMatrix(dist_matrix)
 
-        # utils.saveCodeDistancesInExcel(df_mds_coordinates, codes)
+        # utils.saveconceptDistancesInExcel(df_mds_coordinates, concepts)
 
         return dist_matrix
 
-    def calc_dist_for_specific_subcategory(self,max_workers: int = None,codes: list=None,parallelized=True,taxonomy_tree: Tree=None):
-        """Use this method when you know, that your codes are from the same subcategory and that they are leaves."""
-        self.calc_distance_with_codes(max_workers=max_workers,codes=codes,parallelized=parallelized,taxonomy_tree=taxonomy_tree,ic_mode='levels',cs_mode='simple_wu_palmer')
+    def calc_dist_for_specific_subcategory(self,concepts: list=None, taxonomy_tree: Tree=None):
+        """Use this method when you know, that your concepts are from the same subcategory and that they are leaves."""
+        self.calc_distance_with_concepts(concepts=concepts,taxonomy_tree=taxonomy_tree,ic_mode='levels',cs_mode='simple_wu_palmer')
 
-    def calc_dist_for_distinct_codes(self,max_workers: int = None,codes: list=None,parallelized=True,taxonomy_tree: Tree=None):
+    def calc_dist_for_distinct_concepts(self,concepts: list=None,taxonomy_tree: Tree=None):
         """
-        Use this method when you know, that your codes are more distinct, might not be leaves and you are working
+        Use this method when you know, that your concepts are more distinct, might not be leaves and you are working
         with a more comprehensive concept background.
         """
-        self.calc_distance_with_codes(max_workers=max_workers,codes=codes,parallelized=parallelized,taxonomy_tree=taxonomy_tree,ic_mode='ontology',cs_mode='wu_palmer')
+        self.calc_distance_with_concepts(concepts=concepts,taxonomy_tree=taxonomy_tree,ic_mode='ontology',cs_mode='wu_palmer')
 
