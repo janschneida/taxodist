@@ -130,7 +130,14 @@ def getCSNguyenAlMubaid(concept1: str, concept2: str, lca: str, tree: Tree, dept
 
 def getCSBatet(concept1, concept2, lca, tree, depth):
     """ Cs calculation based on Batet et al. http://dx.doi.org/10.1016/j.jbi.2010.09.002 """
-    return
+    ancestors_1 = getAncestors(concept1,tree)
+    ancestors_1.add(concept1)
+
+    ancestors_2 = getAncestors(concept2,tree)
+    ancestors_2.add(concept2)
+
+    shared_ancestors = ancestors_1.intersection(ancestors_2)
+    return -math.log2((len(ancestors_1)+len(ancestors_2)-len(shared_ancestors))/(len(ancestors_1)+len(ancestors_2)))
 
 def getShortestPath(concept1: str, concept2: str, depth_lca: int, tree: Tree):
     depth_concept1 = tree.level(concept1)
@@ -160,7 +167,7 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
             return getCSLeacockChodorow(ic_1,ic_2,ic_lca,ic_mode,tree,depth)
         elif cs_mode == 'nguyen_almubaid':
             return getCSNguyenAlMubaid(concept1, concept2, lca, tree, depth) 
-        elif cs_mode == 'batet':
+        elif cs_mode == 'batet_sanchez':
             return getCSBatet(concept1, concept2, lca, tree, depth)        
         else:
          raise ValueError('Unsupported CS-mode',cs_mode)
