@@ -47,15 +47,15 @@ def getIC(code: str, tree: Tree, ic_mode: str):
         if ic_mode == 'levels':
             # IC calculation based on Boriah et al. https://doi.org/10.1137/1.9781611972788.22 
             return tree.depth(code)
-        elif ic_mode == 'ontology':
-            return getSanchezIC(code,tree)
+        elif ic_mode == 'sanchez':
+            return getICSanchez(code,tree)
         else:
             raise ValueError('Unsupported IC-mode',ic_mode)
     except ValueError as err:
         print(err.args)
         sys.exit()
 
-def getSanchezIC(code: str, tree: Tree):
+def getICSanchez(code: str, tree: Tree):
     """IC calculation based on Sánchez et al. https://doi.org/10.1016/j.knosys.2010.10.001"""
     if code == tree.root:
         return 0.0
@@ -128,6 +128,10 @@ def getCSNguyenAlMubaid(code1: str, code2: str, lca: str, tree: Tree, depth: int
     depth_lca = tree.level(lca)
     return math.log2((getShortestPath(code1,code2,depth_lca,tree)-1)*(depth - depth_lca)+1)
 
+def getCSBatet(code1, code2, lca, tree, depth):
+    """ Cs calculation based on Batet et al. http://dx.doi.org/10.1016/j.jbi.2010.09.002 """
+    return
+
 def getShortestPath(code1: str, code2: str, depth_lca: int, tree: Tree):
     depth_code1 = tree.level(code1)
     depth_code2 = tree.level(code2)
@@ -155,7 +159,9 @@ def getCS(code1: str, code2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: s
         elif cs_mode == 'leacock_chodorow':
             return getCSLeacockChodorow(ic_1,ic_2,ic_lca,ic_mode,tree,depth)
         elif cs_mode == 'nguyen_almubaid':
-            return getCSNguyenAlMubaid(code1, code2, lca, tree, depth)        
+            return getCSNguyenAlMubaid(code1, code2, lca, tree, depth) 
+        elif cs_mode == 'batet':
+            return getCSBatet(code1, code2, lca, tree, depth)        
         else:
          raise ValueError('Unsupported CS-mode',cs_mode)
     except ValueError as err:
