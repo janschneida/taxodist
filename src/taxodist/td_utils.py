@@ -84,8 +84,9 @@ def getICSanchez(concept: str, tree: Tree):
     ancestors_cnt = len(getAncestors(concept,tree))
     if ancestors_cnt == 0:
         return 0.0
-    leaves_cnt = len(tree.leaves(concept))
-    return -math.log( (leaves_cnt/ancestors_cnt + 1)/(leaves_cnt+1) )
+    subtree_leaves_cnt = len(tree.leaves(concept))
+    all_leaves_cnt = len(tree.leaves())
+    return -math.log( (subtree_leaves_cnt/ancestors_cnt + 1)/(all_leaves_cnt+1) )
 
 
 def getLCA(concept1: str, concept2: str, tree: Tree, ic_mode: str) -> str:
