@@ -118,21 +118,21 @@ def getCSLi(ic_1,ic_2,ic_lca):
     """
     CS calculation based on Li et al. https://doi.org/10.1109/TKDE.2003.1209005
     """
-    return 1 - math.exp(0.2*(ic_1 + ic_2 - 2*ic_lca))*(math.exp(0.6*ic_lca)-math.exp(-0.6*ic_lca))/(math.exp(0.6*ic_lca)+math.exp(-0.6*ic_lca))
+    return math.exp(0.2*(ic_1 + ic_2 - 2*ic_lca))*(math.exp(0.6*ic_lca)-math.exp(-0.6*ic_lca))/(math.exp(0.6*ic_lca)+math.exp(-0.6*ic_lca))
 
 def getCSWuPalmer(ic_1,ic_2,ic_lca):
     """
     CS calculation based on redefined Wu Palmer measure from Sánchez et al. https://doi.org/10.1016/j.jbi.2011.03.013
     Equation is the same as the Lin similarity measure http://dx.doi.org/10.3115/981574.981590
     """
-    return 1 - (2*ic_lca)/(ic_1+ic_2)
+    return (2*ic_lca)/(ic_1+ic_2)
 
 def getCSSimpleWuPalmer(ic_lca, depth):
     """
     CS calculation based on a simplified version of IC-based Wu-Palmer,
     where the two concepts are on the deepest level of the taxonomy tree
     """
-    return (depth - ic_lca)/(depth - 1)
+    return 1 - (depth - ic_lca)/(depth - 1)
 
 def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree, depth):
     """
