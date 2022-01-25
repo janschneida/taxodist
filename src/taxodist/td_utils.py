@@ -309,3 +309,49 @@ def getMaxIC(tree: Tree, ic_mode: str, depth: int) -> float:
         ancestor_cnt = len(getAncestors(concept, tree))
         if ancestor_cnt == depth:
             return getIC(concept,tree,ic_mode)
+
+def getJaccardSS(concepts_1: set, concepts_2: set):
+    """ Returns Jaccard Set Similarity for the given concept sets """
+    intersection = len(concepts_1.intersection(concepts_2))
+    union = concepts_1.union(concepts_2)
+    return float(intersection) / union
+
+def getDiceSS(concepts_1: set, concepts_2: set):
+    """ Returns Dice Set Similarity for the given concept sets """
+    intersection = len(concepts_1.intersection(concepts_2))
+    return (2*intersection)/(len(concepts_2)+len(concepts_1))
+
+def getCosineSS(concepts_1: set, concepts_2: set):
+    """ Returns Cosine Set Similarity for the given concept sets """
+    intersection = len(concepts_1.intersection(concepts_2))
+    return intersection/(math.sqrt(len(concepts_2)*len(concepts_1)))
+
+def getOverlapSS(concepts_1: set, concepts_2: set):
+    """ Returns Overlap Set Similarity for the given concept sets """
+    intersection = len(concepts_1.intersection(concepts_2))
+    return intersection/min(concepts_1,concepts_2)
+
+def getHierachicalDist(concepts_1: set, concepts_2: set,tree: Tree, cs_mode:str,ic_mode: str = 'sanchez'):
+    """ Returns hierarchical distance for the given concept sets based on https://doi.org/10.1016/j.jbi.2016.07.021"""
+    
+    if concepts_1 == concepts_2:
+        return 0.0
+
+    difference_1 = concepts_1.difference(concepts_2)
+    difference_2 = concepts_2.difference(concepts_1)
+    union = concepts_1.union(concepts_2)
+    depth = tree.depth()
+
+    first_summand = 0
+
+    for concept_difference_1 in difference_1:
+        for concept_2 in concepts_2:
+            first_summand += 1 - getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode)
+
+    second_summand = 0
+
+    for concept_difference_2 in difference_2:
+        for concept_1 in concepts_1:
+            second_summand += 1 - getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode)
+
+    return ( (first_summand)/len(difference_2) + (second_summand)/len(difference_1) )/len(union) 
