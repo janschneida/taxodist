@@ -72,7 +72,7 @@ def getIC(concept: str, tree: Tree, ic_mode: str):
         elif ic_mode == 'sanchez':
             return getICSanchez(concept,tree)
         else:
-            raise ValueError('Unsupported IC-mode',ic_mode)
+            raise ValueError('Unsupported IC-mode: ',ic_mode)
     except ValueError as err:
         print(err.args)
         sys.exit()
@@ -192,7 +192,7 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
         elif cs_mode == 'batet_sanchez':
             return getCSBatet(concept1, concept2, lca, tree, depth)        
         else:
-         raise ValueError('Unsupported CS-mode',cs_mode)
+         raise ValueError('Unsupported CS-mode: ',cs_mode)
     except ValueError as err:
         print(err.args)
         sys.exit()
