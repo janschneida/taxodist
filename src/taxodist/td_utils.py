@@ -15,25 +15,47 @@ from treelib.tree import Tree
 
 max_ic = None
 
-def getICD10GMTree():
+def getICD_10_GMTree():
     """
-    Returns a tree that represents the ICD10 taxonomy. \n
-    Based on the ICD10-XML export from https://www.dimdi.de/dynamic/de/klassifikationen/downloads/
+    Returns a tree that represents the ICD-10-GM taxonomy. \n
+    Based on the ICD-10-XML export from https://www.dimdi.de/dynamic/de/klassifikationen/downloads/
     """
-    raw_xml = ET.parse('resources\\ICD10_xml.xml')
+    raw_xml = ET.parse('resources\\ICD_10_xml.xml')
     root = raw_xml.getroot()
     tree = treelib.Tree()
     tree.create_node('ICD-10', 0)
 
     # create all nodes
     for clss in root.iter('Class'):
-        tree.create_node(clss.get('concept'), clss.get('concept'), parent=0)
+        tree.create_node(clss.get('code'), clss.get('code'), parent=0)
 
     # move them to represent the hierarchy
     for clss in root.iter('Class'):
         if clss.get('kind') != 'chapter':
             for superclass in clss.iter('SuperClass'):
-                tree.move_node(clss.get('concept'), superclass.get('concept'))
+                tree.move_node(clss.get('code'), superclass.get('code'))
+
+    return tree
+
+def getICD_O_3Tree():
+    """
+    Returns a tree that represents the ICD-O-3 taxonomy. \n
+    Based on the ICD-O-3-XML export from https://www.bfarm.de/DE/Kodiersysteme/Services/Downloads/_node.html
+    """
+    raw_xml = ET.parse('resources\\ICD_O_3_xml.xml')
+    root = raw_xml.getroot()
+    tree = treelib.Tree()
+    tree.create_node('ICD-O-3', 0)
+
+    # create all nodes
+    for clss in root.iter('Class'):
+        tree.create_node(clss.get('code'), clss.get('code'), parent=0)
+
+    # move them to represent the hierarchy
+    for clss in root.iter('Class'):
+        if clss.get('kind') != 'chapter':
+            for superclass in clss.iter('SuperClass'):
+                tree.move_node(clss.get('code'), superclass.get('code'))
 
     return tree
 
@@ -47,23 +69,24 @@ def getIC(concept: str, tree: Tree, ic_mode: str):
         if ic_mode == 'levels':
             # IC calculation based on Boriah et al. https://doi.org/10.1137/1.9781611972788.22 
             return tree.depth(concept)
-        elif ic_mode == 'ontology':
-            return getSanchezIC(concept,tree)
+        elif ic_mode == 'sanchez':
+            return getICSanchez(concept,tree)
         else:
-            raise ValueError('Unsupported IC-mode',ic_mode)
+            raise ValueError('Unsupported IC-mode: ',ic_mode)
     except ValueError as err:
         print(err.args)
         sys.exit()
 
-def getSanchezIC(concept: str, tree: Tree):
+def getICSanchez(concept: str, tree: Tree):
     """IC calculation based on Sánchez et al. https://doi.org/10.1016/j.knosys.2010.10.001"""
     if concept == tree.root:
         return 0.0
     ancestors_cnt = len(getAncestors(concept,tree))
     if ancestors_cnt == 0:
         return 0.0
-    leaves_cnt = len(tree.leaves(concept))
-    return -math.log( (leaves_cnt/ancestors_cnt + 1)/(leaves_cnt+1) )
+    subtree_leaves_cnt = len(tree.leaves(concept))
+    all_leaves_cnt = len(tree.leaves())
+    return -math.log( (subtree_leaves_cnt/ancestors_cnt + 1)/(all_leaves_cnt+1) )
 
 
 def getLCA(concept1: str, concept2: str, tree: Tree, ic_mode: str) -> str:
@@ -96,21 +119,21 @@ def getCSLi(ic_1,ic_2,ic_lca):
     """
     CS calculation based on Li et al. https://doi.org/10.1109/TKDE.2003.1209005
     """
-    return 1 - math.exp(0.2*(ic_1 + ic_2 - 2*ic_lca))*(math.exp(0.6*ic_lca)-math.exp(-0.6*ic_lca))/(math.exp(0.6*ic_lca)+math.exp(-0.6*ic_lca))
+    return math.exp(0.2*(ic_1 + ic_2 - 2*ic_lca))*(math.exp(0.6*ic_lca)-math.exp(-0.6*ic_lca))/(math.exp(0.6*ic_lca)+math.exp(-0.6*ic_lca))
 
 def getCSWuPalmer(ic_1,ic_2,ic_lca):
     """
     CS calculation based on redefined Wu Palmer measure from Sánchez et al. https://doi.org/10.1016/j.jbi.2011.03.013
     Equation is the same as the Lin similarity measure http://dx.doi.org/10.3115/981574.981590
     """
-    return 1 - (2*ic_lca)/(ic_1+ic_2)
+    return (2*ic_lca)/(ic_1+ic_2)
 
 def getCSSimpleWuPalmer(ic_lca, depth):
     """
     CS calculation based on a simplified version of IC-based Wu-Palmer,
     where the two concepts are on the deepest level of the taxonomy tree
     """
-    return (depth - ic_lca)/(depth - 1)
+    return 1 - (depth - ic_lca)/(depth - 1)
 
 def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree, depth):
     """
@@ -129,6 +152,17 @@ def getCSNguyenAlMubaid(concept1: str, concept2: str, lca: str, tree: Tree, dept
     depth_lca = tree.level(lca)
     return math.log2((getShortestPath(concept1,concept2,depth_lca,tree)-1)*(depth - depth_lca)+1)
 
+def getCSBatet(concept1, concept2, lca, tree, depth):
+    """ Cs calculation based on Batet et al. http://dx.doi.org/10.1016/j.jbi.2010.09.002 """
+    ancestors_1 = getAncestors(concept1,tree)
+    ancestors_1.add(concept1)
+
+    ancestors_2 = getAncestors(concept2,tree)
+    ancestors_2.add(concept2)
+
+    shared_ancestors = ancestors_1.intersection(ancestors_2)
+    return -math.log2((len(ancestors_1)+len(ancestors_2)-len(shared_ancestors))/(len(ancestors_1)+len(ancestors_2)))
+
 def getShortestPath(concept1: str, concept2: str, depth_lca: int, tree: Tree):
     depth_concept1 = tree.level(concept1)
     depth_concept2 = tree.level(concept2)
@@ -137,7 +171,7 @@ def getShortestPath(concept1: str, concept2: str, depth_lca: int, tree: Tree):
 def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: str):
     """Returns concept similarity of two concepts based on CS-algorithms from https://doi.org/10.1186/s12911-019-0807-y"""
     if concept1 == concept2:
-        return 0.0
+        return 1.0
     lca = getLCA(concept1, concept2, tree, ic_mode)
     ic_lca = getIC(lca, tree,ic_mode)
     ic_1 = getIC(concept1,tree,ic_mode)
@@ -156,9 +190,11 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
         elif cs_mode == 'leacock_chodorow':
             return getCSLeacockChodorow(ic_1,ic_2,ic_lca,ic_mode,tree,depth)
         elif cs_mode == 'nguyen_almubaid':
-            return getCSNguyenAlMubaid(concept1, concept2, lca, tree, depth)        
+            return getCSNguyenAlMubaid(concept1, concept2, lca, tree, depth) 
+        elif cs_mode == 'batet_sanchez':
+            return getCSBatet(concept1, concept2, lca, tree, depth)        
         else:
-         raise ValueError('Unsupported CS-mode',cs_mode)
+         raise ValueError('Unsupported CS-mode: ',cs_mode)
     except ValueError as err:
         print(err.args)
         sys.exit()
@@ -274,3 +310,49 @@ def getMaxIC(tree: Tree, ic_mode: str, depth: int) -> float:
         ancestor_cnt = len(getAncestors(concept, tree))
         if ancestor_cnt == depth:
             return getIC(concept,tree,ic_mode)
+
+def getJaccardSS(concepts_1: set, concepts_2: set):
+    """ Returns Jaccard Set Similarity for the given concept sets """
+    intersection = len(concepts_1.intersection(concepts_2))
+    union = concepts_1.union(concepts_2)
+    return float(intersection) / union
+
+def getDiceSS(concepts_1: set, concepts_2: set):
+    """ Returns Dice Set Similarity for the given concept sets """
+    intersection = len(concepts_1.intersection(concepts_2))
+    return (2*intersection)/(len(concepts_2)+len(concepts_1))
+
+def getCosineSS(concepts_1: set, concepts_2: set):
+    """ Returns Cosine Set Similarity for the given concept sets """
+    intersection = len(concepts_1.intersection(concepts_2))
+    return intersection/(math.sqrt(len(concepts_2)*len(concepts_1)))
+
+def getOverlapSS(concepts_1: set, concepts_2: set):
+    """ Returns Overlap Set Similarity for the given concept sets """
+    intersection = len(concepts_1.intersection(concepts_2))
+    return intersection/min(concepts_1,concepts_2)
+
+def getHierachicalDist(concepts_1: set, concepts_2: set,tree: Tree, cs_mode:str,ic_mode: str = 'sanchez'):
+    """ Returns hierarchical distance for the given concept sets based on https://doi.org/10.1016/j.jbi.2016.07.021"""
+    
+    if concepts_1 == concepts_2:
+        return 0.0
+
+    difference_1 = concepts_1.difference(concepts_2)
+    difference_2 = concepts_2.difference(concepts_1)
+    union = concepts_1.union(concepts_2)
+    depth = tree.depth()
+
+    first_summand = 0
+
+    for concept_difference_1 in difference_1:
+        for concept_2 in concepts_2:
+            first_summand += 1 - getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode)
+
+    second_summand = 0
+
+    for concept_difference_2 in difference_2:
+        for concept_1 in concepts_1:
+            second_summand += 1 - getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode)
+
+    return ( (first_summand)/len(difference_2) + (second_summand)/len(difference_1) )/len(union) 

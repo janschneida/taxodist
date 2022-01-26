@@ -1,3 +1,4 @@
+import sys
 from treelib.tree import Tree
 from src.taxodist import td_utils as utils
 import numpy as np
@@ -69,9 +70,17 @@ class DistanceCalculations:
         """
 
         ######################### SETUP #########################
+        try:
+            if taxonomy_tree is None:
+                raise ValueError('No taxonomy tree')
+            elif taxonomy_tree.depth() == 0:
+                raise ValueError('Empty taxonomy tree')
+        except ValueError as err:
+            print(err.args)
+            sys.exit()
 
         if not concepts:
-            concepts = utils.getAllconcepts(taxonomy_tree)
+            concepts = utils.getAllConcepts(taxonomy_tree)
 
         length = len(concepts)
         dist_matrix = np.zeros(shape=(len(concepts), len(concepts)))
