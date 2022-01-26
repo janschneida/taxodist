@@ -343,16 +343,8 @@ def getHierachicalDist(concepts_1: set, concepts_2: set,tree: Tree, cs_mode:str,
     union = concepts_1.union(concepts_2)
     depth = tree.depth()
 
-    first_summand = 0
+    first_summand = sum([1 - getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode) for concept_2 in concepts_2 for concept_difference_1 in difference_1])
 
-    for concept_difference_1 in difference_1:
-        for concept_2 in concepts_2:
-            first_summand += 1 - getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode)
+    second_summand = sum([1 - getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode) for concept_1 in concepts_1 for concept_difference_2 in difference_2])
 
-    second_summand = 0
-
-    for concept_difference_2 in difference_2:
-        for concept_1 in concepts_1:
-            second_summand += 1 - getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode)
-
-    return ( (first_summand)/len(difference_2) + (second_summand)/len(difference_1) )/len(union) 
+    return ( first_summand/len(difference_2) + second_summand/len(difference_1) )/len(union) 
