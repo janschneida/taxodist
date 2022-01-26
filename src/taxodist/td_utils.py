@@ -15,7 +15,7 @@ from treelib.tree import Tree
 
 max_ic = None
 
-def getICD_10_GMTree():
+def getICD10GMTree():
     """
     Returns a tree that represents the ICD-10-GM taxonomy. \n
     Based on the ICD-10-XML export from https://www.dimdi.de/dynamic/de/klassifikationen/downloads/
@@ -37,7 +37,7 @@ def getICD_10_GMTree():
 
     return tree
 
-def getICD_O_3Tree():
+def getICDO3Tree():
     """
     Returns a tree that represents the ICD-O-3 taxonomy. \n
     Based on the ICD-O-3-XML export from https://www.bfarm.de/DE/Kodiersysteme/Services/Downloads/_node.html
@@ -46,6 +46,28 @@ def getICD_O_3Tree():
     root = raw_xml.getroot()
     tree = treelib.Tree()
     tree.create_node('ICD-O-3', 0)
+
+    # create all nodes
+    for clss in root.iter('Class'):
+        tree.create_node(clss.get('code'), clss.get('code'), parent=0)
+
+    # move them to represent the hierarchy
+    for clss in root.iter('Class'):
+        if clss.get('kind') != 'chapter':
+            for superclass in clss.iter('SuperClass'):
+                tree.move_node(clss.get('code'), superclass.get('code'))
+
+    return tree
+
+def getICD10WHOTree():
+    """
+    Returns a tree that represents the ICD-10-WHO taxonomy. \n
+    Based on the ICD-10-WHO-XML export from https://www.bfarm.de/DE/Kodiersysteme/Services/Downloads/_node.html
+    """
+    raw_xml = ET.parse('resources\\ICD_10_WHO_xml.xml')
+    root = raw_xml.getroot()
+    tree = treelib.Tree()
+    tree.create_node('ICD-10-WHO', 0)
 
     # create all nodes
     for clss in root.iter('Class'):
@@ -133,7 +155,7 @@ def getCSSimpleWuPalmer(ic_lca, depth):
     CS calculation based on a simplified version of IC-based Wu-Palmer,
     where the two concepts are on the deepest level of the taxonomy tree
     """
-    return 1 - (depth - ic_lca)/(depth - 1)
+    return (depth - ic_lca)/(depth - 1)
 
 def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree, depth):
     """
