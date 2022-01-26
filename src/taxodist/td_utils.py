@@ -114,7 +114,7 @@ def getCSSimpleWuPalmer(ic_lca, depth):
 
 def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree, depth):
     """
-    CS calculation based on redefined Leacock Chodorow measure
+    CS calculation based on redefined Leacock Chodorow measure from Sánchez https://doi.org/10.1016/j.jbi.2011.03.013
     """
     global max_ic
     if max_ic is None:
@@ -125,6 +125,7 @@ def getCSNguyenAlMubaid(concept1: str, concept2: str, lca: str, tree: Tree, dept
     """ CS calculation based on Nguyen & Al-Mubaid https://doi.org/10.1109/TSMCC.2009.2020689 """
     # TODO add alpha & beta contribution factors
     # TODO lookup reasonable value for k 
+    # note: could not find any research on the contribution factors, so we will set them to 1 for now
     depth_lca = tree.level(lca)
     return math.log2((getShortestPath(concept1,concept2,depth_lca,tree)-1)*(depth - depth_lca)+1)
 
