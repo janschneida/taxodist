@@ -191,7 +191,7 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
             return getCSLeacockChodorow(ic_1,ic_2,ic_lca,ic_mode,tree,depth)
         elif cs_mode == 'nguyen_almubaid':
             return getCSNguyenAlMubaid(concept1, concept2, lca, tree, depth) 
-        elif cs_mode == 'batet_sanchez':
+        elif cs_mode == 'batet':
             return getCSBatet(concept1, concept2, lca, tree, depth)        
         else:
          raise ValueError('Unsupported CS-mode: ',cs_mode)
