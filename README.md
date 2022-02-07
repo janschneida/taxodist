@@ -1,13 +1,57 @@
-# taxodist 
+# Taxodist 
 
-## What the package is about
+Taxodist is a a Python package that offers its users a set of distance & similarity metrics for concepts & concept-sets from hierarchical taxonomies.
+**The tool is (currently) suited for single ontologies only**.
 
-Taxodist is a tool to calculate similarity of codes/concepts from a taxonomic hierarchy.
-The package offers methods to insert a list of codes/concepts and a tree to perform distance calculations for the given codes, based on their position in the taxonomy tree. 
+Table of contents
+
+
+## About taxodist
+
+Knowledge of certain scientific domains is often structured in taxonomies. There has been great efforts to use the structure of such taxonomies to derive similarity of the included concepts \elavarasi2014. There are many different metrics to measure (dis-)similarity between concepts and sets of concepts and having to choose and calculate those algorithms manually is a time consuming task. This package aims to offer the most common concept & set-similarity algorithms to enable researchers faster evaluation of their data.
+The basis for our calculations is the `Tree` type from `treelib` representing the needed taxonomy.
+
+### Implemented Taxonomies
+
+The package already offers the following taxonomies to perform calculations on:
+
+- ICD-10-GM
+- ICD-10-CM
+- ICD-O-3
+
+### Implemented Algorithms
+
+We conducted an extensive review of the literature regarding similarity-metrics and found the following concept-level similarity algorithms to be most valuable:
+
+- Wu-Palmer Similarity Measure (`'wu_palmer'`)
+- Simplified version of Wu-Palmer for cases where one knows that the compared concepts are on the deepest level (``'simple_wu_palmer'``)
+- Leacock Chodorow Similarity Measure (`'leacock_chodorow'`)
+- Li Similarity Measure (``'li'``)
+- Nguyen & Al-Mubaid Similarity Measure (``'nguyen_almubaid'``)
+- Batet Similarity Measure (``'batet'``)
+
+It is to be noted, that we used the information-content-based adaptations of the shown algorithms based on Sánchez et al. \sanchez since they shoed to yield better results \jia \sanchez. 
+The available algorithms to calcualte the information content of a concept are:
+
+- level of a concept in the taxonomy (``'levels'``)
+- Sánchez Information Content Measure  (``'sanchez'``)
+
+The following set-similarity algorithms are available:
+
+- Jaccard
+- Dice
+- Cosine
+- Overlap
+- Hierarchical Distance
+
+## Installation
+
+## How to use 
+
+## Community guidelines
 
 You can choose two kinds of 
  -> mention pull requests for self implemented parsers for other taxonomies 
+## Citing taxodist
 
- // mention that we use IC based/redefined algorithms bc they are more accurate
- // mention that our tool is for DISTANCE not similarity calculations 
- // mention that this is for single ontologies only
+## References
