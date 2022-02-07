@@ -333,23 +333,23 @@ def getMaxIC(tree: Tree, ic_mode: str, depth: int) -> float:
         if ancestor_cnt == depth:
             return getIC(concept,tree,ic_mode)
 
-def getJaccardSS(concepts_1: set, concepts_2: set):
+def getJaccardSetSim(concepts_1: set, concepts_2: set):
     """ Returns Jaccard Set Similarity for the given concept sets """
     intersection = len(concepts_1.intersection(concepts_2))
     union = concepts_1.union(concepts_2)
     return float(intersection) / union
 
-def getDiceSS(concepts_1: set, concepts_2: set):
+def getDiceSetSim(concepts_1: set, concepts_2: set):
     """ Returns Dice Set Similarity for the given concept sets """
     intersection = len(concepts_1.intersection(concepts_2))
     return (2*intersection)/(len(concepts_2)+len(concepts_1))
 
-def getCosineSS(concepts_1: set, concepts_2: set):
+def getCosineSetSim(concepts_1: set, concepts_2: set):
     """ Returns Cosine Set Similarity for the given concept sets """
     intersection = len(concepts_1.intersection(concepts_2))
     return intersection/(math.sqrt(len(concepts_2)*len(concepts_1)))
 
-def getOverlapSS(concepts_1: set, concepts_2: set):
+def getOverlapSetSim(concepts_1: set, concepts_2: set):
     """ Returns Overlap Set Similarity for the given concept sets """
     intersection = len(concepts_1.intersection(concepts_2))
     return intersection/min(concepts_1,concepts_2)
