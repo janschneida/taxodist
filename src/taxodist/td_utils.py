@@ -88,7 +88,7 @@ def getIC(concept: str, tree: Tree, ic_mode: str):
     
     """
     try:
-        if ic_mode == 'levels':
+        if ic_mode == 'level':
             # IC calculation based on Boriah et al. https://doi.org/10.1137/1.9781611972788.22 
             return tree.depth(concept)
         elif ic_mode == 'sanchez':
