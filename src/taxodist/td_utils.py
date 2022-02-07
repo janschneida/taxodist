@@ -202,7 +202,7 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
     try:
         
         if cs_mode == 'binary':
-            return int(concept1==concept2)
+            return float(concept1==concept2)
         elif cs_mode == 'wu_palmer':
             return getCSWuPalmer(ic_1,ic_2,ic_lca) 
         elif cs_mode == 'li':
