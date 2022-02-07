@@ -3,6 +3,7 @@ title: 'TaxoDist: A Python package for '
 tags:
   - Python
   - patient-similarity
+  - distance metrics
   - taxonomies
   - precision medicine
 authors:
