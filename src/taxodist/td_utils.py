@@ -354,7 +354,7 @@ def getOverlapSetSim(concepts_1: set, concepts_2: set):
     intersection = len(concepts_1.intersection(concepts_2))
     return intersection/min(concepts_1,concepts_2)
 
-def getHierachicalDist(concepts_1: set, concepts_2: set,tree: Tree, cs_mode:str,ic_mode: str = 'sanchez'):
+def getHierachicalDistSetSim(concepts_1: set, concepts_2: set,tree: Tree, cs_mode:str,ic_mode: str = 'sanchez'):
     """ Returns hierarchical distance for the given concept sets based on https://doi.org/10.1016/j.jbi.2016.07.021"""
     
     if concepts_1 == concepts_2:
