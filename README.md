@@ -17,6 +17,7 @@ The package already offers the following taxonomies to perform calculations on:
 
 - ICD-10-GM
 - ICD-10-CM
+- ICD-10-WHO
 - ICD-O-3
 
 ### Implemented Algorithms
