@@ -81,6 +81,28 @@ def getICD10WHOTree():
 
     return tree
 
+def getICD10CMTree():
+    """
+    Returns a tree that represents the ICD-10-WHO taxonomy. \n
+    Based on the ICD-10-WHO-XML export from https://www.bfarm.de/DE/Kodiersysteme/Services/Downloads/_node.html
+    """
+    raw_xml = ET.parse('resources\\ICD_10_CM.xml')
+    root = raw_xml.getroot()
+    tree = treelib.Tree()
+    tree.create_node('ICD-10-WHO', 0)
+
+    # create all nodes
+    for clss in root.iter('Class'):
+        tree.create_node(clss.get('code'), clss.get('code'), parent=0)
+
+    # move them to represent the hierarchy
+    for clss in root.iter('Class'):
+        if clss.get('kind') != 'chapter':
+            for superclass in clss.iter('SuperClass'):
+                tree.move_node(clss.get('code'), superclass.get('code'))
+
+    return tree
+
 def getIC(concept: str, tree: Tree, ic_mode: str):
     """
     Returns information content of a given concept 
@@ -361,6 +383,7 @@ def getMeanCSSetSim(concepts_1: set, concepts_2: set,tree: Tree, cs_mode:str,ic_
         for concept_2 in concepts_2:
             sum += getCS(concept_1,concept_2,tree,depth,ic_mode,cs_mode)
     return sum/(len(concepts_1)*len(concepts_2))
+
 def getHierachicalDistSetSim(concepts_1: set, concepts_2: set,tree: Tree, cs_mode:str,ic_mode: str = 'sanchez'):
     """ Returns hierarchical distance for the given concept sets based on https://doi.org/10.1016/j.jbi.2016.07.021"""
     
@@ -377,3 +400,12 @@ def getHierachicalDistSetSim(concepts_1: set, concepts_2: set,tree: Tree, cs_mod
     second_summand = sum([1 - getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode) for concept_1 in concepts_1 for concept_difference_2 in difference_2])
 
     return ( first_summand/len(difference_2) + second_summand/len(difference_1) )/len(union) 
+
+def getMaxWeightedBipartiteMatching(concepts_1, concepts_2, tree, ic_mode, cs_mode):
+    ''' Weighted undirected bipartite Graph with weight function CS(a,b). 
+        Matching = subset of edges with max weights aka highest similarity '''
+    getAdjacencyMatrix(concepts_1, concepts_2, tree, ic_mode, cs_mode)
+    return
+
+def getAdjacencyMatrix(concepts_1, concepts_2, tree, ic_mode, cs_mode):
+    return
