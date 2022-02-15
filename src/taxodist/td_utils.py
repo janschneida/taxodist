@@ -83,25 +83,29 @@ def getICD10WHOTree():
 
 def getICD10CMTree():
     """
-    Returns a tree that represents the ICD-10-WHO taxonomy. \n
-    Based on the ICD-10-WHO-XML export from https://www.bfarm.de/DE/Kodiersysteme/Services/Downloads/_node.html
+    Returns a tree that represents the ICD-10-CM taxonomy. \n
+    Based on the ICD-10-CM-XML export from
     """
     raw_xml = ET.parse('resources\\ICD_10_CM.xml')
     root = raw_xml.getroot()
     tree = treelib.Tree()
-    tree.create_node('ICD-10-WHO', 0)
+    tree.create_node('ICD-10-CM', 0)
 
-    # create all nodes
-    for clss in root.iter('Class'):
-        tree.create_node(clss.get('code'), clss.get('code'), parent=0)
-
-    # move them to represent the hierarchy
-    for clss in root.iter('Class'):
-        if clss.get('kind') != 'chapter':
-            for superclass in clss.iter('SuperClass'):
-                tree.move_node(clss.get('code'), superclass.get('code'))
+    # iterate over chapters, sections & diags to create tree
+    for chapter in root.iter('chapter'):
+        chapter_node = tree.create_node(chapter.find('name').text, chapter.find('name').text, parent=0)
+        for section in chapter.iter('section'):
+            section_node = tree.create_node(section.get('id'), section.get('id'), parent=chapter_node)
+            iterateOverDiags(section,section_node,tree)
 
     return tree
+
+def iterateOverDiags(parent: ET.Element, parent_node: Node, tree: Tree):
+    for diag in parent.iter('diag'):
+        diag_name = diag.find('name').text
+        if not tree.contains(diag_name):
+            diag_node = tree.create_node(diag_name, diag_name, parent=parent_node)
+            iterateOverDiags(diag,diag_node,tree)
 
 def getIC(concept: str, tree: Tree, ic_mode: str):
     """
