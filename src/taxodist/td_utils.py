@@ -15,12 +15,14 @@ from treelib.tree import Tree
 
 max_ic = None
 
-def getICD10GMTree():
+def getICD10GMTree(version = '2022'):
     """
     Returns a tree that represents the ICD-10-GM taxonomy. \n
     Based on the ICD-10-XML export from https://www.dimdi.de/dynamic/de/klassifikationen/downloads/
     """
-    raw_xml = ET.parse('resources\\ICD_10_GM.xml')
+    if(version == '2021'):
+        raw_xml = ET.parse('resources\\ICD_10_GM_2021.xml')
+    elif(version == '2022'):
     root = raw_xml.getroot()
     tree = treelib.Tree()
     tree.create_node('ICD-10', 0)
