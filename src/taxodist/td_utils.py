@@ -152,7 +152,7 @@ def getLCA(concept1: str, concept2: str, tree: Tree, ic_mode: str) -> str:
                 lca = concept
     return lca
 
-def getAncestors(concept, tree: Tree):
+def getAncestors(concept: str, tree: Tree):
     """Return the ancestors of a concept in a given tree"""
     if concept == tree.root:
         return set()
