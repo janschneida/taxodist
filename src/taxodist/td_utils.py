@@ -384,6 +384,7 @@ def getOverlapSetSim(concepts_1: set, concepts_2: set):
     return intersection/min(concepts_1,concepts_2)
 
 def getMeanCSSetSim(concepts_1: set, concepts_2: set,tree: Tree, cs_mode:str,ic_mode: str = 'sanchez'):
+    ''' Returns Set Similarity based on SS#7 from Jia et al. '''
     sum = 0
     depth = tree.depth()
     for concept_1 in concepts_1:
