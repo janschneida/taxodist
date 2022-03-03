@@ -16,21 +16,11 @@ class DistanceCalculations:
 
         ----
         ## Parameters:\n
-        * max_workers (int):\n
-        \tThe number of parallel processes to calculate the distances. \n
-        \tThis number must not be greater then the cores your system offers. \n
-        \tPer default, concurrent.futures picks the "best" setting for your system.\n
 
         * concepts (list): \n
         \tA list of concepts to calculate the distances. \n
         \tPer default, if this parameter is left out or set to None,\n 
         \tthis method uses all concepts of the given taxonomy.\n
-
-        * parallelized (bool):\n
-        \tSets whether or not the calculation should be parallelized. \n 
-        \tEspecially for smaller concept-batch-sizes it might make sense to use the serialized calculation,\n 
-        \tbecause parallelization overhead might outweigh its gain. \n 
-        \tPer default, the method runs in parallel.\n
         
         * taxonomy_tree (Tree):\n 
         \tA tree object representing the taxonomy you wish to calculate concept distances in. \n
@@ -57,15 +47,6 @@ class DistanceCalculations:
         \tFor a comprehensive take on when to use which algorithm look
         \tat the README or https://doi.org/10.1186/s12911-019-0807-y
         \n
-
-        ----
-        ## Returns:\n
-        * max_workers (int):\n
-        \tThe degree of parallelization.\n
-        * concept_cnt (int):\n
-        \tThe number of concepts for which their distances have been calculated.
-        * runtime [s] (float):\n
-        \tThe time in seconds it took to calculate the distances.
        
         """
 
