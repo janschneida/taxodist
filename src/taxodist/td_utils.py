@@ -23,6 +23,7 @@ def getICD10GMTree(version = '2022'):
     if(version == '2021'):
         raw_xml = ET.parse('resources\\ICD_10_GM_2021.xml')
     elif(version == '2022'):
+        raw_xml = ET.parse('resources\\ICD_10_GM_2022.xml')
     root = raw_xml.getroot()
     tree = treelib.Tree()
     tree.create_node('ICD-10', 0)
