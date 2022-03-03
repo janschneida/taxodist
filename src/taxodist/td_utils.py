@@ -203,7 +203,7 @@ def getCSNguyenAlMubaid(concept1: str, concept2: str, lca: str, tree: Tree, dept
     depth_lca = tree.level(lca)
     return math.log2((getShortestPath(concept1,concept2,depth_lca,tree)-1)*(depth - depth_lca)+1)
 
-def getCSBatet(concept1, concept2, lca, tree, depth):
+def getCSBatet(concept1, concept2, tree):
     """ Cs calculation based on Batet et al. http://dx.doi.org/10.1016/j.jbi.2010.09.002 """
     ancestors_1 = getAncestors(concept1,tree)
     ancestors_1.add(concept1)
