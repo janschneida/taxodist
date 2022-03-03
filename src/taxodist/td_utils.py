@@ -45,7 +45,7 @@ def getICDO3Tree():
     Returns a tree that represents the ICD-O-3 taxonomy. \n
     Based on the ICD-O-3-XML export from https://www.bfarm.de/DE/Kodiersysteme/Services/Downloads/_node.html
     """
-    raw_xml = ET.parse('resources\\ICD_O_3.xml')
+    raw_xml = ET.parse('resources\\ICD_O_3_2019.xml')
     root = raw_xml.getroot()
     tree = treelib.Tree()
     tree.create_node('ICD-O-3', 0)
@@ -67,7 +67,7 @@ def getICD10WHOTree():
     Returns a tree that represents the ICD-10-WHO taxonomy. \n
     Based on the ICD-10-WHO-XML export from https://www.bfarm.de/DE/Kodiersysteme/Services/Downloads/_node.html
     """
-    raw_xml = ET.parse('resources\\ICD_10_WHO.xml')
+    raw_xml = ET.parse('resources\\ICD_10_WHO_2019.xml')
     root = raw_xml.getroot()
     tree = treelib.Tree()
     tree.create_node('ICD-10-WHO', 0)
@@ -89,7 +89,7 @@ def getICD10CMTree():
     Returns a tree that represents the ICD-10-CM taxonomy. \n
     Based on the ICD-10-CM-XML export from
     """
-    raw_xml = ET.parse('resources\\ICD_10_CM.xml')
+    raw_xml = ET.parse('resources\\ICD_10_CM_2022.xml')
     root = raw_xml.getroot()
     tree = treelib.Tree()
     tree.create_node('ICD-10-CM', 0)
