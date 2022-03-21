@@ -193,7 +193,7 @@ def getCSSimpleWuPalmer(ic_lca, depth):
     CS calculation based on a simplified version of IC-based Wu-Palmer,
     where the two concepts are on the deepest level of the taxonomy tree
     """
-    return 1-(depth - ic_lca)/(depth - 1)
+    return 1-(depth - ic_lca)/depth
 
 def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree, depth):
     """
