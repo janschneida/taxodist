@@ -202,7 +202,7 @@ def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree, depth):
     global max_ic
     if max_ic is None:
         max_ic = getMaxIC(tree, ic_mode, depth)
-    return -math.log((ic_1+ic_2-2*ic_lca+1)/2*max_ic)
+    return -math.log((ic_1+ic_2-2*ic_lca+1)/(2*max_ic))
 
 def getCSNguyenAlMubaid(concept1: str, concept2: str, lca: str, tree: Tree, depth: int):
     """ CS calculation based on Nguyen & Al-Mubaid https://doi.org/10.1109/TSMCC.2009.2020689 """
