@@ -210,7 +210,7 @@ def getCSNguyenAlMubaid(concept1: str, concept2: str, lca: str, tree: Tree, dept
     # TODO lookup reasonable value for k 
     # note: could not find any research on the contribution factors, so we will set them to 1 for now
     depth_lca = tree.level(lca)
-    return math.log2((getShortestPath(concept1,concept2,depth_lca,tree)-1)*(depth - depth_lca)+1)
+    return math.log((getShortestPath(concept1,concept2,depth_lca,tree)-1)*(depth - depth_lca)+1)
 
 def getCSBatet(concept1, concept2, tree):
     """ Cs calculation based on Batet et al. http://dx.doi.org/10.1016/j.jbi.2010.09.002 """
