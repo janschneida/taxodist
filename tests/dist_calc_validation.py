@@ -37,16 +37,26 @@ def testCSs(tree, depth):
     # LI TESTS
 
     cs = utils.getCS(1,1,tree,depth,'level','li')
-    assert math.isclose(cs,2.639,rel_tol=0.01)
+    assert cs == 0.0
+
+    cs = utils.getCS(31,31,tree,depth,'level','li')
+    assert math.isclose(cs,1.412,rel_tol=0.01)
 
     cs = utils.getCS(1,9,tree,depth,'level','li')
-    assert math.isclose(cs,2.639,rel_tol=0.01)
+    assert cs == 0.0
 
     cs = utils.getCS(13,31,tree,depth,'level','li')
-    assert math.isclose(cs,2.639,rel_tol=0.01)
+    assert math.isclose(cs,1.195,rel_tol=0.01)
 
     cs = utils.getCS(30,31,tree,depth,'level','li')
-    assert math.isclose(cs,2.639,rel_tol=0.01)
+    assert math.isclose(cs,1.412,rel_tol=0.01)
+
+    # cs = utils.getCS(70,71,tree,depth,'level','li')
+    # assert math.isclose(cs,1.491,rel_tol=0.01)
+
+    # cs = utils.getCS(71,71,tree,depth,'level','li')
+    # assert math.isclose(cs,1.491,rel_tol=0.01)
+
 
 
 def testICs(tree):
