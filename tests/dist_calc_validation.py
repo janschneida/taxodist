@@ -12,26 +12,27 @@ def main():
     The ground-truth is derived by manually calculating the values for the respective codes.
     """
     tree = getTestTree()
-    depth = tree.depth
+    depth = tree.depth()
 
     testICs(tree)
     testCSs(tree,depth)
 
 def testCSs(tree, depth):
 
+    
     # WU PALMER TESTS
 
     cs = utils.getCS(1,1,tree,depth,'level','wu_palmer')
-    assert math.isclose(cs,2.639,rel_tol=0.01)
+    assert cs == 1.0
 
     cs = utils.getCS(1,9,tree,depth,'level','wu_palmer')
-    assert math.isclose(cs,2.639,rel_tol=0.01)
+    assert cs == 0.0
 
     cs = utils.getCS(13,31,tree,depth,'level','wu_palmer')
-    assert math.isclose(cs,2.639,rel_tol=0.01)
+    assert math.isclose(cs,0.333,rel_tol=0.01)
 
     cs = utils.getCS(30,31,tree,depth,'level','wu_palmer')
-    assert math.isclose(cs,2.639,rel_tol=0.01)
+    assert cs == 0.75
 
     # LI TESTS
 
