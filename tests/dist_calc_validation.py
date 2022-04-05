@@ -160,6 +160,13 @@ def getTestTree():
     tree.create_node(30,30,parent=20)
     tree.create_node(31,31,parent=20)
 
+    # tree.create_node(40,40,parent=30)
+    # tree.create_node(50,50,parent=40)
+    # tree.create_node(60,60,parent=50)
+
+    # tree.create_node(70,70,parent=60)
+    # tree.create_node(71,71,parent=60)
+
     return tree
 
 if __name__ == "__main__":
