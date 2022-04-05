@@ -57,6 +57,19 @@ def testCSs(tree, depth):
     # cs = utils.getCS(71,71,tree,depth,'level','li')
     # assert math.isclose(cs,1.491,rel_tol=0.01)
 
+    # SIMPLE WU PALMER TESTS
+
+    cs = utils.getCS(1,1,tree,depth,'level','simple_wu_palmer')
+    assert cs == 1.0
+
+    cs = utils.getCS(1,9,tree,depth,'level','simple_wu_palmer')
+    assert cs == 0.0
+
+    cs = utils.getCS(13,31,tree,depth,'level','simple_wu_palmer')
+    assert math.isclose(cs,0.25,rel_tol=0.01)
+
+    cs = utils.getCS(30,31,tree,depth,'level','simple_wu_palmer')
+    assert cs == 0.75
 
 
 def testICs(tree):
