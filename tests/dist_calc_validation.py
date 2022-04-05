@@ -71,6 +71,20 @@ def testCSs(tree, depth):
     cs = utils.getCS(30,31,tree,depth,'level','simple_wu_palmer')
     assert cs == 0.75
 
+    # LEACOCK CHODOROW TESTS
+
+    cs = utils.getCS(1,1,tree,depth,'level','leacock_chodorow')
+    assert math.isclose(cs,0.980,rel_tol=0.01)
+
+    cs = utils.getCS(1,9,tree,depth,'level','leacock_chodorow')
+    assert math.isclose(cs,0.980,rel_tol=0.01)
+
+    cs = utils.getCS(13,31,tree,depth,'level','leacock_chodorow')
+    assert math.isclose(cs,0.470,rel_tol=0.01)
+
+    cs = utils.getCS(30,31,tree,depth,'level','leacock_chodorow')
+    assert math.isclose(cs,0.980,rel_tol=0.01)
+
 
 def testICs(tree):
     ic = utils.getIC(0,tree,'level')
