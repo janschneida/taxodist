@@ -3,7 +3,6 @@ import os
 import math
 import treelib
 sys.path.append(os.getcwd())
-from src.taxodist import td_calc as td
 from src.taxodist import td_utils as utils
 
 def main():
