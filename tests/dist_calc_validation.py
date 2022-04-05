@@ -99,6 +99,21 @@ def testCSs(tree, depth):
     cs = utils.getCS(30,31,tree,depth,'level','nguyen_almubaid')
     assert math.isclose(cs,0.693,rel_tol=0.01)
 
+    # BATET TESTS
+
+    cs = utils.getCS(1,1,tree,depth,'level','nguyen_almubaid')
+    assert math.isclose(cs,1.609,rel_tol=0.01)
+
+    cs = utils.getCS(1,9,tree,depth,'level','nguyen_almubaid')
+    assert math.isclose(cs,1.609,rel_tol=0.01)
+
+    cs = utils.getCS(13,31,tree,depth,'level','nguyen_almubaid')
+    assert math.isclose(cs,2.303,rel_tol=0.01)
+
+    cs = utils.getCS(30,31,tree,depth,'level','nguyen_almubaid')
+    assert math.isclose(cs,0.693,rel_tol=0.01)
+
+
 
 def testICs(tree):
     ic = utils.getIC(0,tree,'level')
