@@ -15,10 +15,11 @@ The basis for our calculations is the `Tree` type from `treelib` representing th
 
 The package already offers the following taxonomies to perform calculations on:
 
-- ICD-10-GM
-- ICD-10-CM
-- ICD-10-WHO
-- ICD-O-3
+- ICD-10-GM 2021
+- ICD-10-GM 2022
+- ICD-10-CM 2022
+- ICD-10-WHO 2019
+- ICD-O-3 2019
 
 ### Implemented Algorithms
 
