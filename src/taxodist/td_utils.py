@@ -12,6 +12,7 @@ from scipy.spatial import distance_matrix
 from sklearn.manifold import MDS
 from treelib.node import Node
 from treelib.tree import Tree
+import cs_algorithms
 
 max_ic = None
 
@@ -175,54 +176,6 @@ def getAncestors(concept: str, tree: Tree):
 
     return set(ancestors)
 
-def getCSLi(ic_1,ic_2,ic_lca):
-    """
-    CS calculation based on Li et al. https://doi.org/10.1109/TKDE.2003.1209005
-    """
-    return math.exp(0.2*(ic_1 + ic_2 - 2*ic_lca))*(math.exp(0.6*ic_lca)-math.exp(-0.6*ic_lca))/(math.exp(0.6*ic_lca)+math.exp(-0.6*ic_lca))
-
-def getCSWuPalmer(ic_1,ic_2,ic_lca):
-    """
-    CS calculation based on redefined Wu Palmer measure from Sánchez et al. https://doi.org/10.1016/j.jbi.2011.03.013
-    Equation is the same as the Lin similarity measure http://dx.doi.org/10.3115/981574.981590
-    """
-    return (2*ic_lca)/(ic_1+ic_2)
-
-def getCSSimpleWuPalmer(ic_lca, depth):
-    """
-    CS calculation based on a simplified version of IC-based Wu-Palmer,
-    where the two concepts are on the deepest level of the taxonomy tree
-    """
-    return 1-(depth - ic_lca)/depth
-
-def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree, depth):
-    """
-    CS calculation based on redefined Leacock Chodorow measure from Sánchez https://doi.org/10.1016/j.jbi.2011.03.013
-    """
-    global max_ic
-    if max_ic is None:
-        max_ic = getMaxIC(tree, ic_mode, depth)
-    return -math.log((ic_1+ic_2-2*ic_lca+1)/(2*max_ic))
-
-def getCSNguyenAlMubaid(concept1: str, concept2: str, lca: str, tree: Tree, depth: int):
-    """ CS calculation based on Nguyen & Al-Mubaid https://doi.org/10.1109/TSMCC.2009.2020689 """
-    # TODO add alpha & beta contribution factors
-    # TODO lookup reasonable value for k 
-    # note: could not find any research on the contribution factors, so we will set them to 1 for now
-    depth_lca = tree.level(lca)
-    return math.log((getShortestPath(concept1,concept2,depth_lca,tree)-1)*(depth - depth_lca)+1)
-
-def getCSBatet(concept1, concept2, tree):
-    """ Cs calculation based on Batet et al. http://dx.doi.org/10.1016/j.jbi.2010.09.002 """
-    ancestors_1 = getAncestors(concept1,tree)
-    ancestors_1.add(concept1)
-
-    ancestors_2 = getAncestors(concept2,tree)
-    ancestors_2.add(concept2)
-
-    shared_ancestors = ancestors_1.intersection(ancestors_2)
-    return -math.log2((len(ancestors_1)+len(ancestors_2)-len(shared_ancestors))/(len(ancestors_1)+len(ancestors_2)))
-
 def getShortestPath(concept1: str, concept2: str, depth_lca: int, tree: Tree):
     depth_concept1 = tree.level(concept1)
     depth_concept2 = tree.level(concept2)
@@ -240,17 +193,17 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
     try:
         
         if cs_mode == 'wu_palmer':
-            return getCSWuPalmer(ic_1,ic_2,ic_lca) 
+            return cs_algorithms.getCSWuPalmer(ic_1,ic_2,ic_lca) 
         elif cs_mode == 'li':
-            return getCSLi(ic_1,ic_2,ic_lca)
+            return cs_algorithms.getCSLi(ic_1,ic_2,ic_lca)
         elif cs_mode == 'simple_wu_palmer':
-            return getCSSimpleWuPalmer(ic_lca,depth)
+            return cs_algorithms.getCSSimpleWuPalmer(ic_lca,depth)
         elif cs_mode == 'leacock_chodorow':
-            return getCSLeacockChodorow(ic_1,ic_2,ic_lca,ic_mode,tree,depth)
+            return cs_algorithms.getCSLeacockChodorow(ic_1,ic_2,ic_lca,ic_mode,tree,depth)
         elif cs_mode == 'nguyen_almubaid':
-            return getCSNguyenAlMubaid(concept1, concept2, lca, tree, depth) 
+            return cs_algorithms.getCSNguyenAlMubaid(concept1, concept2, lca, tree, depth) 
         elif cs_mode == 'batet':
-            return getCSBatet(concept1, concept2, lca, tree, depth)        
+            return cs_algorithms.getCSBatet(concept1, concept2, lca, tree, depth)        
         else:
          raise ValueError('Unsupported CS-mode: ',cs_mode)
     except ValueError as err:
