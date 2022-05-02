@@ -14,6 +14,7 @@ from treelib.node import Node
 from treelib.tree import Tree
 import cs_algorithms
 import ic_algorithms
+from taxodist import setsim_algorithms
 
 max_ic = None
 
@@ -117,6 +118,29 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
     #     case 'simple_wu_palmer':
     #         return (depth - ic_lca)/(depth - 1)
 
+def getSetSim(concepts_1: set, concepts_2: set, setsim: str, tree: Tree, cs_mode: str, ic_mode: str):
+    try:
+        if len(concepts_1) != 0 and len(concepts_2) != 0:
+            
+            if setsim == 'jaccard':
+                return setsim_algorithms.getJaccardSetSim(concepts_1, concepts_2)
+            elif setsim == 'dice':
+                return setsim_algorithms.getDiceSetSim(concepts_1, concepts_2)
+            elif setsim == 'cosine':
+                return setsim_algorithms.getCosineSetSim(concepts_1, concepts_2)
+            elif setsim == 'overlap':
+                return setsim_algorithms.getOverlapSetSim(concepts_1, concepts_2)
+            elif setsim == 'mean_cs':
+                return setsim_algorithms.getMeanCSSetSim(concepts_1, concepts_2, tree, cs_mode, ic_mode)
+            elif setsim == 'hierarchical':
+                return setsim_algorithms.getHierachicalDistSetSim(concepts_1, concepts_2, tree, cs_mode, ic_mode)
+            else:
+                raise ValueError("Unsupported setsim algorithm: ", setsim)
+        else:
+            raise ValueError('Empty Concept Set(s)')
+    except ValueError as err:
+        print(err.args)
+        sys.exit()
 
 def getAllConcepts(tree: Tree):
     all_concepts = []
