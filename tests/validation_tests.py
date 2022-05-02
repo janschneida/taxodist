@@ -99,21 +99,19 @@ class validation_tests(unittest.TestCase):
         cs = utils.getCS(30,31,self.tree,self.depth,'level','nguyen_almubaid')
         self.assertAlmostEqual(cs,0.693,delta=0.001)
 
-    # BATET TESTS
+        # BATET TESTS
+        # TODO nach rechnen
+        # cs = utils.getCS(1,1,self.tree,self.depth,'level','batet')
+        # self.assertAlmostEqual(cs,1.609,delta=0.001)
 
-    cs = utils.getCS(1,1,tree,depth,'level','nguyen_almubaid')
-    assert math.isclose(cs,1.609,rel_tol=0.01)
+        # cs = utils.getCS(1,9,self.tree,self.depth,'level','batet')
+        # self.assertAlmostEqual(cs,1.609,delta=0.001)
 
-    cs = utils.getCS(1,9,tree,depth,'level','nguyen_almubaid')
-    assert math.isclose(cs,1.609,rel_tol=0.01)
+        # cs = utils.getCS(13,31,self.tree,self.depth,'level','batet')
+        # self.assertAlmostEqual(cs,1.609,delta=0.001)
 
-    cs = utils.getCS(13,31,tree,depth,'level','nguyen_almubaid')
-    assert math.isclose(cs,2.303,rel_tol=0.01)
-
-    cs = utils.getCS(30,31,tree,depth,'level','nguyen_almubaid')
-    assert math.isclose(cs,0.693,rel_tol=0.01)
-
-
+        # cs = utils.getCS(30,31,self.tree,self.depth,'level','batet')
+        # self.assertAlmostEqual(cs,1.609,delta=0.001)
 
     def test_ICs(self):
         ic = utils.getIC(0,self.tree,'level')
