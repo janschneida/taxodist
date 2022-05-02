@@ -29,9 +29,8 @@ def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree, depth):
     """
     CS calculation based on redefined Leacock Chodorow measure from Sánchez https://doi.org/10.1016/j.jbi.2011.03.013
     """
-    global max_ic
-    if max_ic is None:
-        max_ic = utils.getMaxIC(tree, ic_mode, depth)
+    # TODO max_ic irgendwo speichern
+    max_ic = utils.getMaxIC(tree, ic_mode, depth)
     return -math.log((ic_1+ic_2-2*ic_lca+1)/(2*max_ic))
 
 def getCSNguyenAlMubaid(concept1: str, concept2: str, lca: str, tree: Tree, depth: int):
