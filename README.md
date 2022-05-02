@@ -32,7 +32,7 @@ We conducted an extensive review of the literature regarding similarity-metrics 
 - Nguyen & Al-Mubaid Similarity Measure (``'nguyen_almubaid'``)
 - Batet Similarity Measure (``'batet'``)
 
-It is to be noted, that we used the information-content-based adaptations of the shown algorithms based on Sánchez et al. \sanchez since they shoed to yield better results \jia \sanchez. 
+It is to be noted, that we used the information-content-based adaptations of the shown algorithms based on Sánchez et al. \sanchez since they showed to yield better results \jia \sanchez. 
 The available algorithms to calcualte the information content of a concept are:
 
 - level of a concept in the taxonomy (``'levels'``)
