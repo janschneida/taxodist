@@ -1,12 +1,19 @@
 import math
 import td_utils as utils
 from treelib import Tree
+import sys
+import warnings
 
 def getJaccardSetSim(concepts_1: set, concepts_2: set):
     """ Returns Jaccard Set Similarity for the given concept sets """
+    
     intersection = len(concepts_1.intersection(concepts_2))
     union = concepts_1.union(concepts_2)
+    if union != 0:
     return float(intersection) / union
+    else:
+        warnings.warn("Union was zero")
+        return 0
 
 def getDiceSetSim(concepts_1: set, concepts_2: set):
     """ Returns Dice Set Similarity for the given concept sets """
