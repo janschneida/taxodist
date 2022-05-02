@@ -7,8 +7,11 @@ sys.path.append(os.getcwd())
 from src.taxodist import td_utils as utils
   
 class exceptionTests(unittest.TestCase):
-  
-    def testInvalidCS(self):
+    
+    def setUp(self):
+        self.tree = getTestTree()
+        self.depth = self.tree.depth()
+    
         with self.assertRaises(SystemExit):
             tree = getTestTree()
             depth = tree.depth()
