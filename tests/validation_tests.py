@@ -1,103 +1,103 @@
 import sys
 import os
+sys.path.append(os.getcwd())
 import math
 import treelib
-sys.path.append(os.getcwd())
 from src.taxodist import td_utils as utils
+import unittest
 
-def main():
+class validation_tests(unittest.TestCase):
     """
     Runs tests with different codes to validate the implemented algorithms.\n
 
     The ground-truth is derived by manually calculating the values for the respective codes.
     """
-    tree = getTestTree()
-    depth = tree.depth()
+    def setUp(self):
+        self.tree = getTestTree()
+        self.depth = self.tree.depth()
 
-    testICs(tree)
-    testCSs(tree,depth)
+    # def test_SetSims(self,tree, depth):
+    #     return
 
-def testCSs(tree, depth):
+    def test_CSs(self):
+        # WU PALMER TESTS
 
-    
-    # WU PALMER TESTS
+        cs = utils.getCS(1,1,self.tree,self.depth,'level','wu_palmer')
+        self.assertEqual(cs,1.0)
 
-    cs = utils.getCS(1,1,tree,depth,'level','wu_palmer')
-    assert cs == 1.0
+        cs = utils.getCS(1,9,self.tree,self.depth,'level','wu_palmer')
+        self.assertEqual(cs,0.0)
 
-    cs = utils.getCS(1,9,tree,depth,'level','wu_palmer')
-    assert cs == 0.0
+        cs = utils.getCS(13,31,self.tree,self.depth,'level','wu_palmer')
+        self.assertAlmostEqual(cs,0.333,delta=0.001)
 
-    cs = utils.getCS(13,31,tree,depth,'level','wu_palmer')
-    assert math.isclose(cs,0.333,rel_tol=0.01)
+        cs = utils.getCS(30,31,self.tree,self.depth,'level','wu_palmer')
+        self.assertEqual(cs,0.75)
 
-    cs = utils.getCS(30,31,tree,depth,'level','wu_palmer')
-    assert cs == 0.75
+        # LI TESTS
 
-    # LI TESTS
+        cs = utils.getCS(1,1,self.tree,self.depth,'level','li')
+        self.assertEqual(cs,0.0)
 
-    cs = utils.getCS(1,1,tree,depth,'level','li')
-    assert cs == 0.0
+        cs = utils.getCS(31,31,self.tree,self.depth,'level','li')
+        self.assertAlmostEqual(cs,1.412,delta=0.001)
 
-    cs = utils.getCS(31,31,tree,depth,'level','li')
-    assert math.isclose(cs,1.412,rel_tol=0.01)
+        cs = utils.getCS(1,9,self.tree,self.depth,'level','li')
+        self.assertEqual(cs,0.0)
 
-    cs = utils.getCS(1,9,tree,depth,'level','li')
-    assert cs == 0.0
+        cs = utils.getCS(13,31,self.tree,self.depth,'level','li')
+        self.assertAlmostEqual(cs,1.195,delta=0.001)
 
-    cs = utils.getCS(13,31,tree,depth,'level','li')
-    assert math.isclose(cs,1.195,rel_tol=0.01)
+        cs = utils.getCS(30,31,self.tree,self.depth,'level','li')
+        self.assertAlmostEqual(cs,1.412,delta=0.001)
 
-    cs = utils.getCS(30,31,tree,depth,'level','li')
-    assert math.isclose(cs,1.412,rel_tol=0.01)
+        # cs = utils.getCS(70,71,self.tree,self.depth,'level','li')
+        # assert math.isclose(cs,1.491,rel_tol=0.01)
 
-    # cs = utils.getCS(70,71,tree,depth,'level','li')
-    # assert math.isclose(cs,1.491,rel_tol=0.01)
+        # cs = utils.getCS(71,71,self.tree,self.depth,'level','li')
+        # assert math.isclose(cs,1.491,rel_tol=0.01)
 
-    # cs = utils.getCS(71,71,tree,depth,'level','li')
-    # assert math.isclose(cs,1.491,rel_tol=0.01)
+        # SIMPLE WU PALMER TESTS
 
-    # SIMPLE WU PALMER TESTS
+        cs = utils.getCS(1,1,self.tree,self.depth,'level','simple_wu_palmer')
+        self.assertEqual(cs,1.0)
 
-    cs = utils.getCS(1,1,tree,depth,'level','simple_wu_palmer')
-    assert cs == 1.0
+        cs = utils.getCS(1,9,self.tree,self.depth,'level','simple_wu_palmer')
+        self.assertEqual(cs,0.0)
 
-    cs = utils.getCS(1,9,tree,depth,'level','simple_wu_palmer')
-    assert cs == 0.0
+        cs = utils.getCS(13,31,self.tree,self.depth,'level','simple_wu_palmer')
+        self.assertAlmostEqual(cs,0.25,delta=0.01)
 
-    cs = utils.getCS(13,31,tree,depth,'level','simple_wu_palmer')
-    assert math.isclose(cs,0.25,rel_tol=0.01)
+        cs = utils.getCS(30,31,self.tree,self.depth,'level','simple_wu_palmer')
+        self.assertEqual(cs,0.75)
 
-    cs = utils.getCS(30,31,tree,depth,'level','simple_wu_palmer')
-    assert cs == 0.75
+        # LEACOCK CHODOROW TESTS
 
-    # LEACOCK CHODOROW TESTS
+        cs = utils.getCS(1,1,self.tree,self.depth,'level','leacock_chodorow')
+        self.assertAlmostEqual(cs,0.980,delta=0.001)
 
-    cs = utils.getCS(1,1,tree,depth,'level','leacock_chodorow')
-    assert math.isclose(cs,0.980,rel_tol=0.01)
+        cs = utils.getCS(1,9,self.tree,self.depth,'level','leacock_chodorow')
+        self.assertAlmostEqual(cs,0.980,delta=0.001)
 
-    cs = utils.getCS(1,9,tree,depth,'level','leacock_chodorow')
-    assert math.isclose(cs,0.980,rel_tol=0.01)
+        cs = utils.getCS(13,31,self.tree,self.depth,'level','leacock_chodorow')
+        self.assertAlmostEqual(cs,0.470,delta=0.001)
 
-    cs = utils.getCS(13,31,tree,depth,'level','leacock_chodorow')
-    assert math.isclose(cs,0.470,rel_tol=0.01)
+        cs = utils.getCS(30,31,self.tree,self.depth,'level','leacock_chodorow')
+        self.assertAlmostEqual(cs,0.980,delta=0.001)
 
-    cs = utils.getCS(30,31,tree,depth,'level','leacock_chodorow')
-    assert math.isclose(cs,0.980,rel_tol=0.01)
+        # NGUYEN AL-MUBAID TESTS
 
-    # NGUYEN AL-MUBAID TESTS
+        cs = utils.getCS(1,1,self.tree,self.depth,'level','nguyen_almubaid')
+        self.assertAlmostEqual(cs,1.609,delta=0.001)
 
-    cs = utils.getCS(1,1,tree,depth,'level','nguyen_almubaid')
-    assert math.isclose(cs,1.609,rel_tol=0.01)
+        cs = utils.getCS(1,9,self.tree,self.depth,'level','nguyen_almubaid')
+        self.assertAlmostEqual(cs,1.609,delta=0.001)
 
-    cs = utils.getCS(1,9,tree,depth,'level','nguyen_almubaid')
-    assert math.isclose(cs,1.609,rel_tol=0.01)
+        cs = utils.getCS(13,31,self.tree,self.depth,'level','nguyen_almubaid')
+        self.assertAlmostEqual(cs,2.303,delta=0.001)
 
-    cs = utils.getCS(13,31,tree,depth,'level','nguyen_almubaid')
-    assert math.isclose(cs,2.303,rel_tol=0.01)
-
-    cs = utils.getCS(30,31,tree,depth,'level','nguyen_almubaid')
-    assert math.isclose(cs,0.693,rel_tol=0.01)
+        cs = utils.getCS(30,31,self.tree,self.depth,'level','nguyen_almubaid')
+        self.assertAlmostEqual(cs,0.693,delta=0.001)
 
     # BATET TESTS
 
@@ -115,36 +115,36 @@ def testCSs(tree, depth):
 
 
 
-def testICs(tree):
-    ic = utils.getIC(0,tree,'level')
-    assert ic == 0
+    def test_ICs(self):
+        ic = utils.getIC(0,self.tree,'level')
+        self.assertEqual(ic,0)
 
-    ic = utils.getIC(1,tree,'level')
-    assert ic == 1
+        ic = utils.getIC(1,self.tree,'level')
+        self.assertEqual(ic,1)
 
-    ic = utils.getIC(10,tree,'level')
-    assert ic == 2
+        ic = utils.getIC(10,self.tree,'level')
+        self.assertEqual(ic,2)
 
-    ic = utils.getIC(20,tree,'level')
-    assert ic == 3
+        ic = utils.getIC(20,self.tree,'level')
+        self.assertEqual(ic,3)
 
-    ic = utils.getIC(31,tree,'level')
-    assert ic == 4
+        ic = utils.getIC(31,self.tree,'level')
+        self.assertEqual(ic,4)
 
-    ic = utils.getIC(0,tree,'sanchez')
-    assert ic == 0.0
+        ic = utils.getIC(0,self.tree,'sanchez')
+        self.assertEqual(ic,0.0)
 
-    ic = utils.getIC(1,tree,'sanchez')
-    assert math.isclose(ic,1.386,rel_tol=0.01)
+        ic = utils.getIC(1,self.tree,'sanchez')
+        self.assertAlmostEqual(ic,1.386,delta=0.001)
 
-    ic = utils.getIC(10,tree,'sanchez')
-    assert math.isclose(ic,2.128,rel_tol=0.01)
+        ic = utils.getIC(10,self.tree,'sanchez')
+        self.assertAlmostEqual(ic,2.128,delta=0.001)
 
-    ic = utils.getIC(20,tree,'sanchez')
-    assert math.isclose(ic,2.233,rel_tol=0.01)
+        ic = utils.getIC(20,self.tree,'sanchez')
+        self.assertAlmostEqual(ic,2.233,delta=0.001)
 
-    ic = utils.getIC(30,tree,'sanchez')
-    assert math.isclose(ic,2.639,rel_tol=0.01)
+        ic = utils.getIC(30,self.tree,'sanchez')
+        self.assertAlmostEqual(ic,2.639,delta=0.001)
 
 def getTestTree():
     tree = treelib.Tree()
@@ -166,8 +166,8 @@ def getTestTree():
 
     # tree.create_node(70,70,parent=60)
     # tree.create_node(71,71,parent=60)
-
+    tree.save2file('testtree.txt')
     return tree
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__': 
+    unittest.main()
