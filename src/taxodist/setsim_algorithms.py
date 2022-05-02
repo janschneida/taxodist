@@ -1,7 +1,6 @@
 import math
-import td_utils as utils
+from src.taxodist import td_utils as utils
 from treelib import Tree
-import sys
 import warnings
 
 def getJaccardSetSim(concepts_1: set, concepts_2: set):

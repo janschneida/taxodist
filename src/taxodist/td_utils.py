@@ -1,7 +1,9 @@
 import sys
+import os
 import math
 import random
 import xml.etree.ElementTree as ET
+sys.path.append(os.getcwd())
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,9 +14,9 @@ from scipy.spatial import distance_matrix
 from sklearn.manifold import MDS
 from treelib.node import Node
 from treelib.tree import Tree
-import cs_algorithms
-import ic_algorithms
-from taxodist import setsim_algorithms
+from src.taxodist import cs_algorithms
+from src.taxodist import ic_algorithms
+from src.taxodist import setsim_algorithms
 
 max_ic = None
 
