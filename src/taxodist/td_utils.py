@@ -98,7 +98,7 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
         elif cs_mode == 'nguyen_almubaid':
             return cs_algorithms.getCSNguyenAlMubaid(concept1, concept2, lca, tree, depth) 
         elif cs_mode == 'batet':
-            return cs_algorithms.getCSBatet(concept1, concept2, lca, tree, depth)        
+            return cs_algorithms.getCSBatet(concept1, concept2, tree)        
         else:
          raise ValueError('Unsupported CS-mode: ',cs_mode)
     except ValueError as err:
