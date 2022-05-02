@@ -12,16 +12,13 @@ class exceptionTests(unittest.TestCase):
         self.tree = getTestTree()
         self.depth = self.tree.depth()
     
+    def test_invalidCS(self):
         with self.assertRaises(SystemExit):
-            tree = getTestTree()
-            depth = tree.depth()
-            utils.getCS(1,1,tree,depth,'level','blabla')
+            utils.getCS(1,1,self.tree,self.depth,'level','blabla')
 
-    def testInvalidIC(self):
+    def test_invalidIC(self):
         with self.assertRaises(SystemExit):
-            tree = getTestTree()
-            depth = tree.depth()
-            utils.getCS(1,1,tree,depth,'blabla','batet')
+            utils.getCS(1,1,self.tree,self.depth,'blabla','batet')
 
 def getTestTree():
         tree = treelib.Tree()
