@@ -15,6 +15,7 @@ def getJaccardSetSim(concepts_1: set, concepts_2: set):
         warnings.warn("Union was zero")
         return 0
 
+
 def getDiceSetSim(concepts_1: set, concepts_2: set):
     """ Returns Dice Set Similarity for the given concept sets """
     intersection = len(concepts_1.intersection(concepts_2))
@@ -28,7 +29,7 @@ def getCosineSetSim(concepts_1: set, concepts_2: set):
 def getOverlapSetSim(concepts_1: set, concepts_2: set):
     """ Returns Overlap Set Similarity for the given concept sets """
     intersection = len(concepts_1.intersection(concepts_2))
-    return intersection/min(concepts_1,concepts_2)
+    return intersection/min(len(concepts_1),len(concepts_2))
 
 def getMeanCSSetSim(concepts_1: set, concepts_2: set,tree: Tree, cs_mode:str,ic_mode: str = 'sanchez'):
     ''' Returns Set Similarity based on SS#7 from Jia et al. '''
