@@ -31,7 +31,7 @@ class DistanceCalculations:
         \tDefines what information-content algorithm should be used. \n
         \tThe following are available:\n
         \t\t-'levels' \n
-        \t\t-'ontology' \n
+        \t\t-'sanchez' \n
 
         \tFor a comprehensive take on when to use which algorithm look
         \tat the README or https://doi.org/10.1186/s12911-019-0807-y
@@ -39,10 +39,12 @@ class DistanceCalculations:
         * cs_mode (str):\n
         \tDefines what concept-similarity algorithm should be used. \n
         \tThe following are available:\n
-        \t\t-'binary'  \n
         \t\t-'wu_palmer' \n
         \t\t-'li' \n
         \t\t-'simple_wu_palmer' \n
+        \t\t-'leacock_chodorow' \n
+        \t\t-'nguyen_almubaid' \n
+        \t\t-'batet' \n
 
         \tFor a comprehensive take on when to use which algorithm look
         \tat the README or https://doi.org/10.1186/s12911-019-0807-y
@@ -69,7 +71,6 @@ class DistanceCalculations:
         fs = []
         with cf.ProcessPoolExecutor(max_workers=1) as executor:
             max_workers = executor.__getattribute__('_max_workers')
-            start = timer()
             for i in range(0,max_workers):
                 # start processes and save return values 
                 fs.append(executor.submit(utils.getDistMatrixWrapper, (concepts, taxonomy_tree, i+1, max_workers,ic_mode,cs_mode)))
@@ -79,9 +80,6 @@ class DistanceCalculations:
             dist_matrix[utils.getStart(worker_index,max_workers,length):utils.getStop(worker_index,max_workers,length)] = partial_dist_matrix
         
         dist_matrix = utils.mirrorMatrix(dist_matrix)
-        # time = timer() - start
-    
-        # dist_matrix = utils.mirrorMatrix(dist_matrix)
 
         # df_mds_coordinates = utils.getMDSMatrix(dist_matrix)
 
@@ -98,5 +96,5 @@ class DistanceCalculations:
         Use this method when you know, that your concepts are more distinct, might not be leaves and you are working
         with a more comprehensive concept background.
         """
-        self.calc_distance_with_concepts(concepts=concepts,taxonomy_tree=taxonomy_tree,ic_mode='ontology',cs_mode='wu_palmer')
+        self.calc_distance_with_concepts(concepts=concepts,taxonomy_tree=taxonomy_tree,ic_mode='sanchez',cs_mode='wu_palmer')
 
