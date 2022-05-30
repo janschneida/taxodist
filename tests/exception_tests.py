@@ -1,7 +1,6 @@
 import unittest
 import sys
 import os
-import math
 import treelib
 sys.path.append(os.getcwd())
 from src.taxodist import td_utils as utils
@@ -23,6 +22,14 @@ class exceptionTests(unittest.TestCase):
     def test_invalidBatet(self):
         with self.assertRaises(SystemExit):
             utils.getCS(1,1,self.tree,self.depth,'levels','batet')
+
+    def testEmptySetSim(self):
+        with self.assertRaises(SystemExit):
+            utils.getSetSim((),(),'jaccard',self.tree,'levels','batet')
+
+    def testInvalidSetSim(self):
+        with self.assertRaises(SystemExit):
+            utils.getSetSim((1,2),(1,2),'blabla',self.tree,'levels','batet')
 
 def getTestTree():
         tree = treelib.Tree()
