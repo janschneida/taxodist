@@ -119,7 +119,7 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
     #     case 'simple_wu_palmer':
     #         return (depth - ic_lca)/(depth - 1)
 
-def getSetSim(concepts_1: set, concepts_2: set, setsim: str, tree: Tree, cs_mode: str, ic_mode: str):
+def getSetSim(concepts_1: set, concepts_2: set, setsim: str, tree: Tree, cs_mode: str, ic_mode: str) -> float:
     try:
         if len(concepts_1) != 0 and len(concepts_2) != 0:
             
