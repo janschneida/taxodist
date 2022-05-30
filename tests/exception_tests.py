@@ -14,11 +14,15 @@ class exceptionTests(unittest.TestCase):
     
     def test_invalidCS(self):
         with self.assertRaises(SystemExit):
-            utils.getCS(1,1,self.tree,self.depth,'level','blabla')
+            utils.getCS(1,1,self.tree,self.depth,'levels','blabla')
 
     def test_invalidIC(self):
         with self.assertRaises(SystemExit):
             utils.getCS(1,1,self.tree,self.depth,'blabla','batet')
+
+    def test_invalidBatet(self):
+        with self.assertRaises(SystemExit):
+            utils.getCS(1,1,self.tree,self.depth,'levels','batet')
 
 def getTestTree():
         tree = treelib.Tree()
