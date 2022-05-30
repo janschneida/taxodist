@@ -1,5 +1,5 @@
 from treelib import Tree
-import td_utils as utils
+from src.taxodist import td_utils as utils
 import math
 
 def getICSanchez(concept: str, tree: Tree):
