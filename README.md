@@ -40,11 +40,13 @@ The available algorithms to calcualte the information content of a concept are:
 
 The following set-similarity algorithms are available:
 
-- Jaccard
-- Dice
-- Cosine
-- Overlap
-- Hierarchical Distance
+- Jaccard (``'jaccard'``)
+- Dice (``'dice'``)
+- Cosine (``'cosine'``)
+- Overlap (``'overlap'``)
+- Mean CS (``'mean_cs'``)
+- Hierarchical Distance (``'hierarchical'``)
+- Bipartite Matching with CS as weight function (``'bipartite_matching'``)
 
 ## Installation
 
