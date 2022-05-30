@@ -46,11 +46,20 @@ def getCSNguyenAlMubaid(concept1: str, concept2: str, lca: str, tree: Tree, dept
 
 def getCSBatet(concept1, concept2, tree):
     """ Cs calculation based on Batet et al. http://dx.doi.org/10.1016/j.jbi.2010.09.002 """
-    ancestors_1 = utils.getAncestors(concept1,tree)
-    ancestors_1.add(concept1)
+    try:
+        if concept1 == concept2:
+            raise ValueError('Batet measure does not support iedntical concept comparisons.')
 
-    ancestors_2 = utils.getAncestors(concept2,tree)
-    ancestors_2.add(concept2)
+        ancestors_1 = utils.getAncestors(concept1,tree)
+        ancestors_1.add(concept1)
 
-    shared_ancestors = ancestors_1.intersection(ancestors_2)
-    return -math.log2((len(ancestors_1)+len(ancestors_2)-len(shared_ancestors))/(len(ancestors_1)+len(ancestors_2)))
+        ancestors_2 = utils.getAncestors(concept2,tree)
+        ancestors_2.add(concept2)
+
+        all_ancestors = ancestors_1.union(ancestors_2)
+
+        shared_ancestors = ancestors_1.intersection(ancestors_2)
+        return -math.log2( (len(all_ancestors)-len(shared_ancestors)) / len(all_ancestors) )
+    except ValueError as err:
+        print(err.args)
+        sys.exit()
