@@ -14,121 +14,133 @@ def main():
     tree = getTestTree()
     depth = tree.depth()
 
-    testICs(tree)
-    testCSs(tree,depth)
+    # testICs(tree)
+    # testCSs(tree,depth)
+    testSetSims(tree,depth)
+
+def testSetSims(tree,depth):
+    
+    return
 
 def testCSs(tree, depth):
 
     
     # WU PALMER TESTS
 
-    cs = utils.getCS(1,1,tree,depth,'level','wu_palmer')
+    cs = utils.getCS(1,1,tree,depth,'levels','wu_palmer')
     assert cs == 1.0
 
-    cs = utils.getCS(1,9,tree,depth,'level','wu_palmer')
+    cs = utils.getCS(1,9,tree,depth,'levels','wu_palmer')
     assert cs == 0.0
 
-    cs = utils.getCS(13,31,tree,depth,'level','wu_palmer')
+    cs = utils.getCS(13,31,tree,depth,'levels','wu_palmer')
     assert math.isclose(cs,0.333,rel_tol=0.01)
 
-    cs = utils.getCS(30,31,tree,depth,'level','wu_palmer')
+    cs = utils.getCS(30,31,tree,depth,'levels','wu_palmer')
     assert cs == 0.75
 
     # LI TESTS
 
-    cs = utils.getCS(1,1,tree,depth,'level','li')
+    cs = utils.getCS(1,1,tree,depth,'levels','li')
     assert cs == 0.0
 
-    cs = utils.getCS(31,31,tree,depth,'level','li')
+    cs = utils.getCS(31,31,tree,depth,'levels','li')
     assert math.isclose(cs,1.412,rel_tol=0.01)
 
-    cs = utils.getCS(1,9,tree,depth,'level','li')
+    cs = utils.getCS(1,9,tree,depth,'levels','li')
     assert cs == 0.0
 
-    cs = utils.getCS(13,31,tree,depth,'level','li')
+    cs = utils.getCS(13,31,tree,depth,'levels','li')
     assert math.isclose(cs,1.195,rel_tol=0.01)
 
-    cs = utils.getCS(30,31,tree,depth,'level','li')
+    cs = utils.getCS(30,31,tree,depth,'levels','li')
     assert math.isclose(cs,1.412,rel_tol=0.01)
 
-    # cs = utils.getCS(70,71,tree,depth,'level','li')
+    # cs = utils.getCS(70,71,tree,depth,'levels','li')
     # assert math.isclose(cs,1.491,rel_tol=0.01)
 
-    # cs = utils.getCS(71,71,tree,depth,'level','li')
+    # cs = utils.getCS(71,71,tree,depth,'levels','li')
     # assert math.isclose(cs,1.491,rel_tol=0.01)
 
     # SIMPLE WU PALMER TESTS
 
-    cs = utils.getCS(1,1,tree,depth,'level','simple_wu_palmer')
+    cs = utils.getCS(1,1,tree,depth,'levels','simple_wu_palmer')
     assert cs == 1.0
 
-    cs = utils.getCS(1,9,tree,depth,'level','simple_wu_palmer')
+    cs = utils.getCS(1,9,tree,depth,'levels','simple_wu_palmer')
     assert cs == 0.0
 
-    cs = utils.getCS(13,31,tree,depth,'level','simple_wu_palmer')
+    cs = utils.getCS(13,31,tree,depth,'levels','simple_wu_palmer')
     assert math.isclose(cs,0.25,rel_tol=0.01)
 
-    cs = utils.getCS(30,31,tree,depth,'level','simple_wu_palmer')
+    cs = utils.getCS(30,31,tree,depth,'levels','simple_wu_palmer')
     assert cs == 0.75
 
     # LEACOCK CHODOROW TESTS
 
-    cs = utils.getCS(1,1,tree,depth,'level','leacock_chodorow')
+    cs = utils.getCS(1,1,tree,depth,'sanchez','leacock_chodorow')
+    assert math.isclose(cs,0.335,rel_tol=0.01)
+
+    cs = utils.getCS(1,9,tree,depth,'sanchez','leacock_chodorow')
+    assert math.isclose(cs,0.022,rel_tol=0.01)
+
+    cs = utils.getCS(13,31,tree,depth,'sanchez','leacock_chodorow')
+    assert math.isclose(cs,0.409,rel_tol=0.01)
+
+    cs = utils.getCS(30,31,tree,depth,'sanchez','leacock_chodorow')
+    assert math.isclose(cs,1.070,rel_tol=0.01)
+
+    cs = utils.getCS(1,1,tree,depth,'levels','leacock_chodorow')
     assert math.isclose(cs,0.980,rel_tol=0.01)
 
-    cs = utils.getCS(1,9,tree,depth,'level','leacock_chodorow')
+    cs = utils.getCS(1,9,tree,depth,'levels','leacock_chodorow')
     assert math.isclose(cs,0.980,rel_tol=0.01)
 
-    cs = utils.getCS(13,31,tree,depth,'level','leacock_chodorow')
+    cs = utils.getCS(13,31,tree,depth,'levels','leacock_chodorow')
     assert math.isclose(cs,0.470,rel_tol=0.01)
 
-    cs = utils.getCS(30,31,tree,depth,'level','leacock_chodorow')
+    cs = utils.getCS(30,31,tree,depth,'levels','leacock_chodorow')
     assert math.isclose(cs,0.980,rel_tol=0.01)
 
     # NGUYEN AL-MUBAID TESTS
 
-    cs = utils.getCS(1,1,tree,depth,'level','nguyen_almubaid')
+    cs = utils.getCS(1,1,tree,depth,'levels','nguyen_almubaid')
     assert math.isclose(cs,1.609,rel_tol=0.01)
 
-    cs = utils.getCS(1,9,tree,depth,'level','nguyen_almubaid')
+    cs = utils.getCS(1,9,tree,depth,'levels','nguyen_almubaid')
     assert math.isclose(cs,1.609,rel_tol=0.01)
 
-    cs = utils.getCS(13,31,tree,depth,'level','nguyen_almubaid')
+    cs = utils.getCS(13,31,tree,depth,'levels','nguyen_almubaid')
     assert math.isclose(cs,2.303,rel_tol=0.01)
 
-    cs = utils.getCS(30,31,tree,depth,'level','nguyen_almubaid')
+    cs = utils.getCS(30,31,tree,depth,'levels','nguyen_almubaid')
     assert math.isclose(cs,0.693,rel_tol=0.01)
 
     # BATET TESTS
 
-    cs = utils.getCS(1,1,tree,depth,'level','nguyen_almubaid')
-    assert math.isclose(cs,1.609,rel_tol=0.01)
+    cs = utils.getCS(1,9,tree,depth,'levels','batet')
+    assert math.isclose(cs,0.585,rel_tol=0.01)  
 
-    cs = utils.getCS(1,9,tree,depth,'level','nguyen_almubaid')
-    assert math.isclose(cs,1.609,rel_tol=0.01)
+    cs = utils.getCS(13,31,tree,depth,'levels','batet')
+    assert math.isclose(cs,0.585,rel_tol=0.01) 
 
-    cs = utils.getCS(13,31,tree,depth,'level','nguyen_almubaid')
-    assert math.isclose(cs,2.303,rel_tol=0.01)
-
-    cs = utils.getCS(30,31,tree,depth,'level','nguyen_almubaid')
-    assert math.isclose(cs,0.693,rel_tol=0.01)
-
-
+    cs = utils.getCS(30,31,tree,depth,'levels','batet')
+    assert math.isclose(cs,1.585,rel_tol=0.01)
 
 def testICs(tree):
-    ic = utils.getIC(0,tree,'level')
+    ic = utils.getIC(0,tree,'levels')
     assert ic == 0
 
-    ic = utils.getIC(1,tree,'level')
+    ic = utils.getIC(1,tree,'levels')
     assert ic == 1
 
-    ic = utils.getIC(10,tree,'level')
+    ic = utils.getIC(10,tree,'levels')
     assert ic == 2
 
-    ic = utils.getIC(20,tree,'level')
+    ic = utils.getIC(20,tree,'levels')
     assert ic == 3
 
-    ic = utils.getIC(31,tree,'level')
+    ic = utils.getIC(31,tree,'levels')
     assert ic == 4
 
     ic = utils.getIC(0,tree,'sanchez')
