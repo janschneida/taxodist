@@ -62,14 +62,13 @@ def getMaxWeightedBipartiteMatchingSim(concepts_1, concepts_2, tree, ic_mode, cs
     ''' Weighted undirected bipartite Graph with weight function CS(a,b). 
         Matching = subset of edges with max weights aka highest similarity for the two given concept-sets. \n
         Returns max-sum of the CS-weighted edges. '''
-    td = td_calc.Taxodist()
+
     # get pairwise-similarity matrix for max bipartite matching
     cs_matrix = utils.getCSMatrix(concepts_1, concepts_2, tree, ic_mode, cs_mode)
     
     # calculate max similarity using hungarian algorithm
-    # TODO use algorithm
-    row_ind, col_ind = linear_sum_assignment(cs_matrix)
-    cs_matrix[row_ind, col_ind].sum()
+    row_ind, col_ind = linear_sum_assignment(cost_matrix=cs_matrix,maximize=True)
+    
+    return cs_matrix[row_ind, col_ind].sum()
 
-    return
 
