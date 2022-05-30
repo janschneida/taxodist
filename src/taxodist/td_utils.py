@@ -12,9 +12,10 @@ from scipy.spatial import distance_matrix
 from sklearn.manifold import MDS
 from treelib.node import Node
 from treelib.tree import Tree
-import cs_algorithms
-import ic_algorithms
-from taxodist import setsim_algorithms
+from src.taxodist import cs_algorithms
+from src.taxodist import ic_algorithms
+from src.taxodist import setsim_algorithms
+from numpy import ndarray
 
 max_ic = None
 
