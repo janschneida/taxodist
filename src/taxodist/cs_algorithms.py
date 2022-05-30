@@ -23,13 +23,17 @@ def getCSSimpleWuPalmer(ic_lca, depth):
     """
     return 1-(depth - ic_lca)/depth
 
-def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree, depth):
+def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree: Tree, depth):
     """
     CS calculation based on redefined Leacock Chodorow measure from Sánchez https://doi.org/10.1016/j.jbi.2011.03.013
     """
-    global max_ic
-    if max_ic is None:
-        max_ic = utils.getMaxIC(tree, ic_mode, depth)
+    if ic_mode == 'levels':
+        max_ic = depth
+    else: 
+        if not tree.contains('max_ic'):
+            utils.setMaxIC(tree, ic_mode)
+        max_ic = tree.get_node('max_ic').data
+        
     return -math.log((ic_1+ic_2-2*ic_lca+1)/(2*max_ic))
 
 def getCSNguyenAlMubaid(concept1: str, concept2: str, lca: str, tree: Tree, depth: int):

@@ -232,9 +232,12 @@ def getConceptCount(tree: treelib.Tree):
     """Returns the number of concepts in a taxonomy."""
     return len(tree.leaves())    
 
-def getMaxIC(tree: Tree, ic_mode: str, depth: int) -> float:
+def setMaxIC(tree: Tree, ic_mode: str) -> float:
+    max_ic = 0
     for node in tree.all_nodes():
         concept = node.identifier
-        ancestor_cnt = len(getAncestors(concept, tree))
-        if ancestor_cnt == depth:
-            return getIC(concept,tree,ic_mode)
+        ic = getIC(concept,tree,ic_mode)
+        if ic > max_ic:
+            max_ic = ic
+    tree.create_node('max_ic','max_ic', data=max_ic,parent=0)
+    return
