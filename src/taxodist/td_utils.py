@@ -135,6 +135,8 @@ def getSetSim(concepts_1: set, concepts_2: set, setsim: str, tree: Tree, cs_mode
                 return setsim_algorithms.getMeanCSSetSim(concepts_1, concepts_2, tree, cs_mode, ic_mode)
             elif setsim == 'hierarchical':
                 return setsim_algorithms.getHierachicalDistSetSim(concepts_1, concepts_2, tree, cs_mode, ic_mode)
+            elif setsim == 'bipartite_matching':
+                return setsim_algorithms.getMaxWeightedBipartiteMatchingSim(concepts_1,concepts_2,tree,ic_mode,cs_mode)
             else:
                 raise ValueError("Unsupported setsim algorithm: ", setsim)
         else:
@@ -241,3 +243,15 @@ def setMaxIC(tree: Tree, ic_mode: str) -> float:
             max_ic = ic
     tree.create_node('max_ic','max_ic', data=max_ic,parent=0)
     return
+
+def getCSMatrix(concepts_1: list, concepts_2: list, tree: Tree, ic_mode, cs_mode) -> ndarray:
+    cs_matrix = np.zeros(shape=(len(concepts_1),len(concepts_2)))
+    depth = tree.depth()
+
+    for concept1 in concepts_1:
+        c1_index = concepts_1.index(concept1)
+        for concept2 in concepts_2:
+            c2_index = concepts_2.index(concept2)
+            cs_matrix[c1_index,c2_index] = getCS(concept1,concept2,tree,depth,ic_mode,cs_mode)
+            
+    return cs_matrix

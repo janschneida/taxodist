@@ -3,6 +3,7 @@ from src.taxodist import td_calc
 from src.taxodist import td_utils as utils
 from treelib import Tree
 import warnings
+from scipy.optimize import linear_sum_assignment
 
 def getJaccardSetSim(concepts_1: set, concepts_2: set):
     """ Returns Jaccard Set Similarity for the given concept sets """
@@ -57,11 +58,18 @@ def getHierachicalDistSetSim(concepts_1: set, concepts_2: set,tree: Tree, cs_mod
 
     return ( first_summand/len(difference_2) + second_summand/len(difference_1) )/len(union) 
 
-def getMaxWeightedBipartiteMatching(concepts_1, concepts_2, tree, ic_mode, cs_mode):
+def getMaxWeightedBipartiteMatchingSim(concepts_1, concepts_2, tree, ic_mode, cs_mode):
     ''' Weighted undirected bipartite Graph with weight function CS(a,b). 
-        Matching = subset of edges with max weights aka highest similarity '''
-    getAdjacencyMatrix(concepts_1, concepts_2, tree, ic_mode, cs_mode)
+        Matching = subset of edges with max weights aka highest similarity for the two given concept-sets. \n
+        Returns max-sum of the CS-weighted edges. '''
+    td = td_calc.Taxodist()
+    # get pairwise-similarity matrix for max bipartite matching
+    cs_matrix = utils.getCSMatrix(concepts_1, concepts_2, tree, ic_mode, cs_mode)
+    
+    # calculate max similarity using hungarian algorithm
+    # TODO use algorithm
+    row_ind, col_ind = linear_sum_assignment(cs_matrix)
+    cs_matrix[row_ind, col_ind].sum()
+
     return
 
-def getAdjacencyMatrix(concepts_1, concepts_2, tree, ic_mode, cs_mode):
-    return
