@@ -119,26 +119,26 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
     #     case 'simple_wu_palmer':
     #         return (depth - ic_lca)/(depth - 1)
 
-def getSetSim(concepts_1: set, concepts_2: set, setsim: str, tree: Tree, cs_mode: str, ic_mode: str) -> float:
+def getSetSim(concepts_1: set, concepts_2: set, setsim_mode: str, tree: Tree, cs_mode: str, ic_mode: str) -> float:
     try:
         if len(concepts_1) != 0 and len(concepts_2) != 0:
             
-            if setsim == 'jaccard':
+            if setsim_mode == 'jaccard':
                 return setsim_algorithms.getJaccardSetSim(concepts_1, concepts_2)
-            elif setsim == 'dice':
+            elif setsim_mode == 'dice':
                 return setsim_algorithms.getDiceSetSim(concepts_1, concepts_2)
-            elif setsim == 'cosine':
+            elif setsim_mode == 'cosine':
                 return setsim_algorithms.getCosineSetSim(concepts_1, concepts_2)
-            elif setsim == 'overlap':
+            elif setsim_mode == 'overlap':
                 return setsim_algorithms.getOverlapSetSim(concepts_1, concepts_2)
-            elif setsim == 'mean_cs':
+            elif setsim_mode == 'mean_cs':
                 return setsim_algorithms.getMeanCSSetSim(concepts_1, concepts_2, tree, cs_mode, ic_mode)
-            elif setsim == 'hierarchical':
+            elif setsim_mode == 'hierarchical':
                 return setsim_algorithms.getHierachicalDistSetSim(concepts_1, concepts_2, tree, cs_mode, ic_mode)
-            elif setsim == 'bipartite_matching':
+            elif setsim_mode == 'bipartite_matching':
                 return setsim_algorithms.getMaxWeightedBipartiteMatchingSim(concepts_1,concepts_2,tree,ic_mode,cs_mode)
             else:
-                raise ValueError("Unsupported setsim algorithm: ", setsim)
+                raise ValueError("Unsupported setsim algorithm: ", setsim_mode)
         else:
             raise ValueError('Empty Concept Set(s)')
     except ValueError as err:
