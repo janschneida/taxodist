@@ -37,7 +37,9 @@ def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree: Tree, depth):
     return -math.log((ic_1+ic_2-2*ic_lca+1)/(2*max_ic))
 
 def getCSNguyenAlMubaid(concept1: str, concept2: str, lca: str, tree: Tree, depth: int):
-    """ CS calculation based on Nguyen & Al-Mubaid https://doi.org/10.1109/TSMCC.2009.2020689 """
+    """ CS calculation based on Nguyen & Al-Mubaid https://doi.org/10.1109/TSMCC.2009.2020689. 
+        This algorithm returns distances as metric. Use calc_mode = 'similarity' for similarity calculations.
+    """
     # TODO add alpha & beta contribution factors
     # TODO lookup reasonable value for k 
     # note: could not find any research on the contribution factors, so we will set them to 1 for now
