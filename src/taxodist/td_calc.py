@@ -118,7 +118,7 @@ class Taxodist:
                 matrix[i, sets.index(set2)] = setsim
             i+=1
 
-        #matrix = utils.mirrorMatrix(matrix)
+        matrix = utils.mirrorMatrix(matrix)
 
         if normalize:
             scaler = preprocessing.MinMaxScaler()
