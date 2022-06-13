@@ -93,10 +93,17 @@ class Taxodist:
         """Use this method when you know, that your concepts are from the same subcategory and that they are leaves."""
         self.calc_distance_with_concepts(concepts=concepts,taxonomy_tree=taxonomy_tree,ic_mode='levels',cs_mode='simple_wu_palmer')
 
-    def calc_dist_for_distinct_concepts(self,concepts: list=None,taxonomy_tree: Tree=None):
+    def calc_dist_for_distinct_concepts(self,concepts: list=None,taxonomy_tree: Tree=None,normalize: bool=False):
         """
         Use this method when you know, that your concepts are more distinct, might not be leaves and you are working
         with a more comprehensive concept background.
         """
-        self.calc_distance_with_concepts(concepts=concepts,taxonomy_tree=taxonomy_tree,ic_mode='sanchez',cs_mode='wu_palmer')
+        self.calc_distance_with_concepts(concepts=concepts,taxonomy_tree=taxonomy_tree,ic_mode='sanchez',cs_mode='wu_palmer',normalize=normalize)
+
+    def calc_similarity_with_concepts(self, concepts: list=None,taxonomy_tree: Tree=None, ic_mode: str='levels', cs_mode: str='simple_wu_palmer', normalize: bool= False, calc_mode: str='similarity'):
+        """
+        Use this method when you want to have similarity scores instead of distances of the given concepts.
+        """
+        self.calc_distance_with_concepts(concepts=concepts,taxonomy_tree=taxonomy_tree,ic_mode=ic_mode,cs_mode=cs_mode,normalize=normalize,calc_mode=calc_mode)
+
 
