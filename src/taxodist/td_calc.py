@@ -60,6 +60,7 @@ class Taxodist:
             concepts = utils.getAllConcepts(taxonomy_tree)
 
         length = len(concepts)
+        #TODO not dist matrix, but sim matrix -> normalize & substract from 1 to get distances
         dist_matrix = np.zeros(shape=(len(concepts), len(concepts)))
 
         fs = []
@@ -75,9 +76,16 @@ class Taxodist:
         
         dist_matrix = utils.mirrorMatrix(dist_matrix)
 
-        # df_mds_coordinates = utils.getMDSMatrix(dist_matrix)
+        if normalize:
+            scaler = preprocessing.MinMaxScaler()
+            dist_matrix = scaler.fit_transform(dist_matrix)
 
-        # utils.saveconceptDistancesInExcel(df_mds_coordinates, concepts)
+        # if calc_mode == 'distance':
+        #     if cs_mode == ''
+
+        df_mds_coordinates = utils.getMDSMatrix(dist_matrix)
+
+        utils.saveConceptDistancesInExcel(df_mds_coordinates, concepts)
 
         return dist_matrix
 
