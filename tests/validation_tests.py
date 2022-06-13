@@ -110,6 +110,9 @@ def testCSs(tree, depth):
     cs = utils.getCS(1,9,tree,depth,'levels','nguyen_almubaid')
     assert math.isclose(cs,1.609,rel_tol=0.01)
 
+    cs = utils.getCS(11,11,tree,depth,'levels','nguyen_almubaid')
+    assert math.isclose(cs,1.386,rel_tol=0.01)
+
     cs = utils.getCS(13,31,tree,depth,'levels','nguyen_almubaid')
     assert math.isclose(cs,2.303,rel_tol=0.01)
 
