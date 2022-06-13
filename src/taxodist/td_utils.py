@@ -245,6 +245,7 @@ def setMaxIC(tree: Tree, ic_mode: str) -> float:
     return
 
 def getCSMatrix(concepts_1: list, concepts_2: list, tree: Tree, ic_mode, cs_mode) -> ndarray:
+    """ Returns CS matrix for given concept sets. """
     cs_matrix = np.zeros(shape=(len(concepts_1),len(concepts_2)))
     depth = tree.depth()
 
