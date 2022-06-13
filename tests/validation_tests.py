@@ -15,16 +15,31 @@ def main():
     depth = tree.depth()
 
     # testICs(tree)
-    # testCSs(tree,depth)
-    testSetSims(tree,depth)
+    testCSs(tree,depth)
+    #testSetSims(tree)
 
-def testSetSims(tree,depth):
+def testSetSims(tree):
     
-    return
+    concepts_1 = (1,2,12,3,31)
+    concepts_2 = (1,11)
+    concepts_3 = (30,31)
+
+    # BIPARTITE MATCHING TESTS
+
+    setsim = utils.getSetSim(concepts_1, concepts_1,'bipartite_matching', tree, 'wu_palmer','levels')
+    assert math.isclose(setsim,5.0,rel_tol=0.01)
+
+    setsim = utils.getSetSim(concepts_1, concepts_2,'bipartite_matching', tree, 'wu_palmer','levels')
+    assert math.isclose(setsim,1.5,rel_tol=0.01)
+
+    setsim = utils.getSetSim(concepts_1, concepts_3,'bipartite_matching', tree, 'wu_palmer','levels')
+    assert math.isclose(setsim,1.333,rel_tol=0.01)
+
+    setsim = utils.getSetSim(concepts_2, concepts_3,'bipartite_matching', tree, 'wu_palmer','levels')
+    assert math.isclose(setsim,0.333,rel_tol=0.01)    
 
 def testCSs(tree, depth):
 
-    
     # WU PALMER TESTS
 
     cs = utils.getCS(1,1,tree,depth,'levels','wu_palmer')
