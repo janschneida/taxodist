@@ -4,13 +4,14 @@ from src.taxodist import td_utils as utils
 import numpy as np
 import concurrent.futures as cf
 from timeit import default_timer as timer
+from sklearn import preprocessing
 
-class DistanceCalculations:
+class Taxodist:
     def __init__(self) -> None:
         pass
-    def calc_distance_with_concepts(self, concepts: list=None,taxonomy_tree: Tree=None, ic_mode: str='levels', cs_mode: str='simple_wu_palmer'):
+    def calc_distance_with_concepts(self, concepts: list=None,taxonomy_tree: Tree=None, ic_mode: str='levels', cs_mode: str='simple_wu_palmer', normalize: bool= False, calc_mode: str='distance'):
         """
-        Computes the similarity of concepts based on their position in the corresponding taxonomy. \n
+        Computes the distance or similarity of concepts based on their position in the corresponding taxonomy. \n
         Saves x and y coordiantes of the concepts in an excel-sheet for further distance calculation. \n
         Saves pairwise distances of the concepts in another excel-sheet.\n
 
@@ -33,9 +34,6 @@ class DistanceCalculations:
         \t\t-'levels' \n
         \t\t-'sanchez' \n
 
-        \tFor a comprehensive take on when to use which algorithm look
-        \tat the README or https://doi.org/10.1186/s12911-019-0807-y
-        \n
         * cs_mode (str):\n
         \tDefines what concept-similarity algorithm should be used. \n
         \tThe following are available:\n
@@ -45,10 +43,6 @@ class DistanceCalculations:
         \t\t-'leacock_chodorow' \n
         \t\t-'nguyen_almubaid' \n
         \t\t-'batet' \n
-
-        \tFor a comprehensive take on when to use which algorithm look
-        \tat the README or https://doi.org/10.1186/s12911-019-0807-y
-        \n
        
         """
 
