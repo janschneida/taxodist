@@ -204,18 +204,18 @@ def getMDSMatrix(dist_matrix):
     df_dist_matrix = pd.DataFrame(dist_matrix_transformed)
     return df_dist_matrix
 
-def mirrorMatrix(dist_matrix):
+def mirrorMatrix(dist_matrix:ndarray) -> ndarray:
     """mirrors uppertriangular distance matrix along its diagonal"""
     return dist_matrix + dist_matrix.T - np.diag(np.diag(dist_matrix))
 
-def plotConcepts(df_mds_coordinates: DataFrame, concepts: list):
+def plotDistMatrix(df_mds_coordinates: DataFrame, concepts: list):
     fig, ax = plt.subplots()
     df_mds_coordinates.plot(0, 1, kind='scatter', ax=ax)
 
     for k, v in df_mds_coordinates.iterrows():
         ax.annotate(concepts[k], v)
 
-    plt.show()
+    plt.show(block=True)
 
 def saveConceptDistancesInExcel(df_mds_coordinates: DataFrame, concepts: list):
     """Saves pairwise concept-distances to excel."""
