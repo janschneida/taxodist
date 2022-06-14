@@ -114,7 +114,7 @@ class Taxodist:
         for set1 in sets:
             set1_index = sets.index(set1)
             for set2 in sets[set1_index:]:
-                setsim = utils.getSetSim(set1, set2,tree=tree,cs_mode=cs_mode, ic_mode=ic_mode, setsim_mode=setsim_mode)
+                setsim = utils.getSetSim(set(set1), set(set2),tree=tree,cs_mode=cs_mode, ic_mode=ic_mode, setsim_mode=setsim_mode)
                 matrix[i, sets.index(set2)] = setsim
             i+=1
     
