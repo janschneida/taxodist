@@ -52,9 +52,12 @@ def getHierachicalDistSetSim(concepts_1: set, concepts_2: set,tree: Tree, cs_mod
     union = concepts_1.union(concepts_2)
     depth = tree.depth()
 
-    first_summand = sum([1 - utils.getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode) for concept_2 in concepts_2 for concept_difference_1 in difference_1])
-
-    second_summand = sum([1 - utils.getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode) for concept_1 in concepts_1 for concept_difference_2 in difference_2])
+    if cs_mode != 'nguyen_almubaid':
+        first_summand = sum([1 - utils.getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode) for concept_2 in concepts_2 for concept_difference_1 in difference_1])
+        second_summand = sum([1 - utils.getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode) for concept_1 in concepts_1 for concept_difference_2 in difference_2])
+    else:
+        first_summand = sum([utils.getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode) for concept_2 in concepts_2 for concept_difference_1 in difference_1])
+        second_summand = sum([utils.getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode) for concept_1 in concepts_1 for concept_difference_2 in difference_2])
 
     return ( first_summand/len(difference_2) + second_summand/len(difference_1) )/len(union) 
 
