@@ -3,6 +3,7 @@ from src.taxodist import td_utils as utils
 from treelib import Tree
 import warnings
 from scipy.optimize import linear_sum_assignment
+from sklearn import preprocessing
 
 def getJaccardSetSim(concepts_1: set, concepts_2: set):
     """ Returns Jaccard Set Similarity for the given concept sets """
@@ -51,14 +52,25 @@ def getHierachicalDistSetSim(concepts_1: set, concepts_2: set,tree: Tree, cs_mod
     union = concepts_1.union(concepts_2)
     depth = tree.depth()
 
-    if cs_mode != 'nguyen_almubaid':
-        first_summand = sum([1 - utils.getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode) for concept_2 in concepts_2 for concept_difference_1 in difference_1])
-        second_summand = sum([1 - utils.getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode) for concept_1 in concepts_1 for concept_difference_2 in difference_2])
-    else:
+    # needs normalized distance as measure 
+    if cs_mode == 'path_based':
         first_summand = sum([utils.getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode) for concept_2 in concepts_2 for concept_difference_1 in difference_1])
         second_summand = sum([utils.getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode) for concept_1 in concepts_1 for concept_difference_2 in difference_2])
+    elif cs_mode == 'nguyen_almubaid':
+        distances_one = [utils.getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode) for concept_2 in concepts_2 for concept_difference_1 in difference_1]
+        normed_distances_one = preprocessing.normalize([distances_one])[0]
+        first_summand = sum(normed_distances_one)
 
-    return ( first_summand/len(difference_2) + second_summand/len(difference_1) )/len(union) 
+        distances_two = [utils.getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode) for concept_1 in concepts_1 for concept_difference_2 in difference_2]
+        normed_distances_two = preprocessing.normalize([distances_two])[0]
+        second_summand = sum(normed_distances_two)
+    else:
+        # TODO not correct yet!!
+        # TODO account for other algorithms by normalizing & substracting from one
+        first_summand = sum([1 - utils.getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode) for concept_2 in concepts_2 for concept_difference_1 in difference_1])
+        second_summand = sum([1 - utils.getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode) for concept_1 in concepts_1 for concept_difference_2 in difference_2])
+
+    return ( first_summand/len(concepts_2) + second_summand/len(concepts_1) )/len(union) 
 
 def getMaxWeightedBipartiteMatchingSim(concepts_1: set, concepts_2: set, tree: Tree, ic_mode, cs_mode):
     ''' Weighted undirected bipartite Graph with weight function CS(a,b). 
