@@ -1,5 +1,4 @@
 import math
-from src.taxodist import td_calc
 from src.taxodist import td_utils as utils
 from treelib import Tree
 import warnings
