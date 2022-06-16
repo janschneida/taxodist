@@ -65,3 +65,8 @@ def getCSBatet(concept1: str, concept2: str, tree: Tree):
     except ValueError as err:
         print(err.args)
         sys.exit()
+
+def getPathBasedDist(concept1: str, concept2: str, tree: Tree, depth):
+    depth_1 = tree.depth(concept1)
+    depth_2 = tree.depth(concept2)
+    return depth/(depth_1+depth_2)
