@@ -77,15 +77,21 @@ def getShortestPath(concept1: str, concept2: str, depth_lca: int, tree: Tree):
 
 def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: str):
     """Returns concept similarity of two concepts based on CS-algorithms from https://doi.org/10.1186/s12911-019-0807-y"""
-    if concept1 == concept2 and ( cs_mode == 'wu_palmer' or cs_mode == 'simple_wu_palmer' ):
-        return 1.0
+    if concept1 == concept2:
+        if cs_mode == 'wu_palmer' or cs_mode == 'simple_wu_palmer':
+            return 1.0
+        elif cs_mode == 'path_based':
+            return 0.0
+    
     lca = getLCA(concept1, concept2, tree, ic_mode)
     ic_lca = getIC(lca, tree,ic_mode)
     ic_1 = getIC(concept1,tree,ic_mode)
     ic_2 = getIC(concept2,tree,ic_mode)
     
     try:
-        
+
+        if cs_mode == 'path_based':
+            return cs_algorithms.getPathBasedDist(concept1,concept2,tree,depth) 
         if cs_mode == 'wu_palmer':
             return cs_algorithms.getCSWuPalmer(ic_1,ic_2,ic_lca) 
         elif cs_mode == 'li':
