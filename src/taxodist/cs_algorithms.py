@@ -46,7 +46,7 @@ def getCSNguyenAlMubaid(concept1: str, concept2: str, lca: str, tree: Tree, dept
     depth_lca = tree.level(lca)
     return math.log((utils.getShortestPath(concept1,concept2,depth_lca,tree)-1)*(depth - depth_lca)+1)
 
-def getCSBatet(concept1, concept2, tree):
+def getCSBatet(concept1: str, concept2: str, tree: Tree):
     """ Cs calculation based on Batet et al. http://dx.doi.org/10.1016/j.jbi.2010.09.002 """
     try:
         if concept1 == concept2:
