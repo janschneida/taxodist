@@ -4,13 +4,14 @@ from src.taxodist import td_utils as utils
 import numpy as np
 import concurrent.futures as cf
 from timeit import default_timer as timer
+from sklearn import preprocessing
 
-class DistanceCalculations:
+class Taxodist:
     def __init__(self) -> None:
         pass
-    def calc_distance_with_concepts(self, concepts: list=None,taxonomy_tree: Tree=None, ic_mode: str='levels', cs_mode: str='simple_wu_palmer'):
+    def calc_distance_with_concepts(self, concepts: list=None,taxonomy_tree: Tree=None, ic_mode: str='levels', cs_mode: str='simple_wu_palmer', normalize: bool= False, calc_mode: str='distance'):
         """
-        Computes the similarity of concepts based on their position in the corresponding taxonomy. \n
+        Computes the distance or similarity of concepts based on their position in the corresponding taxonomy. \n
         Saves x and y coordiantes of the concepts in an excel-sheet for further distance calculation. \n
         Saves pairwise distances of the concepts in another excel-sheet.\n
 
@@ -33,9 +34,6 @@ class DistanceCalculations:
         \t\t-'levels' \n
         \t\t-'sanchez' \n
 
-        \tFor a comprehensive take on when to use which algorithm look
-        \tat the README or https://doi.org/10.1186/s12911-019-0807-y
-        \n
         * cs_mode (str):\n
         \tDefines what concept-similarity algorithm should be used. \n
         \tThe following are available:\n
@@ -45,10 +43,6 @@ class DistanceCalculations:
         \t\t-'leacock_chodorow' \n
         \t\t-'nguyen_almubaid' \n
         \t\t-'batet' \n
-
-        \tFor a comprehensive take on when to use which algorithm look
-        \tat the README or https://doi.org/10.1186/s12911-019-0807-y
-        \n
        
         """
 
@@ -66,6 +60,7 @@ class DistanceCalculations:
             concepts = utils.getAllConcepts(taxonomy_tree)
 
         length = len(concepts)
+        #TODO not dist matrix, but sim matrix -> normalize & substract from 1 to get distances
         dist_matrix = np.zeros(shape=(len(concepts), len(concepts)))
 
         fs = []
@@ -81,9 +76,16 @@ class DistanceCalculations:
         
         dist_matrix = utils.mirrorMatrix(dist_matrix)
 
-        # df_mds_coordinates = utils.getMDSMatrix(dist_matrix)
+        if normalize:
+            scaler = preprocessing.MinMaxScaler()
+            dist_matrix = scaler.fit_transform(dist_matrix)
 
-        # utils.saveconceptDistancesInExcel(df_mds_coordinates, concepts)
+        # if calc_mode == 'distance':
+        #     if cs_mode == ''
+
+        df_mds_coordinates = utils.getMDSMatrix(dist_matrix)
+
+        utils.saveConceptDistancesInExcel(df_mds_coordinates, concepts)
 
         return dist_matrix
 
@@ -91,10 +93,35 @@ class DistanceCalculations:
         """Use this method when you know, that your concepts are from the same subcategory and that they are leaves."""
         self.calc_distance_with_concepts(concepts=concepts,taxonomy_tree=taxonomy_tree,ic_mode='levels',cs_mode='simple_wu_palmer')
 
-    def calc_dist_for_distinct_concepts(self,concepts: list=None,taxonomy_tree: Tree=None):
+    def calc_dist_for_distinct_concepts(self,concepts: list=None,taxonomy_tree: Tree=None,normalize: bool=False):
         """
         Use this method when you know, that your concepts are more distinct, might not be leaves and you are working
         with a more comprehensive concept background.
         """
-        self.calc_distance_with_concepts(concepts=concepts,taxonomy_tree=taxonomy_tree,ic_mode='sanchez',cs_mode='wu_palmer')
+        self.calc_distance_with_concepts(concepts=concepts,taxonomy_tree=taxonomy_tree,ic_mode='sanchez',cs_mode='wu_palmer',normalize=normalize)
 
+    def calc_similarity_with_concepts(self, concepts: list=None,taxonomy_tree: Tree=None, ic_mode: str='levels', cs_mode: str='simple_wu_palmer', normalize: bool= False, calc_mode: str='similarity'):
+        """
+        Use this method when you want to have similarity scores instead of distances of the given concepts.
+        """
+        self.calc_distance_with_concepts(concepts=concepts,taxonomy_tree=taxonomy_tree,ic_mode=ic_mode,cs_mode=cs_mode,normalize=normalize,calc_mode=calc_mode)
+
+    def calc_set_sim(self, sets: list,tree: Tree, ic_mode:str, cs_mode: str, setsim_mode: str, normalize: bool=True) -> np.ndarray:
+        """ Calculates the set similarity/distance of the given concept-sets. Returns the pairwise similarity/distance matrix"""
+        
+        matrix = np.zeros(shape=(len(sets),len(sets)))
+        i = 0
+        for set1 in sets:
+            set1_index = sets.index(set1)
+            for set2 in sets[set1_index:]:
+                setsim = utils.getSetSim(set(set1), set(set2),tree=tree,cs_mode=cs_mode, ic_mode=ic_mode, setsim_mode=setsim_mode)
+                matrix[i, sets.index(set2)] = setsim
+            i+=1
+    
+        matrix = utils.mirrorMatrix(matrix)
+
+        if normalize:
+            scaler = preprocessing.MinMaxScaler()
+            matrix = scaler.fit_transform(matrix)
+            
+        return matrix

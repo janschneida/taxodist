@@ -17,6 +17,7 @@ from treelib.tree import Tree
 from src.taxodist import cs_algorithms
 from src.taxodist import ic_algorithms
 from src.taxodist import setsim_algorithms
+from numpy import ndarray
 
 max_ic = None
 
@@ -78,15 +79,21 @@ def getShortestPath(concept1: str, concept2: str, depth_lca: int, tree: Tree):
 
 def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: str):
     """Returns concept similarity of two concepts based on CS-algorithms from https://doi.org/10.1186/s12911-019-0807-y"""
-    if concept1 == concept2 and ( cs_mode == 'wu_palmer' or cs_mode == 'simple_wu_palmer' ):
-        return 1.0
+    if concept1 == concept2:
+        if cs_mode == 'wu_palmer' or cs_mode == 'simple_wu_palmer':
+            return 1.0
+        elif cs_mode == 'path_based':
+            return 0.0
+    
     lca = getLCA(concept1, concept2, tree, ic_mode)
     ic_lca = getIC(lca, tree,ic_mode)
     ic_1 = getIC(concept1,tree,ic_mode)
     ic_2 = getIC(concept2,tree,ic_mode)
     
     try:
-        
+
+        if cs_mode == 'path_based':
+            return cs_algorithms.getPathBasedDist(concept1,concept2,tree,depth) 
         if cs_mode == 'wu_palmer':
             return cs_algorithms.getCSWuPalmer(ic_1,ic_2,ic_lca) 
         elif cs_mode == 'li':
@@ -120,24 +127,26 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
     #     case 'simple_wu_palmer':
     #         return (depth - ic_lca)/(depth - 1)
 
-def getSetSim(concepts_1: set, concepts_2: set, setsim: str, tree: Tree, cs_mode: str, ic_mode: str):
+def getSetSim(concepts_1: set, concepts_2: set, setsim_mode: str, tree: Tree, cs_mode: str, ic_mode: str) -> float:
     try:
         if len(concepts_1) != 0 and len(concepts_2) != 0:
             
-            if setsim == 'jaccard':
+            if setsim_mode == 'jaccard':
                 return setsim_algorithms.getJaccardSetSim(concepts_1, concepts_2)
-            elif setsim == 'dice':
+            elif setsim_mode == 'dice':
                 return setsim_algorithms.getDiceSetSim(concepts_1, concepts_2)
-            elif setsim == 'cosine':
+            elif setsim_mode == 'cosine':
                 return setsim_algorithms.getCosineSetSim(concepts_1, concepts_2)
-            elif setsim == 'overlap':
+            elif setsim_mode == 'overlap':
                 return setsim_algorithms.getOverlapSetSim(concepts_1, concepts_2)
-            elif setsim == 'mean_cs':
+            elif setsim_mode == 'mean_cs':
                 return setsim_algorithms.getMeanCSSetSim(concepts_1, concepts_2, tree, cs_mode, ic_mode)
-            elif setsim == 'hierarchical':
+            elif setsim_mode == 'hierarchical':
                 return setsim_algorithms.getHierachicalDistSetSim(concepts_1, concepts_2, tree, cs_mode, ic_mode)
+            elif setsim_mode == 'bipartite_matching':
+                return setsim_algorithms.getMaxWeightedBipartiteMatchingSim(concepts_1,concepts_2,tree,ic_mode,cs_mode)
             else:
-                raise ValueError("Unsupported setsim algorithm: ", setsim)
+                raise ValueError("Unsupported setsim algorithm: ", setsim_mode)
         else:
             raise ValueError('Empty Concept Set(s)')
     except ValueError as err:
@@ -203,18 +212,18 @@ def getMDSMatrix(dist_matrix):
     df_dist_matrix = pd.DataFrame(dist_matrix_transformed)
     return df_dist_matrix
 
-def mirrorMatrix(dist_matrix):
+def mirrorMatrix(dist_matrix:ndarray) -> ndarray:
     """mirrors uppertriangular distance matrix along its diagonal"""
     return dist_matrix + dist_matrix.T - np.diag(np.diag(dist_matrix))
 
-def plotConcepts(df_mds_coordinates: DataFrame, concepts: list):
+def plotDistMatrix(df_mds_coordinates: DataFrame, concepts: list):
     fig, ax = plt.subplots()
     df_mds_coordinates.plot(0, 1, kind='scatter', ax=ax)
 
     for k, v in df_mds_coordinates.iterrows():
         ax.annotate(concepts[k], v)
 
-    plt.show()
+    plt.show(block=True)
 
 def saveConceptDistancesInExcel(df_mds_coordinates: DataFrame, concepts: list):
     """Saves pairwise concept-distances to excel."""
@@ -233,9 +242,25 @@ def getConceptCount(tree: treelib.Tree):
     """Returns the number of concepts in a taxonomy."""
     return len(tree.leaves())    
 
-def getMaxIC(tree: Tree, ic_mode: str, depth: int) -> float:
+def setMaxIC(tree: Tree, ic_mode: str) -> float:
+    max_ic = 0
     for node in tree.all_nodes():
         concept = node.identifier
-        ancestor_cnt = len(getAncestors(concept, tree))
-        if ancestor_cnt == depth:
-            return getIC(concept,tree,ic_mode)
+        ic = getIC(concept,tree,ic_mode)
+        if ic > max_ic:
+            max_ic = ic
+    tree.create_node('max_ic','max_ic', data=max_ic,parent=0)
+    return
+
+def getCSMatrix(concepts_1: list, concepts_2: list, tree: Tree, ic_mode, cs_mode) -> ndarray:
+    """ Returns CS matrix for given concept sets. """
+    cs_matrix = np.zeros(shape=(len(concepts_1),len(concepts_2)))
+    depth = tree.depth()
+
+    for concept1 in concepts_1:
+        c1_index = concepts_1.index(concept1)
+        for concept2 in concepts_2:
+            c2_index = concepts_2.index(concept2)
+            cs_matrix[c1_index,c2_index] = getCS(concept1,concept2,tree,depth,ic_mode,cs_mode)
+            
+    return cs_matrix

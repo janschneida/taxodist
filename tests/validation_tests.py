@@ -12,125 +12,160 @@ class validation_tests(unittest.TestCase):
 
     The ground-truth is derived by manually calculating the values for the respective codes.
     """
-    def setUp(self):
-        self.tree = getTestTree()
-        self.depth = self.tree.depth()
+    tree = getTestTree()
+    depth = tree.depth()
 
-    # def test_SetSims(self,tree, depth):
-    #     return
+    # testICs(tree)
+    testCSs(tree,depth)
+    #testSetSims(tree)
 
-    def test_CSs(self):
-        # WU PALMER TESTS
+def testSetSims(tree):
+    
+    concepts_1 = (1,2,12,3,31)
+    concepts_2 = (1,11)
+    concepts_3 = (30,31)
 
-        cs = utils.getCS(1,1,self.tree,self.depth,'level','wu_palmer')
-        self.assertEqual(cs,1.0)
+    # BIPARTITE MATCHING TESTS
 
-        cs = utils.getCS(1,9,self.tree,self.depth,'level','wu_palmer')
-        self.assertEqual(cs,0.0)
+    setsim = utils.getSetSim(concepts_1, concepts_1,'bipartite_matching', tree, 'wu_palmer','levels')
+    assert math.isclose(setsim,5.0,rel_tol=0.01)
+
+    setsim = utils.getSetSim(concepts_1, concepts_2,'bipartite_matching', tree, 'wu_palmer','levels')
+    assert math.isclose(setsim,1.5,rel_tol=0.01)
+
+    setsim = utils.getSetSim(concepts_1, concepts_3,'bipartite_matching', tree, 'wu_palmer','levels')
+    assert math.isclose(setsim,1.333,rel_tol=0.01)
+
+    setsim = utils.getSetSim(concepts_2, concepts_3,'bipartite_matching', tree, 'wu_palmer','levels')
+    assert math.isclose(setsim,0.333,rel_tol=0.01)    
+
+def testCSs(tree, depth):
+
+    # WU PALMER TESTS
+
+    cs = utils.getCS(1,1,tree,depth,'levels','wu_palmer')
+    assert cs == 1.0
+
+    cs = utils.getCS(1,9,tree,depth,'levels','wu_palmer')
+    assert cs == 0.0
+
+    cs = utils.getCS(13,31,tree,depth,'levels','wu_palmer')
+    assert math.isclose(cs,0.333,rel_tol=0.01)
+
+    cs = utils.getCS(30,31,tree,depth,'levels','wu_palmer')
+    assert cs == 0.75
 
         cs = utils.getCS(13,31,self.tree,self.depth,'level','wu_palmer')
         self.assertAlmostEqual(cs,0.333,delta=0.001)
 
-        cs = utils.getCS(30,31,self.tree,self.depth,'level','wu_palmer')
-        self.assertEqual(cs,0.75)
+    cs = utils.getCS(1,1,tree,depth,'levels','li')
+    assert cs == 0.0
 
-        # LI TESTS
+    cs = utils.getCS(31,31,tree,depth,'levels','li')
+    assert math.isclose(cs,1.412,rel_tol=0.01)
 
-        cs = utils.getCS(1,1,self.tree,self.depth,'level','li')
-        self.assertEqual(cs,0.0)
+    cs = utils.getCS(1,9,tree,depth,'levels','li')
+    assert cs == 0.0
 
-        cs = utils.getCS(31,31,self.tree,self.depth,'level','li')
-        self.assertAlmostEqual(cs,1.412,delta=0.001)
+    cs = utils.getCS(13,31,tree,depth,'levels','li')
+    assert math.isclose(cs,1.195,rel_tol=0.01)
 
-        cs = utils.getCS(1,9,self.tree,self.depth,'level','li')
-        self.assertEqual(cs,0.0)
+    cs = utils.getCS(30,31,tree,depth,'levels','li')
+    assert math.isclose(cs,1.412,rel_tol=0.01)
 
-        cs = utils.getCS(13,31,self.tree,self.depth,'level','li')
-        self.assertAlmostEqual(cs,1.195,delta=0.001)
+    # cs = utils.getCS(70,71,tree,depth,'levels','li')
+    # assert math.isclose(cs,1.491,rel_tol=0.01)
 
-        cs = utils.getCS(30,31,self.tree,self.depth,'level','li')
-        self.assertAlmostEqual(cs,1.412,delta=0.001)
+    # cs = utils.getCS(71,71,tree,depth,'levels','li')
+    # assert math.isclose(cs,1.491,rel_tol=0.01)
 
         # cs = utils.getCS(70,71,self.tree,self.depth,'level','li')
         # assert math.isclose(cs,1.491,rel_tol=0.01)
 
-        # cs = utils.getCS(71,71,self.tree,self.depth,'level','li')
-        # assert math.isclose(cs,1.491,rel_tol=0.01)
+    cs = utils.getCS(1,1,tree,depth,'levels','simple_wu_palmer')
+    assert cs == 1.0
 
-        # SIMPLE WU PALMER TESTS
+    cs = utils.getCS(1,9,tree,depth,'levels','simple_wu_palmer')
+    assert cs == 0.0
 
-        cs = utils.getCS(1,1,self.tree,self.depth,'level','simple_wu_palmer')
-        self.assertEqual(cs,1.0)
+    cs = utils.getCS(13,31,tree,depth,'levels','simple_wu_palmer')
+    assert math.isclose(cs,0.25,rel_tol=0.01)
 
-        cs = utils.getCS(1,9,self.tree,self.depth,'level','simple_wu_palmer')
-        self.assertEqual(cs,0.0)
+    cs = utils.getCS(30,31,tree,depth,'levels','simple_wu_palmer')
+    assert cs == 0.75
 
         cs = utils.getCS(13,31,self.tree,self.depth,'level','simple_wu_palmer')
         self.assertAlmostEqual(cs,0.25,delta=0.01)
 
-        cs = utils.getCS(30,31,self.tree,self.depth,'level','simple_wu_palmer')
-        self.assertEqual(cs,0.75)
+    cs = utils.getCS(1,1,tree,depth,'sanchez','leacock_chodorow')
+    assert math.isclose(cs,0.335,rel_tol=0.01)
 
-        # LEACOCK CHODOROW TESTS
+    cs = utils.getCS(1,9,tree,depth,'sanchez','leacock_chodorow')
+    assert math.isclose(cs,0.022,rel_tol=0.01)
 
-        cs = utils.getCS(1,1,self.tree,self.depth,'level','leacock_chodorow')
-        self.assertAlmostEqual(cs,0.980,delta=0.001)
+    cs = utils.getCS(13,31,tree,depth,'sanchez','leacock_chodorow')
+    assert math.isclose(cs,0.409,rel_tol=0.01)
 
-        cs = utils.getCS(1,9,self.tree,self.depth,'level','leacock_chodorow')
-        self.assertAlmostEqual(cs,0.980,delta=0.001)
+    cs = utils.getCS(30,31,tree,depth,'sanchez','leacock_chodorow')
+    assert math.isclose(cs,1.070,rel_tol=0.01)
+
+    cs = utils.getCS(1,1,tree,depth,'levels','leacock_chodorow')
+    assert math.isclose(cs,0.980,rel_tol=0.01)
+
+    cs = utils.getCS(1,9,tree,depth,'levels','leacock_chodorow')
+    assert math.isclose(cs,0.980,rel_tol=0.01)
+
+    cs = utils.getCS(13,31,tree,depth,'levels','leacock_chodorow')
+    assert math.isclose(cs,0.470,rel_tol=0.01)
+
+    cs = utils.getCS(30,31,tree,depth,'levels','leacock_chodorow')
+    assert math.isclose(cs,0.980,rel_tol=0.01)
 
         cs = utils.getCS(13,31,self.tree,self.depth,'level','leacock_chodorow')
         self.assertAlmostEqual(cs,0.470,delta=0.001)
 
-        cs = utils.getCS(30,31,self.tree,self.depth,'level','leacock_chodorow')
-        self.assertAlmostEqual(cs,0.980,delta=0.001)
+    cs = utils.getCS(1,1,tree,depth,'levels','nguyen_almubaid')
+    assert math.isclose(cs,1.609,rel_tol=0.01)
 
-        # NGUYEN AL-MUBAID TESTS
+    cs = utils.getCS(1,9,tree,depth,'levels','nguyen_almubaid')
+    assert math.isclose(cs,1.609,rel_tol=0.01)
 
-        cs = utils.getCS(1,1,self.tree,self.depth,'level','nguyen_almubaid')
-        self.assertAlmostEqual(cs,1.609,delta=0.001)
+    cs = utils.getCS(11,11,tree,depth,'levels','nguyen_almubaid')
+    assert math.isclose(cs,1.386,rel_tol=0.01)
 
-        cs = utils.getCS(1,9,self.tree,self.depth,'level','nguyen_almubaid')
-        self.assertAlmostEqual(cs,1.609,delta=0.001)
+    cs = utils.getCS(13,31,tree,depth,'levels','nguyen_almubaid')
+    assert math.isclose(cs,2.303,rel_tol=0.01)
+
+    cs = utils.getCS(30,31,tree,depth,'levels','nguyen_almubaid')
+    assert math.isclose(cs,0.693,rel_tol=0.01)
 
         cs = utils.getCS(13,31,self.tree,self.depth,'level','nguyen_almubaid')
         self.assertAlmostEqual(cs,2.303,delta=0.001)
 
-        cs = utils.getCS(30,31,self.tree,self.depth,'level','nguyen_almubaid')
-        self.assertAlmostEqual(cs,0.693,delta=0.001)
+    cs = utils.getCS(1,9,tree,depth,'levels','batet')
+    assert math.isclose(cs,0.585,rel_tol=0.01)  
 
-        # BATET TESTS
-        # TODO nach rechnen
-        # cs = utils.getCS(1,1,self.tree,self.depth,'level','batet')
-        # self.assertAlmostEqual(cs,1.609,delta=0.001)
+    cs = utils.getCS(13,31,tree,depth,'levels','batet')
+    assert math.isclose(cs,0.585,rel_tol=0.01) 
 
-        # cs = utils.getCS(1,9,self.tree,self.depth,'level','batet')
-        # self.assertAlmostEqual(cs,1.609,delta=0.001)
+    cs = utils.getCS(30,31,tree,depth,'levels','batet')
+    assert math.isclose(cs,1.585,rel_tol=0.01)
 
-        # cs = utils.getCS(13,31,self.tree,self.depth,'level','batet')
-        # self.assertAlmostEqual(cs,1.609,delta=0.001)
+def testICs(tree):
+    ic = utils.getIC(0,tree,'levels')
+    assert ic == 0
 
-        # cs = utils.getCS(30,31,self.tree,self.depth,'level','batet')
-        # self.assertAlmostEqual(cs,1.609,delta=0.001)
+    ic = utils.getIC(1,tree,'levels')
+    assert ic == 1
 
-    def test_ICs(self):
-        ic = utils.getIC(0,self.tree,'level')
-        self.assertEqual(ic,0)
+    ic = utils.getIC(10,tree,'levels')
+    assert ic == 2
 
-        ic = utils.getIC(1,self.tree,'level')
-        self.assertEqual(ic,1)
+    ic = utils.getIC(20,tree,'levels')
+    assert ic == 3
 
-        ic = utils.getIC(10,self.tree,'level')
-        self.assertEqual(ic,2)
-
-        ic = utils.getIC(20,self.tree,'level')
-        self.assertEqual(ic,3)
-
-        ic = utils.getIC(31,self.tree,'level')
-        self.assertEqual(ic,4)
-
-        ic = utils.getIC(0,self.tree,'sanchez')
-        self.assertEqual(ic,0.0)
+    ic = utils.getIC(31,tree,'levels')
+    assert ic == 4
 
         ic = utils.getIC(1,self.tree,'sanchez')
         self.assertAlmostEqual(ic,1.386,delta=0.001)
@@ -144,7 +179,7 @@ class validation_tests(unittest.TestCase):
         ic = utils.getIC(30,self.tree,'sanchez')
         self.assertAlmostEqual(ic,2.639,delta=0.001)
 
-def getTestTree():
+def getTestTree() -> Tree:
     tree = treelib.Tree()
     tree.create_node('test', 0)
 

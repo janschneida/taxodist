@@ -23,7 +23,7 @@ The package already offers the following taxonomies to perform calculations on:
 
 ### Implemented Algorithms
 
-We conducted an extensive review of the literature regarding similarity-metrics and found the following concept-level similarity algorithms to be most valuable:
+We conducted an extensive review of the literature regarding similarity-metrics and found the following concept-level similarity/distance algorithms to be most valuable:
 
 - Wu-Palmer Similarity Measure (`'wu_palmer'`)
 - Simplified version of Wu-Palmer for cases where one knows that the compared concepts are on the deepest level (``'simple_wu_palmer'``)
@@ -40,11 +40,13 @@ The available algorithms to calcualte the information content of a concept are:
 
 The following set-similarity algorithms are available:
 
-- Jaccard
-- Dice
-- Cosine
-- Overlap
-- Hierarchical Distance
+- Jaccard (``'jaccard'``)
+- Dice (``'dice'``)
+- Cosine (``'cosine'``)
+- Overlap (``'overlap'``)
+- Mean CS (``'mean_cs'``)
+- Hierarchical Distance (instead of using the path-based distance metric proposed by Girardi et al., you can choose a metric from above) (``'hierarchical'``)
+- Bipartite Matching with CS as weight function (``'bipartite_matching'``)
 
 ## Installation
 
