@@ -9,3 +9,10 @@
 performance_evaluation.py
 run_performance_tests.py
 testree.txt
+pyproject.toml
+dist/taxodist-0.0.0.tar.gz
+taxodist.egg-info/dependency_links.txt
+taxodist.egg-info/PKG-INFO
+taxodist.egg-info/SOURCES.txt
+taxodist.egg-info/requires.txt
+taxodist.egg-info/top_level.txt
