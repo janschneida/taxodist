@@ -3,10 +3,10 @@ import os
 sys.path.append(os.getcwd())
 import math
 import treelib
+from treelib.tree import Tree
 from src.taxodist import td_utils as utils
-import unittest
 
-class validation_tests(unittest.TestCase):
+def main():
     """
     Runs tests with different codes to validate the implemented algorithms.\n
 
@@ -16,8 +16,8 @@ class validation_tests(unittest.TestCase):
     depth = tree.depth()
 
     # testICs(tree)
-    testCSs(tree,depth)
-    #testSetSims(tree)
+    # testCSs(tree,depth)
+    testSetSims(tree)
 
 def testSetSims(tree):
     
@@ -55,9 +55,6 @@ def testCSs(tree, depth):
     cs = utils.getCS(30,31,tree,depth,'levels','wu_palmer')
     assert cs == 0.75
 
-        cs = utils.getCS(13,31,self.tree,self.depth,'level','wu_palmer')
-        self.assertAlmostEqual(cs,0.333,delta=0.001)
-
     cs = utils.getCS(1,1,tree,depth,'levels','li')
     assert cs == 0.0
 
@@ -79,9 +76,6 @@ def testCSs(tree, depth):
     # cs = utils.getCS(71,71,tree,depth,'levels','li')
     # assert math.isclose(cs,1.491,rel_tol=0.01)
 
-        # cs = utils.getCS(70,71,self.tree,self.depth,'level','li')
-        # assert math.isclose(cs,1.491,rel_tol=0.01)
-
     cs = utils.getCS(1,1,tree,depth,'levels','simple_wu_palmer')
     assert cs == 1.0
 
@@ -93,9 +87,6 @@ def testCSs(tree, depth):
 
     cs = utils.getCS(30,31,tree,depth,'levels','simple_wu_palmer')
     assert cs == 0.75
-
-        cs = utils.getCS(13,31,self.tree,self.depth,'level','simple_wu_palmer')
-        self.assertAlmostEqual(cs,0.25,delta=0.01)
 
     cs = utils.getCS(1,1,tree,depth,'sanchez','leacock_chodorow')
     assert math.isclose(cs,0.335,rel_tol=0.01)
@@ -121,9 +112,6 @@ def testCSs(tree, depth):
     cs = utils.getCS(30,31,tree,depth,'levels','leacock_chodorow')
     assert math.isclose(cs,0.980,rel_tol=0.01)
 
-        cs = utils.getCS(13,31,self.tree,self.depth,'level','leacock_chodorow')
-        self.assertAlmostEqual(cs,0.470,delta=0.001)
-
     cs = utils.getCS(1,1,tree,depth,'levels','nguyen_almubaid')
     assert math.isclose(cs,1.609,rel_tol=0.01)
 
@@ -138,9 +126,6 @@ def testCSs(tree, depth):
 
     cs = utils.getCS(30,31,tree,depth,'levels','nguyen_almubaid')
     assert math.isclose(cs,0.693,rel_tol=0.01)
-
-        cs = utils.getCS(13,31,self.tree,self.depth,'level','nguyen_almubaid')
-        self.assertAlmostEqual(cs,2.303,delta=0.001)
 
     cs = utils.getCS(1,9,tree,depth,'levels','batet')
     assert math.isclose(cs,0.585,rel_tol=0.01)  
@@ -167,18 +152,6 @@ def testICs(tree):
     ic = utils.getIC(31,tree,'levels')
     assert ic == 4
 
-        ic = utils.getIC(1,self.tree,'sanchez')
-        self.assertAlmostEqual(ic,1.386,delta=0.001)
-
-        ic = utils.getIC(10,self.tree,'sanchez')
-        self.assertAlmostEqual(ic,2.128,delta=0.001)
-
-        ic = utils.getIC(20,self.tree,'sanchez')
-        self.assertAlmostEqual(ic,2.233,delta=0.001)
-
-        ic = utils.getIC(30,self.tree,'sanchez')
-        self.assertAlmostEqual(ic,2.639,delta=0.001)
-
 def getTestTree() -> Tree:
     tree = treelib.Tree()
     tree.create_node('test', 0)
@@ -199,8 +172,8 @@ def getTestTree() -> Tree:
 
     # tree.create_node(70,70,parent=60)
     # tree.create_node(71,71,parent=60)
-    tree.save2file('testtree.txt')
+    # tree.save2file('testtree.txt')
     return tree
 
 if __name__ == '__main__': 
-    unittest.main()
+    main()
