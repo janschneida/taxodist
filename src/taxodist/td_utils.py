@@ -232,11 +232,12 @@ def saveConceptDistancesInExcel(df_mds_coordinates: DataFrame, concepts: list):
     df = pd.DataFrame(dm)
     df.to_excel('concept_distances.xlsx')
 
-def getRandomConcepts(concept_cnt: int,tree: treelib.Tree) -> list:
+def getRandomConcepts(concept_cnt: int,tree: treelib.Tree) -> set:
     """Returns list with concept_cnt random concepts from the given taxonomy tree."""
     nodes: list[Node]
     nodes = random.sample(tree.all_nodes(),concept_cnt)
-    return [x.identifier for x in nodes]
+    concepts = [x.identifier for x in nodes]
+    return set(concepts)
 
 def getConceptCount(tree: treelib.Tree):
     """Returns the number of concepts in a taxonomy."""
