@@ -265,3 +265,6 @@ def getCSMatrix(concepts_1: list, concepts_2: list, tree: Tree, ic_mode, cs_mode
             cs_matrix[c1_index,c2_index] = getCS(concept1,concept2,tree,depth,ic_mode,cs_mode)
             
     return cs_matrix
+
+def normalize(matrix: ndarray) -> ndarray:
+    return matrix/np.max(matrix)

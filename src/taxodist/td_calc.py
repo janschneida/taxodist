@@ -77,8 +77,7 @@ class Taxodist:
         dist_matrix = utils.mirrorMatrix(dist_matrix)
 
         if normalize:
-            scaler = preprocessing.MinMaxScaler()
-            dist_matrix = scaler.fit_transform(dist_matrix)
+            dist_matrix = utils.normalize(dist_matrix)
 
         # if calc_mode == 'distance':
         #     if cs_mode == ''
