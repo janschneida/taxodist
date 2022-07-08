@@ -203,7 +203,7 @@ def getDistMatrixWrapper(p):
     """Wrapper for the parallel-process-function"""
     return getDistMatrix(*p)
 
-def getMDSMatrix(dist_matrix):
+def getMDSMatrix(dist_matrix: ndarray) -> DataFrame:
     """Computes multi-dimensionally-scaled two-dimensional concept-coordinates based on a pairwise-distance-matrix"""
     # use MDS to compute the relative distances of the distinct concepts
     embedding = MDS(n_components=2)
@@ -216,12 +216,12 @@ def mirrorMatrix(dist_matrix:ndarray) -> ndarray:
     """mirrors uppertriangular distance matrix along its diagonal"""
     return dist_matrix + dist_matrix.T - np.diag(np.diag(dist_matrix))
 
-def plotDistMatrix(df_mds_coordinates: DataFrame, concepts: list):
+def plotDistMatrix(coordinates: DataFrame, datapoints: list):
     fig, ax = plt.subplots()
-    df_mds_coordinates.plot(0, 1, kind='scatter', ax=ax)
+    coordinates.plot(0, 1, kind='scatter', ax=ax)
 
-    for k, v in df_mds_coordinates.iterrows():
-        ax.annotate(concepts[k], v)
+    for k, v in coordinates.iterrows():
+        ax.annotate(datapoints[k], v)
 
     plt.show(block=True)
 
@@ -239,7 +239,7 @@ def getRandomConcepts(concept_cnt: int,tree: treelib.Tree) -> set:
     concepts = [x.identifier for x in nodes]
     return set(concepts)
 
-def getConceptCount(tree: treelib.Tree):
+def getConceptCount(tree: treelib.Tree) -> int:
     """Returns the number of concepts in a taxonomy."""
     return len(tree.leaves())    
 
