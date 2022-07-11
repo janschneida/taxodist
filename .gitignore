@@ -3,6 +3,7 @@
 **/taxodist_env
 **/build
 *.xlsx
+!sim_matrix_L_NA_BIP.xlsx
 !icd-codes_examples.xlsx
 !ICD10_xml.xlsx
 *.code-workspace
