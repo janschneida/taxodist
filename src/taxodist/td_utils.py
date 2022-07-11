@@ -219,7 +219,8 @@ def mirrorMatrix(dist_matrix:ndarray) -> ndarray:
 def plotDistMatrix(coordinates: DataFrame, datapoints: list):
     fig, ax = plt.subplots()
     coordinates.plot(0, 1, kind='scatter', ax=ax)
-
+    ax.set_ylabel('')
+    ax.set_xlabel('')
     for k, v in coordinates.iterrows():
         ax.annotate(datapoints[k], v)
 
