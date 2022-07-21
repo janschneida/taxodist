@@ -19,3 +19,4 @@ taxodist.egg-info/requires.txt
 taxodist.egg-info/top_level.txt
 !pancreas_pats_dist_L_NA_BIP.xlsx
 !pancreas_pats_icd.xlsx
+!**analysis/resources/*
