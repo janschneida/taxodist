@@ -120,7 +120,51 @@ class Taxodist:
         matrix = utils.mirrorMatrix(matrix)
 
         if normalize:
-            scaler = preprocessing.MinMaxScaler()
-            matrix = scaler.fit_transform(matrix)
+            dist_matrix = utils.normalize(dist_matrix)
             
         return matrix
+    
+    def calc_set_sim_par(self, sets: list,tree: Tree, ic_mode:str, cs_mode: str, setsim_mode: str, normalize: bool=True) -> np.ndarray:
+        """ Calculates the set similarity/distance of the given concept-sets. Returns the pairwise similarity/distance matrix"""
+      
+    ######################### SETUP #########################
+        try:
+            if tree is None:
+                raise ValueError('No taxonomy tree')
+            elif tree.depth() == 0:
+                raise ValueError('Empty taxonomy tree')
+        except ValueError as err:
+            print(err.args)
+            sys.exit()
+
+        if not sets:
+            sets = utils.getAllConcepts(tree)
+
+        length = len(sets)
+        #TODO not dist matrix, but sim matrix -> normalize & substract from 1 to get distances
+        dist_matrix = np.zeros(shape=(len(sets), len(sets)))
+
+        fs = []
+        with cf.ProcessPoolExecutor() as executor:
+            max_workers = executor.__getattribute__('_max_workers')
+            for i in range(0,max_workers):
+                # start processes and save return values 
+                fs.append(executor.submit(utils.getSetDistMatrixWrapper, (sets, tree, i+1, max_workers,ic_mode,cs_mode,setsim_mode)))
+        for future in cf.as_completed(fs):
+            # merge partial matrices
+            partial_dist_matrix, worker_index = future.result()
+            dist_matrix[utils.getStart(worker_index,max_workers,length):utils.getStop(worker_index,max_workers,length)] = partial_dist_matrix
+        
+        dist_matrix = utils.mirrorMatrix(dist_matrix)
+
+        if normalize:
+            dist_matrix = utils.normalize(dist_matrix)
+
+        # if calc_mode == 'distance':
+        #     if cs_mode == ''
+
+        # df_mds_coordinates = utils.getMDSMatrix(dist_matrix)
+
+        # utils.saveConceptDistancesInExcel(df_mds_coordinates, concepts)
+
+        return dist_matrix

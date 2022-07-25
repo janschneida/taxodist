@@ -269,3 +269,27 @@ def getCSMatrix(concepts_1: list, concepts_2: list, tree: Tree, ic_mode, cs_mode
 
 def normalize(matrix: ndarray) -> ndarray:
     return matrix/np.max(matrix)
+
+def getSetDistMatrixWrapper(p):
+    """Wrapper for the parallel-process-function"""
+    return getSetDistMatrix(*p)
+
+def getSetDistMatrix(sets: list, tree: Tree, worker_index, max_workers,ic_mode,cs_mode,setsim_mode) -> ndarray:
+    """
+    Function for the parallelized processes. \n 
+    Computes the part of the (absolute) distance matrix of the given conceptsets, 
+    that corresponds to the worker index of the calling process.
+    """
+    length = len(sets)
+    start = getStart(worker_index, max_workers, length)
+    stop = getStop(worker_index, max_workers, length)
+    dist_matrix = np.zeros(shape=(stop-start, length))
+    i = 0
+    for set1 in sets[start:stop]: 
+        set1_index = sets.index(set1)
+        for set2 in sets[set1_index:]:
+            cs = getSetSim(concepts_1=set1, concepts_2=set2, tree=tree,ic_mode=ic_mode,cs_mode=cs_mode,setsim_mode=setsim_mode)
+            # safe CS values in matrix (only upper triangular)
+            dist_matrix[i, sets.index(set2)] = cs
+        i+=1
+    return dist_matrix, worker_index
