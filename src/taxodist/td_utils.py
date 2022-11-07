@@ -293,3 +293,8 @@ def getSetDistMatrix(sets: list, tree: Tree, worker_index, max_workers,ic_mode,c
             dist_matrix[i, sets.index(set2)] = cs
         i+=1
     return dist_matrix, worker_index
+
+def getModifierLabel(root: ET.Element, modifier: str, mod_code: str) -> str:
+    for mod_class in root.iter('ModifierClass'):
+        if mod_class.get('code') == mod_code and mod_class.get('modifier') == modifier:
+            return mod_class.find('Rubric').find('Label').text

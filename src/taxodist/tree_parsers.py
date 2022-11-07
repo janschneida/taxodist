@@ -18,7 +18,8 @@ def getICD10GMTree(version = '2022'):
 
     # create all nodes
     for clss in root.iter('Class'):
-        tree.create_node(clss.get('code'), clss.get('code'), parent=0)
+        data =  clss.find('Rubric').find('Label').text
+        tree.create_node(clss.get('code'), clss.get('code'), parent=0, data=data)
 
     # move them to represent the hierarchy
     for clss in root.iter('Class'):
@@ -33,28 +34,39 @@ def getICD10GMTree(version = '2022'):
         
         class_mods = clss.findall('ModifiedBy')
         if len(class_mods) > 1:
+            # iterate over class modifiers
             for mod1 in root.iter('Modifier'):
                 if mod1.get('code') == class_mods[0].get('code'):
                     for val1 in mod1.iter('SubClass'):
                         for mod2 in root.iter('Modifier'):
                             if mod2.get('code') == class_mods[1].get('code'):
                                 for val2 in mod2.iter('SubClass'):
+                                    # merge the modifier values
+                                    data = clss.find('Rubric').find('Label').text
+                                    data = data+' | '+utils.getModifierLabel(root,mod1.get('code'),val1.get('code'))+' & '+utils.getModifierLabel(root,mod2.get('code'),val2.get('code'))
                                     node_name = parent_name+val1.get('code')+val2.get('code')
-                                    tree.create_node(node_name, node_name, parent=parent)
+                                    tree.create_node(node_name, node_name, parent=parent, data=data)
         else:
-            for cls_mod in clss.iter('ModifiedBy'):
+            for cls_mod in clss.iter('ModifiedBy'): 
                 if cls_mod.get('all') == 'false':
+                    # only add valid modifier codes
                     for modclass in clss.iter('ValidModifierClass'):
-                        node_name = parent_name+modclass.get('code')
-                        tree.create_node(node_name, node_name, parent=parent)
+                        mod_class_code = modclass.get('code')
+                        data = clss.find('Rubric').find('Label').text
+                        data = data+' | '+utils.getModifierLabel(root=root, modifier = cls_mod.get('code'), mod_code = mod_class_code)
+                        node_name = parent_name+mod_class_code
+                        tree.create_node(node_name, node_name, parent=parent, data=data)
                 else:
                     #find corresponding modifier
                     for mod in root.iter('Modifier'):
                         # get values of class modifier
                         if mod.get('code') == cls_mod.get('code'):
                             for value in mod.iter('SubClass'):
-                                node_name = parent_name+value.get('code')
-                                tree.create_node(node_name, node_name, parent=parent)
+                                mod_code = value.get('code')
+                                data = clss.find('Rubric').find('Label').text
+                                data = data+' | '+utils.getModifierLabel(root=root, modifier = mod.get('code'), mod_code = mod_code)
+                                node_name = parent_name+mod_code
+                                tree.create_node(node_name, node_name, parent=parent, data=data)
     
     return tree
 
