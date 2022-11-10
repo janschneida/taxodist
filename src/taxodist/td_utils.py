@@ -144,7 +144,7 @@ def getSetSim(concepts_1: set, concepts_2: set, setsim_mode: str, tree: Tree, cs
             elif setsim_mode == 'hierarchical':
                 return setsim_algorithms.getHierachicalDistSetSim(concepts_1, concepts_2, tree, cs_mode, ic_mode)
             elif setsim_mode == 'bipartite_matching':
-                return setsim_algorithms.getMaxWeightedBipartiteMatchingSim(concepts_1,concepts_2,tree,ic_mode,cs_mode)
+                return setsim_algorithms.getWeightedBipartiteMatchingSim(concepts_1,concepts_2,tree,ic_mode,cs_mode)
             else:
                 raise ValueError("Unsupported setsim algorithm: ", setsim_mode)
         else:
