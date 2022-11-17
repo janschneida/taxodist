@@ -59,18 +59,30 @@ def pancreasPatients():
     # use taxodist to calculate similarity of all patients
     dist_matrix = td.calc_set_sim(pancreas_icd_sets,tree,'levels','nguyen_almubaid','bipartite_matching',normalize=False)
     
-    pd.DataFrame(dist_matrix).to_excel('pancreas_pats_dist_L_NA_BIP.xlsx')
+    # pd.DataFrame(dist_matrix).to_excel('pancreas_pats_dist_L_NA_BIP.xlsx')
     
-    df_mds_coordinates = utils.getMDSMatrix(dist_matrix)
+    # df_mds_coordinates = utils.getMDSMatrix(dist_matrix)
     
-    # plotting/saving figure as svg
-    fig, ax = plt.subplots()
-    df_mds_coordinates.plot(0, 1, kind='scatter', ax=ax)
-    for k, v in df_mds_coordinates.iterrows():
-        ax.annotate(setnames[k], v)
-    plt.savefig('panceas_pats_numbered_pats.svg',format='svg')
-    plt.show()
-    # utils.plotDistMatrix(df_mds_coordinates,setnames)
+    # # plotting/saving figure as svg
+    # fig, ax = plt.subplots()
+    # df_mds_coordinates.plot(0, 1, kind='scatter', ax=ax)
+    # for k, v in df_mds_coordinates.iterrows():
+    #     ax.annotate(setnames[k], v)
+    # plt.savefig('panceas_pats_numbered_pats.svg',format='svg')
+    # plt.show()
+    # # utils.plotDistMatrix(df_mds_coordinates,setnames)
+
+def pancreasPatientsExpertValues():
+    ''' Retrieve & plot expert's similarities '''
+    
+    df = pd.read_excel('analysis\\resources\pankreas_patienten_matrix_MB.xlsx')
+    df = df.drop(axis=1,columns='Unnamed: 0')
+    df = df.set_index(df.columns)
+    df[df.isna()] = 0.0
+
+    matrix = utils.mirrorMatrix(df.to_numpy())
+    df_mds_dist = utils.getMDSMatrix(matrix)
+    # utils.plotDistMatrix(df_mds_dist,df.columns)
 
 if __name__ == '__main__': 
     main()
