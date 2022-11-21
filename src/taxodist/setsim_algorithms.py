@@ -83,11 +83,11 @@ def getWeightedBipartiteMatchingSim(concepts_1: set, concepts_2: set, tree: Tree
     # min for distance measures, max for similarity measures
     if cs_mode == "nguyen_almubaid" or cs_mode == "path_based":
 
-        # calculate min similarity using hungarian algorithm
+        # calculate min distance using hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(cost_matrix=cs_matrix,maximize=False)
     else:
 
-        # calculate max dist using hungarian algorithm
+        # calculate max similarity using hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(cost_matrix=cs_matrix,maximize=True)
 
     return cs_matrix[row_ind, col_ind].sum()
