@@ -293,3 +293,10 @@ def getSetDistMatrix(sets: list, tree: Tree, worker_index, max_workers,ic_mode,c
             dist_matrix[i, sets.index(set2)] = cs
         i+=1
     return dist_matrix, worker_index
+
+def getScaledSetSim(setSim, set1, set2):
+    ''' Used to scale the set-similarities to account for differences in set-sizes that might impair the accuracy of the calculations. '''
+    setDiff = abs(len(set1) - len(set2))
+    len(set1),len(set2)
+    maxSim = min(len(set1),len(set2))
+    return setSim/(maxSim + math.log(setDiff + 1))
