@@ -14,7 +14,8 @@ import matplotlib.pylab as plt
 
 def main():
     #allMOLTBPats()
-    pancreasPatients()
+    #pancreasPatients()
+    runAllSetSims()
     return
     
 
@@ -72,17 +73,52 @@ def pancreasPatients():
     # plt.show()
     # # utils.plotDistMatrix(df_mds_coordinates,setnames)
 
-def pancreasPatientsExpertValues():
+def pancreasPatientsExpertValues() -> np.ndarray:
     ''' Retrieve & plot expert's similarities '''
     
-    df = pd.read_excel('analysis\\resources\pankreas_patienten_matrix_MB.xlsx')
+    df = pd.read_excel('analysis\local\\resources\pankreas_patienten_matrix_MB.xlsx')
     df = df.drop(axis=1,columns='Unnamed: 0')
     df = df.set_index(df.columns)
     df[df.isna()] = 0.0
 
     matrix = utils.mirrorMatrix(df.to_numpy())
-    df_mds_dist = utils.getMDSMatrix(matrix)
+    # df_mds_dist = utils.getMDSMatrix(matrix)
     # utils.plotDistMatrix(df_mds_dist,df.columns)
+    return matrix
+    
+def runAllSetSims():
+    ics = ['levels','sanchez']
+    css = ['nguyen_almubaid','leacock_chodorow','simple_wu_palmer','li','wu_palmer','path_based'] # 'batet', TODO talk about batet -> cant compare same concepts
+    setsims = ['bipartite_matching','hierarchical','mean_cs','overlap','cosine','dice','jaccard']
+    expert_matrix = pancreasPatientsExpertValues()
+    #retrieve patients with pancreas neoplasm (C25) as main diagnoses
+    df_hd_moltb = pd.read_excel('analysis/resources/pseudo_icd10_hauptdiagnose_moltb.xlsx')
+    df_pancreas_hd = df_hd_moltb[df_hd_moltb['ICD-10 Hauptdiagnose'].str.contains('C25')]
+
+    df_moltb = pd.read_excel('analysis/resources/pseudo_icd10_moltb.xlsx')
+    df_patient_icd = df_moltb.groupby(df_moltb.PseudoPatNr.name)['ICD'].agg(list).reset_index(name='ICD')
+    df_pancreas_patient = df_patient_icd[df_patient_icd['PseudoPatNr'].isin(df_pancreas_hd['Pseudonym'])]
+    
+    pancreas_patient_array = df_pancreas_patient.to_numpy()
+    pancreas_icd_sets = [set(icd_list) for patient, icd_list in pancreas_patient_array]
+    # setnames = [str(pseudonym) for pseudonym, icd in pancreas_patient_array]
+    # setnames = ['patient ' + str(i) for i, icd in enumerate(pancreas_patient_array)]
+
+    tree = tree_parsers.getICD10GMTree(version='2021')
+    td = td_calc.Taxodist()
+    
+    for ic in ics:
+        for cs in css:
+            for setsim in setsims:
+                # use taxodist to calculate similarity of all patients
+                td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cs,setsim,normalize=False)
+                mds_matrix = utils.getMDSMatrix(td_matrix)
+                correlation = np.corrcoef(expert_matrix.flatten(),td_matrix.flatten())
+                print(ic,' ',cs,' ',setsim,' correlation: ',correlation)
+                
+                
+                
+            
 
 if __name__ == '__main__': 
     main()
