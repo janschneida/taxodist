@@ -72,7 +72,7 @@ def getHierachicalDistSetSim(concepts_1: set, concepts_2: set,tree: Tree, cs_mod
 
     return ( first_summand/len(concepts_2) + second_summand/len(concepts_1) )/len(union) 
 
-def getMaxWeightedBipartiteMatchingSim(concepts_1: set, concepts_2: set, tree: Tree, ic_mode, cs_mode):
+def getWeightedBipartiteMatchingSim(concepts_1: set, concepts_2: set, tree: Tree, ic_mode, cs_mode):
     ''' Weighted undirected bipartite Graph with weight function CS(a,b). 
         Matching = subset of edges with max weights aka highest similarity (or min weights for distance measures) for the two given concept-sets. \n
         Returns max-sum (or min-sum) of the weighted edges. ''' 
@@ -81,14 +81,14 @@ def getMaxWeightedBipartiteMatchingSim(concepts_1: set, concepts_2: set, tree: T
     cs_matrix = utils.getCSMatrix(list(concepts_1), list(concepts_2), tree, ic_mode, cs_mode)
     
     # min for distance measures, max for similarity measures
-    if cs_mode != "nguyen_almubaid":
+    if cs_mode == "nguyen_almubaid" or cs_mode == "path_based":
+
+        # calculate min distance using hungarian algorithm
+        row_ind, col_ind = linear_sum_assignment(cost_matrix=cs_matrix,maximize=False)
+    else:
 
         # calculate max similarity using hungarian algorithm
         row_ind, col_ind = linear_sum_assignment(cost_matrix=cs_matrix,maximize=True)
-    else:
-
-        # calculate min dist using hungarian algorithm
-        row_ind, col_ind = linear_sum_assignment(cost_matrix=cs_matrix,maximize=False)
 
     return cs_matrix[row_ind, col_ind].sum()
 

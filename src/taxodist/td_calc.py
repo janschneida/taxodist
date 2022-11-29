@@ -1,3 +1,4 @@
+import math
 import sys
 from treelib.tree import Tree
 from src.taxodist import td_utils as utils
@@ -105,7 +106,7 @@ class Taxodist:
         """
         self.calc_distance_with_concepts(concepts=concepts,taxonomy_tree=taxonomy_tree,ic_mode=ic_mode,cs_mode=cs_mode,normalize=normalize,calc_mode=calc_mode)
 
-    def calc_set_sim(self, sets: list,tree: Tree, ic_mode:str, cs_mode: str, setsim_mode: str, normalize: bool=True) -> np.ndarray:
+    def calc_set_sim(self, sets: list,tree: Tree, ic_mode:str, cs_mode: str, setsim_mode: str, normalize: bool=False, scale_to_setsizes: bool = True) -> np.ndarray:
         """ Calculates the set similarity/distance of the given concept-sets. Returns the pairwise similarity/distance matrix"""
         
         matrix = np.zeros(shape=(len(sets),len(sets)))
@@ -113,8 +114,10 @@ class Taxodist:
         for set1 in sets:
             set1_index = sets.index(set1)
             for set2 in sets[set1_index:]:
-                setsim = utils.getSetSim(set(set1), set(set2),tree=tree,cs_mode=cs_mode, ic_mode=ic_mode, setsim_mode=setsim_mode)
-                matrix[i, sets.index(set2)] = setsim
+                setSim = utils.getSetSim(set(set1), set(set2),tree=tree,cs_mode=cs_mode, ic_mode=ic_mode, setsim_mode=setsim_mode)
+                if scale_to_setsizes:
+                    setSim = utils.getScaledSetSim(setSim,set1,set2)
+                matrix[i, sets.index(set2)] = setSim
             i+=1
     
         matrix = utils.mirrorMatrix(matrix)

@@ -144,7 +144,7 @@ def getSetSim(concepts_1: set, concepts_2: set, setsim_mode: str, tree: Tree, cs
             elif setsim_mode == 'hierarchical':
                 return setsim_algorithms.getHierachicalDistSetSim(concepts_1, concepts_2, tree, cs_mode, ic_mode)
             elif setsim_mode == 'bipartite_matching':
-                return setsim_algorithms.getMaxWeightedBipartiteMatchingSim(concepts_1,concepts_2,tree,ic_mode,cs_mode)
+                return setsim_algorithms.getWeightedBipartiteMatchingSim(concepts_1,concepts_2,tree,ic_mode,cs_mode)
             else:
                 raise ValueError("Unsupported setsim algorithm: ", setsim_mode)
         else:
@@ -293,6 +293,13 @@ def getSetDistMatrix(sets: list, tree: Tree, worker_index, max_workers,ic_mode,c
             dist_matrix[i, sets.index(set2)] = cs
         i+=1
     return dist_matrix, worker_index
+
+def getScaledSetSim(setSim, set1, set2):
+    ''' Used to scale the set-similarities to account for differences in set-sizes that might impair the accuracy of the calculations. '''
+    setDiff = abs(len(set1) - len(set2))
+    len(set1),len(set2)
+    maxSim = min(len(set1),len(set2))
+    return setSim/(maxSim + math.log(setDiff + 1))
 
 def getModifierLabel(root: ET.Element, modifier: str, mod_code: str) -> str:
     for mod_class in root.iter('ModifierClass'):
