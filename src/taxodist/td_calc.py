@@ -116,7 +116,7 @@ class Taxodist:
             for set2 in sets[set1_index:]:
                 setSim = utils.getSetSim(set(set1), set(set2),tree=tree,cs_mode=cs_mode, ic_mode=ic_mode, setsim_mode=setsim_mode)
                 if scale_to_setsizes:
-                    setSim = utils.getScaledSetSim(setSim,set1,set2)
+                    setSim = utils.getScaledSetSim(setSim,len(set1),len(set2))
                 matrix[i, sets.index(set2)] = setSim
             i+=1
     

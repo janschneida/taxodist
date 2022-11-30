@@ -294,11 +294,10 @@ def getSetDistMatrix(sets: list, tree: Tree, worker_index, max_workers,ic_mode,c
         i+=1
     return dist_matrix, worker_index
 
-def getScaledSetSim(setSim, set1, set2):
+def getScaledSetSim(setSim, len1, len2):
     ''' Used to scale the set-similarities to account for differences in set-sizes that might impair the accuracy of the calculations. '''
-    setDiff = abs(len(set1) - len(set2))
-    len(set1),len(set2)
-    maxSim = min(len(set1),len(set2))
+    setDiff = abs(len1 - len2)
+    maxSim = min(len1,len2)
     return setSim/(maxSim + math.log(setDiff + 1))
 
 def getModifierLabel(root: ET.Element, modifier: str, mod_code: str) -> str:
