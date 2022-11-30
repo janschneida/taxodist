@@ -258,6 +258,25 @@ def getMaxIC(tree: Tree, ic_mode: str) -> float:
     if not tree.contains('max_ic'):
             setMaxIC(tree, ic_mode)
     return tree.get_node('max_ic').data
+
+def setMaxDistOrSim(tree: Tree, ic_mode: str, cs_mode: str):
+    max_dist_or_sim = 0
+    depth = tree.depth()
+    for node1 in tree.all_nodes():
+        concept1 = node1.identifier
+        for node2 in tree.all_nodes():
+            concept2 = node2.identifier
+            cs = getCS(concept1,concept2,tree,depth,ic_mode,cs_mode)
+            if cs > max_dist_or_sim:
+                max_dist_or_sim = cs
+    tree.create_node('max_dist_or_sim','max_dist_or_sim', data=max_dist_or_sim,parent=0)
+    return
+
+def getMaxDistOrSim(tree: Tree, ic_mode: str, cs_mode: str) -> float:
+    if not tree.contains('max_dist_or_sim'):
+            setMaxDistOrSim(tree, ic_mode, cs_mode)
+    return tree.get_node('max_dist_or_sim').data
+
 def getCSMatrix(concepts_1: list, concepts_2: list, tree: Tree, ic_mode, cs_mode) -> ndarray:
     """ Returns CS matrix for given concept sets. """
     cs_matrix = np.zeros(shape=(len(concepts_1),len(concepts_2)))
