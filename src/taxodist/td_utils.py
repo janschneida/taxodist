@@ -311,9 +311,9 @@ def getSetDistMatrix(sets: list, tree: Tree, worker_index, max_workers,ic_mode,c
     for set1 in sets[start:stop]: 
         set1_index = sets.index(set1)
         for set2 in sets[set1_index:]:
-            cs = getSetSim(concepts_1=set1, concepts_2=set2, tree=tree,ic_mode=ic_mode,cs_mode=cs_mode,setsim_mode=setsim_mode)
-            # safe CS values in matrix (only upper triangular)
-            dist_matrix[i, sets.index(set2)] = cs
+            setsim = getSetSim(concepts_1=set1, concepts_2=set2, tree=tree,ic_mode=ic_mode,cs_mode=cs_mode,setsim_mode=setsim_mode)
+            # safe SetSim values in matrix (only upper triangular)
+            dist_matrix[i, sets.index(set2)] = setsim
         i+=1
     return dist_matrix, worker_index
 
