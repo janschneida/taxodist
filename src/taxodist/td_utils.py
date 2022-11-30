@@ -244,7 +244,7 @@ def getConceptCount(tree: treelib.Tree) -> int:
     """Returns the number of concepts in a taxonomy."""
     return len(tree.leaves())    
 
-def setMaxIC(tree: Tree, ic_mode: str) -> float:
+def setMaxIC(tree: Tree, ic_mode: str):
     max_ic = 0
     for node in tree.all_nodes():
         concept = node.identifier
@@ -254,6 +254,10 @@ def setMaxIC(tree: Tree, ic_mode: str) -> float:
     tree.create_node('max_ic','max_ic', data=max_ic,parent=0)
     return
 
+def getMaxIC(tree: Tree, ic_mode: str) -> float:
+    if not tree.contains('max_ic'):
+            setMaxIC(tree, ic_mode)
+    return tree.get_node('max_ic').data
 def getCSMatrix(concepts_1: list, concepts_2: list, tree: Tree, ic_mode, cs_mode) -> ndarray:
     """ Returns CS matrix for given concept sets. """
     cs_matrix = np.zeros(shape=(len(concepts_1),len(concepts_2)))

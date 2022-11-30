@@ -30,9 +30,7 @@ def getCSLeacockChodorow(ic_1, ic_2, ic_lca, ic_mode, tree: Tree, depth):
     if ic_mode == 'levels':
         max_ic = depth
     else: 
-        if not tree.contains('max_ic'):
-            utils.setMaxIC(tree, ic_mode)
-        max_ic = tree.get_node('max_ic').data
+        max_ic = utils.getMaxIC(tree, ic_mode)
         
     return -math.log((ic_1+ic_2-2*ic_lca+1)/(2*max_ic))
 
