@@ -140,9 +140,6 @@ class Taxodist:
             print(err.args)
             sys.exit()
 
-        if not sets:
-            sets = utils.getAllConcepts(tree)
-
         length = len(sets)
         #TODO not dist matrix, but sim matrix -> normalize & substract from 1 to get distances
         dist_matrix = np.zeros(shape=(len(sets), len(sets)))
