@@ -9,7 +9,7 @@ def getJaccardSetSim(concepts_1: set, concepts_2: set):
     """ Returns Jaccard Set Similarity for the given concept sets """
     
     intersection = len(concepts_1.intersection(concepts_2))
-    union = concepts_1.union(concepts_2)
+    union = len(concepts_1.union(concepts_2))
     if union != 0:
         return float(intersection) / union
     else:
