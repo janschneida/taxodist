@@ -97,10 +97,12 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
     if concept1 == concept2:
         if cs_mode == 'wu_palmer' or cs_mode == 'simple_wu_palmer':
             cs = 1.0
+            cs_table[(concept1,concept2)] = cs
+            return cs
         elif cs_mode == 'path_based':
             cs = 0.0
-        cs_table[(concept1,concept2)] = cs
-        return cs
+            cs_table[(concept1,concept2)] = cs
+            return cs
     
     lca = getLCA(concept1, concept2, tree, ic_mode)
     ic_lca = getIC(lca, tree,ic_mode)
