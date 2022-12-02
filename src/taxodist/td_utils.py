@@ -19,7 +19,9 @@ from src.taxodist import ic_algorithms
 from src.taxodist import setsim_algorithms
 from numpy import ndarray
 
-max_ic = None
+# global hashtables
+ic_table = {}
+cs_table = {}
 
 def iterateOverDiags(parent: ET.Element, parent_node: Node, tree: Tree):
     for diag in parent.iter('diag'):
@@ -34,14 +36,21 @@ def getIC(concept: str, tree: Tree, ic_mode: str):
     based on the IC algorthms from https://doi.org/10.1186/s12911-019-0807-y
     
     """
+    global ic_table 
+    
+    if ic_table.get(concept):
+        return ic_table[concept]
+    
     try:
         if ic_mode == 'levels':
             # IC calculation based on Boriah et al. https://doi.org/10.1137/1.9781611972788.22 
-            return tree.depth(concept)
+            ic = tree.depth(concept)
         elif ic_mode == 'sanchez':
-            return ic_algorithms.getICSanchez(concept,tree)
+            ic = ic_algorithms.getICSanchez(concept,tree)
         else:
             raise ValueError('Unsupported IC-mode: ',ic_mode)
+        ic_table[concept] = ic
+        return ic
     except ValueError as err:
         print(err.args)
         sys.exit()
@@ -79,11 +88,19 @@ def getShortestPath(concept1: str, concept2: str, depth_lca: int, tree: Tree):
 
 def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_mode: str):
     """Returns concept similarity of two concepts based on CS-algorithms from https://doi.org/10.1186/s12911-019-0807-y"""
+    
+    global cs_table
+    
+    if cs_table.get((concept1,concept2)):
+        return cs_table[(concept1,concept2)]
+    
     if concept1 == concept2:
         if cs_mode == 'wu_palmer' or cs_mode == 'simple_wu_palmer':
-            return 1.0
+            cs = 1.0
         elif cs_mode == 'path_based':
-            return 0.0
+            cs = 0.0
+        cs_table[(concept1,concept2)] = cs
+        return cs
     
     lca = getLCA(concept1, concept2, tree, ic_mode)
     ic_lca = getIC(lca, tree,ic_mode)
@@ -93,21 +110,24 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
     try:
 
         if cs_mode == 'path_based':
-            return cs_algorithms.getPathBasedDist(concept1,concept2,tree,depth) 
+            cs = cs_algorithms.getPathBasedDist(concept1,concept2,tree,depth) 
         if cs_mode == 'wu_palmer':
-            return cs_algorithms.getCSWuPalmer(ic_1,ic_2,ic_lca) 
+            cs = cs_algorithms.getCSWuPalmer(ic_1,ic_2,ic_lca) 
         elif cs_mode == 'li':
-            return cs_algorithms.getCSLi(ic_1,ic_2,ic_lca)
+            cs = cs_algorithms.getCSLi(ic_1,ic_2,ic_lca)
         elif cs_mode == 'simple_wu_palmer':
-            return cs_algorithms.getCSSimpleWuPalmer(ic_lca,depth)
+            cs = cs_algorithms.getCSSimpleWuPalmer(ic_lca,depth)
         elif cs_mode == 'leacock_chodorow':
-            return cs_algorithms.getCSLeacockChodorow(ic_1,ic_2,ic_lca,ic_mode,tree,depth)
+            cs = cs_algorithms.getCSLeacockChodorow(ic_1,ic_2,ic_lca,ic_mode,tree,depth)
         elif cs_mode == 'nguyen_almubaid':
-            return cs_algorithms.getCSNguyenAlMubaid(concept1, concept2, lca, tree, depth) 
+            cs = cs_algorithms.getCSNguyenAlMubaid(concept1, concept2, lca, tree, depth) 
         elif cs_mode == 'batet':
-            return cs_algorithms.getCSBatet(concept1, concept2, tree)        
+            cs = cs_algorithms.getCSBatet(concept1, concept2, tree)        
         else:
          raise ValueError('Unsupported CS-mode: ',cs_mode)
+
+        cs_table[(concept1,concept2)] = cs
+        return cs
     except ValueError as err:
         print(err.args)
         sys.exit()
