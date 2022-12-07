@@ -110,17 +110,16 @@ class Taxodist:
         """ Calculates the set similarity/distance of the given concept-sets. Returns the pairwise similarity/distance matrix"""
         
         matrix = np.zeros(shape=(len(sets),len(sets)))
-        i = 0
-        for set1 in sets:
-            set1_index = sets.index(set1)
-            for set2 in sets[set1_index:]:
+        for i, set1 in enumerate(sets):
+            for j, set2 in enumerate(sets[i:]): 
                 setSim = utils.getSetSim(set(set1), set(set2),tree=tree,cs_mode=cs_mode, ic_mode=ic_mode, setsim_mode=setsim_mode)
                 if scale_to_setsizes:
                     setSim = utils.getScaledSetSim(setSim,len(set1),len(set2))
-                matrix[i, sets.index(set2)] = setSim
-            i+=1
+                matrix[i, j+i] = setSim
+                matrix[j+i, i] = setSim
+                #print('calculated patient:',set1_index,'and patient:',sets.index(set2))
     
-        matrix = utils.mirrorMatrix(matrix)
+        #matrix = utils.mirrorMatrix(matrix) 
 
         if normalize:
         # clear hashmaps
