@@ -122,6 +122,8 @@ class Taxodist:
         #matrix = utils.mirrorMatrix(matrix) 
 
         if normalize:
+            matrix = utils.normalize(matrix)
+        
         # clear hashmaps
         utils.cs_table = {}
         utils.ic_table = {}
