@@ -87,13 +87,15 @@ def pancreasPatientsExpertValues() -> np.ndarray:
     return matrix
     
 def runAllSetSims():
+    # TODO normalized correlations + sim/dist mixes
     ics = ['levels','sanchez']
     
     c_dists = ['nguyen_almubaid','path_based']
     setdists = ['bipartite_matching','hierarchical']
     
     c_sims = ['leacock_chodorow','simple_wu_palmer','li','wu_palmer'] # 'batet', TODO talk about batet -> cant compare same concepts
-    setsims = ['mean_cs','overlap','cosine','dice','jaccard']  
+    setsims = ['mean_cs','bipartite_matching'] 
+    setsims_triv = ['overlap','cosine','dice','jaccard']  
     
     expert_sim_matrix = pancreasPatientsExpertValues()
     expert_dist_matrix = 1 - expert_sim_matrix/10
@@ -114,31 +116,53 @@ def runAllSetSims():
     tree = tree_parsers.getICD10GMTree(version='2021')
     td = td_calc.Taxodist()
     
-    # # distance correlations SCALED
-    # for ic in ics:
-    #     for cd in c_dists:
-    #         for sd in setdists:
-    #             combination = ic+'_'+cd+'_'+sd+'_scaled'
-    #             # use taxodist to calculate similarity of all patient sets
-    #             td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cd,sd,normalize=False,scale_to_setsizes=True)
-    #             # mds_matrix = utils.getMDSMatrix(td_matrix)
-    #             correlation = np.corrcoef(expert_dist_matrix.flatten(),td_matrix.flatten())
-    #             print('combination: ',combination,'\ncorrelation: ',correlation)  
-    #             pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
-    #             pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')
+    # # similarity calculations with "trivial" setsims UNSCALED
+    # for setsim in setsims_triv:
+    #     # use taxodist to calculate similarity of all patient sets
+    #     td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic_mode='',cs_mode='',setsim_mode=setsim,normalize=False,scale_to_setsizes=False)
+    #     # mds_matrix = utils.getMDSMatrix(td_matrix)
+    #     correlation = np.corrcoef(expert_sim_matrix.flatten(),td_matrix.flatten())
+    #     combination = setsim+'_unscaled'
+    #     print('combination: ',combination,'\ncorrelation: ',correlation)
+    #     pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
+    #     pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx') 
+        
+    # # similarity calculations with "trivial" setsims SCALED
+    # for setsim in setsims_triv:
+    #     # use taxodist to calculate similarity of all patient sets
+    #     td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic_mode='',cs_mode='',setsim_mode=setsim,normalize=False,scale_to_setsizes=True)
+    #     # mds_matrix = utils.getMDSMatrix(td_matrix)
+    #     correlation = np.corrcoef(expert_sim_matrix.flatten(),td_matrix.flatten())
+    #     combination = setsim+'_scaled'
+    #     print('combination: ',combination,'\ncorrelation: ',correlation)
+    #     pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
+    #     pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')                 
+    
+    # distance correlations SCALED
+    for ic in ics:
+        for cd in c_dists:
+            for sd in setdists:
+                combination = ic+'_'+cd+'_'+sd+'_scaled'
+                # use taxodist to calculate similarity of all patient sets
+                td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cd,sd,normalize=False,scale_to_setsizes=True)
+                # mds_matrix = utils.getMDSMatrix(td_matrix)
+                correlation = np.corrcoef(expert_dist_matrix.flatten(),td_matrix.flatten())
+                print('combination: ',combination,'\ncorrelation: ',correlation)  
+                pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
+                pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')
                 
     # distance correlations UNSCALED
-    # for ic in ics:
-    #     for cd in c_dists:
-    #         for sd in setdists:
-    #             combination = ic+'_'+cd+'_'+sd+'_unscaled'
-    #             # use taxodist to calculate similarity of all patient sets
-    #             td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cd,sd,normalize=False,scale_to_setsizes=False)
-    #             # mds_matrix = utils.getMDSMatrix(td_matrix)
-    #             correlation = np.corrcoef(expert_dist_matrix.flatten(),td_matrix.flatten())
-    #             print('combination: ',combination,'\ncorrelation: ',correlation)  
-    #             pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
-    #             pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')
+    for ic in ics:
+        for cd in c_dists:
+            for sd in setdists:
+                combination = ic+'_'+cd+'_'+sd+'_unscaled'
+                # use taxodist to calculate similarity of all patient sets
+                td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cd,sd,normalize=False,scale_to_setsizes=False)
+                # mds_matrix = utils.getMDSMatrix(td_matrix)
+                correlation = np.corrcoef(expert_dist_matrix.flatten(),td_matrix.flatten())
+                print('combination: ',combination,'\ncorrelation: ',correlation)  
+                pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
+                pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')
                 
     # similarity correlations SCALED        
     for ic in ics:
@@ -154,19 +178,18 @@ def runAllSetSims():
                 pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx') 
                 
     # similarity correlations UNSCALED        
-    for ic in ics:
+    for ic in ics:           
         for cs in c_sims:
             for setsim in setsims:
                 # use taxodist to calculate similarity of all patient sets
                 td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cs,setsim,normalize=False,scale_to_setsizes=False)
                 # mds_matrix = utils.getMDSMatrix(td_matrix)
                 correlation = np.corrcoef(expert_sim_matrix.flatten(),td_matrix.flatten())
-                combination = ic+'_'+cs+'_'+setsim+'_scaled'
+                combination = ic+'_'+cs+'_'+setsim+'_unscaled'
                 print('combination: ',combination,'\ncorrelation: ',correlation)
                 pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
-                pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')              
-                
-            
+                pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')           
+                 
 
 if __name__ == '__main__': 
     main()
