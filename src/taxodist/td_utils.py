@@ -93,15 +93,19 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
     
     if cs_table.get((concept1,concept2)):
         return cs_table[(concept1,concept2)]
+    if cs_table.get((concept2,concept1)):
+        return cs_table[(concept2,concept1)]
     
     if concept1 == concept2:
         if cs_mode == 'wu_palmer' or cs_mode == 'simple_wu_palmer':
             cs = 1.0
             cs_table[(concept1,concept2)] = cs
+            cs_table[(concept2,concept1)] = cs
             return cs
         elif cs_mode == 'path_based':
             cs = 0.0
             cs_table[(concept1,concept2)] = cs
+            cs_table[(concept2,concept1)] = cs
             return cs
     
     lca = getLCA(concept1, concept2, tree, ic_mode)
@@ -129,6 +133,7 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
          raise ValueError('Unsupported CS-mode: ',cs_mode)
 
         cs_table[(concept1,concept2)] = cs
+        cs_table[(concept2,concept1)] = cs
         return cs
     except ValueError as err:
         print(err.args)

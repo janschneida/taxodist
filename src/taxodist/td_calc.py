@@ -123,8 +123,9 @@ class Taxodist:
         matrix = utils.mirrorMatrix(matrix)
 
         if normalize:
-            dist_matrix = utils.normalize(dist_matrix)
-            
+        # clear hashmaps
+        utils.cs_table = {}
+        utils.ic_table = {}
         return matrix
     
     def calc_set_sim_par(self, sets: list,tree: Tree, ic_mode:str, cs_mode: str, setsim_mode: str, normalize: bool=True) -> np.ndarray:
