@@ -3,6 +3,7 @@
 **/taxodist_env
 **/build
 *.xlsx
+!**/correlations_AND_dist_sim_matrices/*.xlsx
 !sim_matrix_L_NA_BIP.xlsx
 !icd-codes_examples.xlsx
 !ICD10_xml.xlsx
@@ -21,3 +22,4 @@ taxodist.egg-info/top_level.txt
 !pancreas_pats_icd.xlsx
 !**analysis/resources/*
 */local
+ 
