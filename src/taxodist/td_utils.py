@@ -112,8 +112,8 @@ def getCS(concept1: str, concept2: str, tree: Tree, depth: int,ic_mode: str,cs_m
     try:
 
         if cs_mode == 'path_based':
-            cs = cs_algorithms.getPathBasedDist(concept1,concept2,tree,depth) 
-        if cs_mode == 'wu_palmer':
+            cs = cs_algorithms.getPathBasedDist(concept1,concept2,tree,depth)
+        elif cs_mode == 'wu_palmer':
             cs = cs_algorithms.getCSWuPalmer(ic_1,ic_2,ic_lca) 
         elif cs_mode == 'li':
             cs = cs_algorithms.getCSLi(ic_1,ic_2,ic_lca)
