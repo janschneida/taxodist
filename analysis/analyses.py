@@ -10,12 +10,14 @@ import numpy as np
 import plotly.express as px
 import seaborn as sns
 import matplotlib.pylab as plt
+import seaborn as sn
 #plt.style.use("seaborn")
 
 def main():
     #allMOLTBPats()
     #pancreasPatients()
-    runAllSetSims()
+    #runAllSetSims()
+    generateSimHeatMaps()
     return
     
 
@@ -87,11 +89,10 @@ def pancreasPatientsExpertValues() -> np.ndarray:
     return matrix
     
 def runAllSetSims():
-    # TODO normalized correlations + sim/dist mixes
     ics = ['levels','sanchez']
     
     c_dists = ['nguyen_almubaid','path_based']
-    setdists = ['bipartite_matching','hierarchical']
+    setdists = ['mean_cs','bipartite_matching','hierarchical']
     
     c_sims = ['leacock_chodorow','simple_wu_palmer','li','wu_palmer'] # 'batet', TODO talk about batet -> cant compare same concepts
     setsims = ['mean_cs','bipartite_matching'] 
@@ -116,6 +117,35 @@ def runAllSetSims():
     tree = tree_parsers.getICD10GMTree(version='2021')
     td = td_calc.Taxodist()
     
+    #--------------------------------------------------------------------------------------------
+    
+    # # c_sim + hierarchical UNSCALED 
+    # for ic in ics:
+    #     for cd in c_sims:
+    #         for sd in ['hierarchical']:
+    #             combination = ic+'_'+cd+'_'+sd+'_unscaled'
+    #             # use taxodist to calculate similarity of all patient sets
+    #             td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cd,sd,normalize=False,scale_to_setsizes=False)
+    #             # mds_matrix = utils.getMDSMatrix(td_matrix)
+    #             correlation = np.corrcoef(expert_dist_matrix.flatten(),td_matrix.flatten())
+    #             print('combination: ',combination,'\ncorrelation: ',correlation)  
+    #             pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
+    #             pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')
+                
+    #  # c_sim + hierarchical SCALED 
+    # for ic in ics:
+    #     for cd in c_sims:
+    #         for sd in ['hierarchical']:
+    #             combination = ic+'_'+cd+'_'+sd+'_scaled'
+    #             # use taxodist to calculate similarity of all patient sets
+    #             td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cd,sd,normalize=False,scale_to_setsizes=True)
+    #             # mds_matrix = utils.getMDSMatrix(td_matrix)
+    #             correlation = np.corrcoef(expert_dist_matrix.flatten(),td_matrix.flatten())
+    #             print('combination: ',combination,'\ncorrelation: ',correlation)  
+    #             pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
+    #             pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')
+            
+    
     # # similarity calculations with "trivial" setsims UNSCALED
     # for setsim in setsims_triv:
     #     # use taxodist to calculate similarity of all patient sets
@@ -138,58 +168,73 @@ def runAllSetSims():
     #     pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
     #     pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')                 
     
-    # distance correlations SCALED
-    for ic in ics:
-        for cd in c_dists:
-            for sd in setdists:
-                combination = ic+'_'+cd+'_'+sd+'_scaled'
-                # use taxodist to calculate similarity of all patient sets
-                td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cd,sd,normalize=False,scale_to_setsizes=True)
-                # mds_matrix = utils.getMDSMatrix(td_matrix)
-                correlation = np.corrcoef(expert_dist_matrix.flatten(),td_matrix.flatten())
-                print('combination: ',combination,'\ncorrelation: ',correlation)  
-                pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
-                pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')
+    # # distance correlations SCALED
+    # for ic in ics:
+    #     for cd in c_dists:
+    #         for sd in setdists:
+    #             combination = ic+'_'+cd+'_'+sd+'_scaled'
+    #             # use taxodist to calculate similarity of all patient sets
+    #             td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cd,sd,normalize=False,scale_to_setsizes=True)
+    #             # mds_matrix = utils.getMDSMatrix(td_matrix)
+    #             correlation = np.corrcoef(expert_dist_matrix.flatten(),td_matrix.flatten())
+    #             print('combination: ',combination,'\ncorrelation: ',correlation)  
+    #             pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
+    #             pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')
                 
-    # distance correlations UNSCALED
-    for ic in ics:
-        for cd in c_dists:
-            for sd in setdists:
-                combination = ic+'_'+cd+'_'+sd+'_unscaled'
-                # use taxodist to calculate similarity of all patient sets
-                td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cd,sd,normalize=False,scale_to_setsizes=False)
-                # mds_matrix = utils.getMDSMatrix(td_matrix)
-                correlation = np.corrcoef(expert_dist_matrix.flatten(),td_matrix.flatten())
-                print('combination: ',combination,'\ncorrelation: ',correlation)  
-                pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
-                pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')
+    # # distance correlations UNSCALED
+    # for ic in ics:
+    #     for cd in c_dists:
+    #         for sd in setdists:
+    #             combination = ic+'_'+cd+'_'+sd+'_unscaled'
+    #             # use taxodist to calculate similarity of all patient sets
+    #             td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cd,sd,normalize=False,scale_to_setsizes=False)
+    #             # mds_matrix = utils.getMDSMatrix(td_matrix)
+    #             correlation = np.corrcoef(expert_dist_matrix.flatten(),td_matrix.flatten())
+    #             print('combination: ',combination,'\ncorrelation: ',correlation)  
+    #             pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
+    #             pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')
                 
-    # similarity correlations SCALED        
-    for ic in ics:
-        for cs in c_sims:
-            for setsim in setsims:
-                # use taxodist to calculate similarity of all patient sets
-                td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cs,setsim,normalize=False,scale_to_setsizes=True)
-                # mds_matrix = utils.getMDSMatrix(td_matrix)
-                correlation = np.corrcoef(expert_sim_matrix.flatten(),td_matrix.flatten())
-                combination = ic+'_'+cs+'_'+setsim+'_scaled'
-                print('combination: ',combination,'\ncorrelation: ',correlation)
-                pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
-                pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx') 
+    # # similarity correlations SCALED        
+    # for ic in ics:
+    #     for cs in c_sims:
+    #         for setsim in setsims:
+    #             # use taxodist to calculate similarity of all patient sets
+    #             td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cs,setsim,normalize=False,scale_to_setsizes=True)
+    #             # mds_matrix = utils.getMDSMatrix(td_matrix)
+    #             correlation = np.corrcoef(expert_sim_matrix.flatten(),td_matrix.flatten())
+    #             combination = ic+'_'+cs+'_'+setsim+'_scaled'
+    #             print('combination: ',combination,'\ncorrelation: ',correlation)
+    #             pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
+    #             pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx') 
                 
-    # similarity correlations UNSCALED        
-    for ic in ics:           
-        for cs in c_sims:
-            for setsim in setsims:
-                # use taxodist to calculate similarity of all patient sets
-                td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cs,setsim,normalize=False,scale_to_setsizes=False)
-                # mds_matrix = utils.getMDSMatrix(td_matrix)
-                correlation = np.corrcoef(expert_sim_matrix.flatten(),td_matrix.flatten())
-                combination = ic+'_'+cs+'_'+setsim+'_unscaled'
-                print('combination: ',combination,'\ncorrelation: ',correlation)
-                pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
-                pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')           
+    # # similarity correlations UNSCALED        
+    # for ic in ics:           
+    #     for cs in c_sims:
+    #         for setsim in setsims:
+    #             # use taxodist to calculate similarity of all patient sets
+    #             td_matrix = td.calc_set_sim(pancreas_icd_sets,tree,ic,cs,setsim,normalize=False,scale_to_setsizes=False)
+    #             # mds_matrix = utils.getMDSMatrix(td_matrix)
+    #             correlation = np.corrcoef(expert_sim_matrix.flatten(),td_matrix.flatten())
+    #             combination = ic+'_'+cs+'_'+setsim+'_unscaled'
+    #             print('combination: ',combination,'\ncorrelation: ',correlation)
+    #             pd.DataFrame(td_matrix).to_excel(combination+'_matrix.xlsx')
+    #             pd.DataFrame(correlation).to_excel(combination+'_correlation.xlsx')           
                  
+def generateSimHeatMaps():
+    df = pd.read_excel('analysis\local\\resources\pankreas_patienten_matrix_MB.xlsx')
+    df = df.drop(axis=1,columns='Unnamed: 0')
+    df = df.set_index(df.columns)
+    df[df.isna()] = 0.0
+    expert_matrix = utils.mirrorMatrix(df.to_numpy())
 
+    dir = 'analysis/generated/correlations_AND_dist_sim_matrices'
+    for i, file in enumerate(os.listdir(dir)):
+        if 'matrix' in file:
+            df = pd.read_excel(dir+'/'+file)
+            df = df.drop(axis=1,columns='Unnamed: 0')
+            td_matrix = df.to_numpy()
+            heatmap = sn.heatmap(td_matrix,square=True,cbar= i == 1)
+            fig = heatmap.get_figure()
+            fig.savefig(file.replace('.xlsx','_heatmap.png')) 
 if __name__ == '__main__': 
     main()
