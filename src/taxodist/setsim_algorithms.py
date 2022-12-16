@@ -52,15 +52,21 @@ def getHierachicalDistSetSim(concepts_1: set, concepts_2: set,tree: Tree, cs_mod
     union = concepts_1.union(concepts_2)
     depth = tree.depth()
 
-    # path based = natively used distance measure + other CS-measures that return distances
-    if cs_mode == 'path_based' or cs_mode == 'nguyen_almubaid':
-        first_summand = sum([utils.getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode) for concept_2 in concepts_2 for concept_difference_1 in difference_1])
-        second_summand = sum([utils.getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode) for concept_1 in concepts_1 for concept_difference_2 in difference_2])
-    else:
-        max_cs = utils.getMaxDistOrSim(tree,ic_mode,cs_mode)
-        # we have to normalize and substract from 1 to turn SIM into DIST measures
-        first_summand = sum([1 - utils.getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode)/max_cs for concept_2 in concepts_2 for concept_difference_1 in difference_1])
-        second_summand = sum([1 - utils.getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode)/max_cs for concept_1 in concepts_1 for concept_difference_2 in difference_2])
+    # NOTE commented out the sim/dist differences, because MAX_CS 
+    #      takes too much fucking timmmmeee to calculate & normalize (maybe its not even needed)
+    
+    # # path based = natively used distance measure + other CS-measures that return distances
+    # if cs_mode == 'path_based' or cs_mode == 'nguyen_almubaid':
+    #     first_summand = sum([utils.getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode) for concept_2 in concepts_2 for concept_difference_1 in difference_1])
+    #     second_summand = sum([utils.getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode) for concept_1 in concepts_1 for concept_difference_2 in difference_2])
+    first_summand = sum([utils.getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode) for concept_2 in concepts_2 for concept_difference_1 in difference_1])
+    second_summand = sum([utils.getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode) for concept_1 in concepts_1 for concept_difference_2 in difference_2])
+    
+    # else:
+    #     max_cs = utils.getMaxDistOrSim(tree,ic_mode,cs_mode)
+    #     # we have to normalize and substract from 1 to turn SIM into DIST measures
+    #     first_summand = sum([1 - utils.getCS(concept_difference_1,concept_2,tree,depth,ic_mode,cs_mode)/max_cs for concept_2 in concepts_2 for concept_difference_1 in difference_1])
+    #     second_summand = sum([1 - utils.getCS(concept_difference_2,concept_1,tree,depth,ic_mode,cs_mode)/max_cs for concept_1 in concepts_1 for concept_difference_2 in difference_2])
 
     return ( first_summand/len(concepts_2) + second_summand/len(concepts_1) )/len(union) 
 
