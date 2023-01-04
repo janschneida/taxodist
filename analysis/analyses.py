@@ -18,6 +18,7 @@ def main():
     #pancreasPatients()
     #runAllSetSims()
     generateSimHeatMaps()
+    #generateOverviewHeatmap()
     return
     
 
