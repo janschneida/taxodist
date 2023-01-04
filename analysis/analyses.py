@@ -226,16 +226,18 @@ def generateSimHeatMaps():
     df = df.set_index(df.columns)
     df[df.isna()] = 0.0
     expert_matrix = utils.mirrorMatrix(df.to_numpy())
+    plt.subplots(figsize=(10, 10))
 
-    dir = 'analysis/generated/correlations_AND_dist_sim_matrices'
-    for i, file in enumerate(os.listdir(dir)):
+    read_dir = 'analysis/generated/correlations_AND_dist_sim_matrices'
+    write_dir = 'analysis/generated/plots'
+    for i, file in enumerate(os.listdir(read_dir)):
         if 'matrix' in file:
-            df = pd.read_excel(dir+'/'+file)
+            df = pd.read_excel(read_dir+'/'+file)
             df = df.drop(axis=1,columns='Unnamed: 0')
             td_matrix = df.to_numpy()
             heatmap = sn.heatmap(td_matrix,square=True,cbar= i == 1)
             fig = heatmap.get_figure()
-            fig.savefig(file.replace('.xlsx','_heatmap.png')) 
+            fig.savefig(write_dir+'/'+file.replace('.xlsx','_heatmap.png')) 
             
 def generteOverviewHeatmap():
     dir = 'analysis/generated/correlations_AND_dist_sim_matrices'
