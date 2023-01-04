@@ -236,5 +236,51 @@ def generateSimHeatMaps():
             heatmap = sn.heatmap(td_matrix,square=True,cbar= i == 1)
             fig = heatmap.get_figure()
             fig.savefig(file.replace('.xlsx','_heatmap.png')) 
+            
+def generteOverviewHeatmap():
+    dir = 'analysis/generated/correlations_AND_dist_sim_matrices'
+    correlation_dict = getCorrelationDict()
+    all_combis = os.listdir(dir)
+    ics = ['levels','sanchez']
+    css = ['nguyen_almubaid','path_based','leacock_chodorow','simple_wu_palmer','li','wu_palmer']
+    sss = ['mean_cs','bipartite_matching','hierarchical','overlap','cosine','dice','jaccard']
+
+    index = list()
+    columns = list()
+
+    # building the dataframe index
+    for i, ss in enumerate(sss):
+        for j, scaled in enumerate(['scaled','unscaled']):
+            index.append(ss+'_'+scaled)
+
+    # building the df columns
+    for i, ic in enumerate(ics):
+        for j, cs in enumerate(css):
+            columns.append(ic+'_'+cs)
+    
+    # fill df with values from dict      
+    df = pd.DataFrame(columns=columns,index=index)
+    for i in index:
+        for c in columns:
+            df.at[i,c] = correlation_dict.get(c+'_'+i)
+            if df.at[i,c] == None:
+                df.at[i,c] = correlation_dict.get(i)
+    
+    # plot the heatmaps
+    fig, ax = plt.subplots(figsize=(15, 5))
+    sn.heatmap(df.apply(pd.to_numeric),annot=True)
+    
+    df.apply(pd.to_numeric).style.background_gradient()
+                
+def getCorrelationDict() -> dict:
+    dir = 'analysis/generated/correlations_AND_dist_sim_matrices'
+    correlation_dict = {}
+    for file in os.listdir(dir):
+        if 'correlation' in file:
+            df = pd.read_excel(dir+'/'+file)
+            corr = df[0][1]
+            combination = file.replace('_correlation.xlsx','')
+            correlation_dict[combination] = abs(corr)
+
 if __name__ == '__main__': 
     main()
