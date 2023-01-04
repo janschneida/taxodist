@@ -239,7 +239,7 @@ def generateSimHeatMaps():
             fig = heatmap.get_figure()
             fig.savefig(write_dir+'/'+file.replace('.xlsx','_heatmap.png')) 
             
-def generteOverviewHeatmap():
+def generateOverviewHeatmap():
     dir = 'analysis/generated/correlations_AND_dist_sim_matrices'
     correlation_dict = getCorrelationDict()
     all_combis = os.listdir(dir)
@@ -269,10 +269,10 @@ def generteOverviewHeatmap():
                 df.at[i,c] = correlation_dict.get(i)
     
     # plot the heatmaps
-    fig, ax = plt.subplots(figsize=(15, 5))
+    plt.subplots(figsize=(15, 5))
     sn.heatmap(df.apply(pd.to_numeric),annot=True)
-    
-    df.apply(pd.to_numeric).style.background_gradient()
+    plt.show()
+    # df.apply(pd.to_numeric).style.background_gradient()
                 
 def getCorrelationDict() -> dict:
     dir = 'analysis/generated/correlations_AND_dist_sim_matrices'
@@ -283,6 +283,7 @@ def getCorrelationDict() -> dict:
             corr = df[0][1]
             combination = file.replace('_correlation.xlsx','')
             correlation_dict[combination] = abs(corr)
+    return correlation_dict
 
 if __name__ == '__main__': 
     main()
