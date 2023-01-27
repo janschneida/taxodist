@@ -11,14 +11,15 @@ import plotly.express as px
 import seaborn as sns
 import matplotlib.pylab as plt
 import seaborn as sn
+import analysis_utils as anau
 #plt.style.use("seaborn")
 
 def main():
     #allMOLTBPats()
     #pancreasPatients()
     #runAllSetSims()
-    generateSimHeatMaps()
-    #generateOverviewHeatmap()
+    #generateSimHeatMaps()
+    generateOverviewHeatmap()
     return
     
 
@@ -76,19 +77,6 @@ def pancreasPatients():
     # plt.show()
     # # utils.plotDistMatrix(df_mds_coordinates,setnames)
 
-def pancreasPatientsExpertValues() -> np.ndarray:
-    ''' Retrieve & plot expert's similarities '''
-    
-    df = pd.read_excel('analysis\local\\resources\pankreas_patienten_matrix_MB.xlsx')
-    df = df.drop(axis=1,columns='Unnamed: 0')
-    df = df.set_index(df.columns)
-    df[df.isna()] = 0.0
-
-    matrix = utils.mirrorMatrix(df.to_numpy())
-    # df_mds_dist = utils.getMDSMatrix(matrix)
-    # utils.plotDistMatrix(df_mds_dist,df.columns)
-    return matrix
-    
 def runAllSetSims():
     ics = ['levels','sanchez']
     
@@ -99,19 +87,10 @@ def runAllSetSims():
     setsims = ['mean_cs','bipartite_matching'] 
     setsims_triv = ['overlap','cosine','dice','jaccard']  
     
-    expert_sim_matrix = pancreasPatientsExpertValues()
+    expert_sim_matrix = anau.getPancreasPatientsExpertValues()
     expert_dist_matrix = 1 - expert_sim_matrix/10
     
-    #retrieve patients with pancreas neoplasm (C25) as main diagnoses
-    df_hd_moltb = pd.read_excel('analysis/resources/pseudo_icd10_hauptdiagnose_moltb.xlsx')
-    df_pancreas_hd = df_hd_moltb[df_hd_moltb['ICD-10 Hauptdiagnose'].str.contains('C25')]
-
-    df_moltb = pd.read_excel('analysis/resources/pseudo_icd10_moltb.xlsx')
-    df_patient_icd = df_moltb.groupby(df_moltb.PseudoPatNr.name)['ICD'].agg(list).reset_index(name='ICD')
-    df_pancreas_patient = df_patient_icd[df_patient_icd['PseudoPatNr'].isin(df_pancreas_hd['Pseudonym'])]
-    
-    pancreas_patient_array = df_pancreas_patient.to_numpy()
-    pancreas_icd_sets = [set(icd_list) for patient, icd_list in pancreas_patient_array]
+    pancreas_icd_sets = anau.getPancreasICDSets()
     # setnames = [str(pseudonym) for pseudonym, icd in pancreas_patient_array]
     # setnames = ['patient ' + str(i) for i, icd in enumerate(pancreas_patient_array)]
 
@@ -242,7 +221,7 @@ def generateSimHeatMaps():
             
 def generateOverviewHeatmap():
     dir = 'analysis/generated/correlations_AND_dist_sim_matrices'
-    correlation_dict = getCorrelationDict()
+    correlation_dict = anau.getCorrelationDict()
     all_combis = os.listdir(dir)
     ics = ['levels','sanchez']
     css = ['nguyen_almubaid','path_based','leacock_chodorow','simple_wu_palmer','li','wu_palmer']
@@ -270,21 +249,13 @@ def generateOverviewHeatmap():
                 df.at[i,c] = correlation_dict.get(i)
     
     # plot the heatmaps
-    plt.subplots(figsize=(15, 5))
-    sn.heatmap(df.apply(pd.to_numeric),annot=True)
+    plt.subplots(figsize=(20, 13))
+    heatmap = sn.heatmap(df.apply(pd.to_numeric),annot=True)
+    #fig = heatmap.get_figure()
+    #fig.savefig('correlation_overview_heatmap.png')
     plt.show()
     # df.apply(pd.to_numeric).style.background_gradient()
                 
-def getCorrelationDict() -> dict:
-    dir = 'analysis/generated/correlations_AND_dist_sim_matrices'
-    correlation_dict = {}
-    for file in os.listdir(dir):
-        if 'correlation' in file:
-            df = pd.read_excel(dir+'/'+file)
-            corr = df[0][1]
-            combination = file.replace('_correlation.xlsx','')
-            correlation_dict[combination] = abs(corr)
-    return correlation_dict
 
 if __name__ == '__main__': 
     main()
