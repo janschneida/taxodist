@@ -51,7 +51,7 @@ def getCorrelationDict() -> dict:
 
 def sortSimMatrixByICDSetSize(matrix) -> list:
     ''' sorts given similarity matrix by the number diagnoses per patient (setsize)'''
-    icd_sets = anau.getPancreasICDSets()
+    icd_sets = getPancreasICDSets()
     set_len = []
     for patientset in icd_sets:
         set_len.append(len(patientset))
