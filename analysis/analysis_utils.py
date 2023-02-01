@@ -47,6 +47,9 @@ def getCorrelationDict() -> dict:
             corr = df[0][1]
             combination = file.replace('_correlation.xlsx','')
             correlation_dict[combination] = abs(corr)
+    # safe correlations into excel
+    # corr_dic_df = pd.DataFrame(correlation_dict.values(),index=correlation_dict.keys(),columns=['correlation'])
+    # corr_dic_df.to_excel('expert_correlation.xlsx')
     return correlation_dict
 
 def sortSimMatrixByICDSetSize(matrix) -> list:
