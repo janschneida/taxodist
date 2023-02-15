@@ -32,7 +32,7 @@ We conducted an extensive review of the literature regarding similarity-metrics 
 - Nguyen & Al-Mubaid Similarity Measure (``'nguyen_almubaid'``)
 - Batet Similarity Measure (``'batet'``)
 
-It is to be noted, that we used the information-content-based adaptations of the shown algorithms based on Sánchez et al. since they showed to yield better results [[1]]((https://doi.org/10.1016/j.jbi.2011.03.013)) [[2]](https://doi.org/10.1186/s12911-019-0807-y). 
+It is to be noted, that we used the information-content-based adaptations of the shown algorithms based on Sánchez et al. since they showed to yield better results [[1]](https://doi.org/10.1016/j.jbi.2011.03.013) [[2]](https://doi.org/10.1186/s12911-019-0807-y). 
 The available algorithms to calcualte the information content of a concept are:
 
 - Level of a concept in the taxonomy (``'levels'``)
@@ -53,6 +53,7 @@ A tutorial jupyter notebook is available in our github.
 
 ## References
 [1] D. Sánchez and M. Batet, “Semantic similarity estimation in the biomedical domain: An ontology-based information-theoretic perspective,” Journal of Biomedical Informatics, vol. 44, no. 5, pp. 749–759, Oct. 2011, doi: 10.1016/j.jbi.2011.03.013.
+
 [2] Z. Jia, X. Lu, H. Duan, and H. Li, “Using the distance between sets of hierarchical taxonomic clinical concepts to measure patient similarity,” BMC Med Inform Decis Mak, vol. 19, no. 1, p. 91, Dec. 2019, doi: 10.1186/s12911-019-0807-y.
 
 
