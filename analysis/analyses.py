@@ -215,6 +215,7 @@ def generateSimHeatMaps():
             df = pd.read_excel(read_dir+'/'+file)
             df = df.drop(axis=1,columns='Unnamed: 0')
             td_matrix = df.to_numpy()
+            td_matrix = anau.sortSimMatrixByICDSetSize(td_matrix)
             heatmap = sn.heatmap(td_matrix,square=True,cbar= i == 1)
             fig = heatmap.get_figure()
             fig.savefig(write_dir+'/'+file.replace('.xlsx','_heatmap.png')) 
