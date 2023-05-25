@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 import sys
 import os
 sys.path.append(os.getcwd())
-import td_utils as utils
+from src.taxodist import td_utils as utils
 
 def getICD10GMTree(version = '2022'):
     """

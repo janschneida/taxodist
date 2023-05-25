@@ -1,4 +1,7 @@
 from treelib import Tree
+import sys
+import os
+sys.path.append(os.getcwd())
 from src.taxodist import td_utils as utils
 import math
 
